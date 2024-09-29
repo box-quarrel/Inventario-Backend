@@ -35,8 +35,8 @@ public class Product extends AbstractEntity {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     // references primary unit of measure
     @ManyToOne
@@ -50,7 +50,6 @@ public class Product extends AbstractEntity {
     @JsonBackReference
     private Category category;
 
-    // TODO: Add suppliers and addSupplier
     @ManyToMany
     @JoinTable(
             name = "Product_Supplier",

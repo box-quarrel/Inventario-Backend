@@ -54,7 +54,7 @@ CREATE TABLE Products (
                           current_cost DECIMAL(10,2), -- not used in pharmacy for example
                           current_price DECIMAL(10,2), -- should not be used in reporting. Should use the actual selling unit price in sales_lines table
                           quantity INT,
-                          image VARCHAR(255),
+                          image_url VARCHAR(255),
                           category_code VARCHAR(50),
                           creation_date DATETIME,
                           created_by VARCHAR(255),
