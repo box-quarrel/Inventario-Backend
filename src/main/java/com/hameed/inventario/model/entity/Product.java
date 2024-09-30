@@ -27,7 +27,7 @@ public class Product extends AbstractEntity {
     private String barcode;
 
     @Column(name = "current_price")
-    private Double currenPrice;
+    private Double currentPrice;
 
     @Column(name = "current_cost")
     private Double currentCost;
