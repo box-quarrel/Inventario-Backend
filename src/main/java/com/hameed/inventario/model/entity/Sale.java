@@ -30,7 +30,7 @@ public class Sale extends AbstractEntity{
     private Customer customer;
 
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<SaleItem> saleItems = new HashSet<>();
 

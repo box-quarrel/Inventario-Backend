@@ -128,9 +128,12 @@ public class PurchaseServiceImpl implements PurchaseService {
                     // save to repository
                     purchaseRepository.save(purchaseOrder);
 
-                    // increase status of repository
+                    // increase status of repository, and add the supplier to the list of suppliers of each product in the PO
                     purchaseOrder.getPurchaseLines().forEach(
-                            purchaseLine -> inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity())
+                            purchaseLine -> {
+                                inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
+                                purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
+                            }
                     );
 
                 },

@@ -1,6 +1,5 @@
 package com.hameed.inventario.model.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data

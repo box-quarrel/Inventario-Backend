@@ -28,10 +28,10 @@ public class Customer extends AbstractEntity {
     @Column(name = "address")
     private String address;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Sale> sales = new HashSet<>();
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<ProductReturn> productReturns;
 

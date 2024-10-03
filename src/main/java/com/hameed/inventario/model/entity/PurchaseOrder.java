@@ -37,7 +37,7 @@ public class PurchaseOrder extends AbstractEntity{
     @JsonBackReference
     private Supplier supplier;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<PurchaseLine> purchaseLines = new ArrayList<>();
 
