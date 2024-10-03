@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @Entity
-@Table(name = "po_header", schema = "inventoria-directory")
+@Table(name = "po_header", schema = "inventario-directory")
 @Getter
 @Setter
 public class PurchaseOrder extends AbstractEntity{

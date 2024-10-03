@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface SaleItemMapper {
     // for a singleton mapper
     SaleItemMapper  INSTANCE = Mappers.getMapper(SaleItemMapper.class);

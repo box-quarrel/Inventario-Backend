@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Table(name = "unit_of_measures", schema = "inventoria-directory")
+@Table(name = "unit_of_measures", schema = "inventario-directory")
 @Getter
 @Setter
 public class UnitOfMeasure {

@@ -5,7 +5,7 @@ import com.hameed.inventario.model.entity.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CustomerMapper {
     // for a singleton mapper
     CustomerMapper  INSTANCE = Mappers.getMapper(CustomerMapper.class);

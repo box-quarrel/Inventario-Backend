@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "sales", schema = "inventoria-directory")
+@Table(name = "sales", schema = "inventario-directory")
 @Getter
 @Setter
 public class Sale extends AbstractEntity{

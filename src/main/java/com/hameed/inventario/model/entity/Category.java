@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "categories", schema = "inventoria-directory")
+@Table(name = "categories", schema = "inventario-directory")
 @Getter
 @Setter
 public class Category extends AbstractEntity{

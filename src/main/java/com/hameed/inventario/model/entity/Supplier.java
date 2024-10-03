@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "suppliers", schema = "inventoria-directory")
+@Table(name = "suppliers", schema = "inventario-directory")
 @Getter
 @Setter
 public class Supplier extends AbstractEntity{
