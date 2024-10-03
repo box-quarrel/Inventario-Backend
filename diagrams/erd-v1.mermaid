@@ -71,7 +71,8 @@ erDiagram
 
     PO_LINES {
         int id PK
-        int quantity
+        int requested_quantity,
+        int received_quantity,
         decimal unit_price
         int po_header_id FK
         int product_id FK

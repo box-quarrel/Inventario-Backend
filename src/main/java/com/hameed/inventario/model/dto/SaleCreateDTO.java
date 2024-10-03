@@ -9,5 +9,5 @@ public class SaleCreateDTO {
     private Double totalAmount;
     private Double discount;
     private Long customerId;
-    private Set<SaleItemDTO> saleItems;
+    private Set<SaleItemCreateDTO> saleItemCreateDTOS;
 }

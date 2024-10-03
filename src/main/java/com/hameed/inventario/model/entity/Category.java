@@ -23,7 +23,7 @@ public class Category extends AbstractEntity{
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 

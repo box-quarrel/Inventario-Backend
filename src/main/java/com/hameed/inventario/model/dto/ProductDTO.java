@@ -8,7 +8,8 @@ public class ProductDTO {
     private String productCode;
     private String description;
     private String barcode;
-    private String currentPrice;
+    private Double currentPrice;
+    private Double currentCost;
     private int quantity;
     private String imageUrl;
     private String categoryName;

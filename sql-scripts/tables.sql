@@ -149,7 +149,8 @@ CREATE TABLE PO_HEADER (
 -- Create PO_LINES Table
 CREATE TABLE  PO_LINES (
                            id INT PRIMARY KEY AUTO_INCREMENT,
-                           quantity INT NOT NULL,
+                           requested_quantity INT NOT NULL,
+                           received_quantity INT NOT NULL,
                            unit_price DECIMAL(10,2) NOT NULL,
                            po_header_id INT,
                            product_id INT,

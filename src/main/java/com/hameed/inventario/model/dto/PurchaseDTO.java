@@ -16,7 +16,7 @@ public class PurchaseDTO {
 
     private String notes;
 
-    private Long supplierId;
+    private String supplierName;
 
     private List<POLineDTO> poLineCreateDTOS;
 }

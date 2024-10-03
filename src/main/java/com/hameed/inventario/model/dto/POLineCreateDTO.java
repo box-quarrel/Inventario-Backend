@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class POLineCreateDTO {
     
-    private int quantity;
+    private int requestedQuantity;
+
+    private int receivedQuantity;
 
     private Double unitPrice;
 

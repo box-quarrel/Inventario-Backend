@@ -17,19 +17,19 @@ import java.util.Set;
 @Setter
 public class Supplier extends AbstractEntity{
     @Column(name = "name")
-    private String purchaseNumber;
+    private String supplierName;
 
     @Column(name = "contact_name")
-    private String purchaseStatus;
+    private String contactName;
 
     @Column(name = "contact_phone")
-    private Double discount;
+    private String contactPhone;
 
     @Column(name = "email")
-    private Double totalAmount;
+    private String email;
 
     @Column(name = "address")
-    private String notes;
+    private String address;
 
     @ManyToMany(mappedBy = "suppliers")
     private Set<Product> products;

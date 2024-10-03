@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SupplierDTO {
-    private String name;
+    private String supplierName;
     private String contactName;
     private String contactPhone;
     private String email;

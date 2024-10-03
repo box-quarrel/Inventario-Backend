@@ -12,8 +12,11 @@ import lombok.Setter;
 @Setter
 public class PurchaseLine extends AbstractEntity {
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "request_quantity")
+    private int requestedQuantity;
+
+    @Column(name = "received_quantity")
+    private int receivedQuantity;
 
     @Column(name = "unit_price")
     private Double unitPrice;

@@ -50,7 +50,7 @@ public class Product extends AbstractEntity {
     @JsonBackReference
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Supplier",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -65,6 +65,18 @@ public class Product extends AbstractEntity {
             }
             suppliers.add(supplier);
             supplier.getProducts().add(this);
+        }
+    }
+
+    public void removeSupplier(Supplier supplier) {
+        if (supplier != null) {
+            if (suppliers != null && suppliers.remove(supplier)) {
+                supplier.getProducts().remove(this);
+            } else {
+                throw new IllegalStateException("Supplier has not been added to the list");
+            }
+
+
         }
     }
 
