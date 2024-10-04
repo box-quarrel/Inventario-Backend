@@ -2,8 +2,8 @@ package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.ProductMapper;
-import com.hameed.inventario.model.dto.ProductCreateDTO;
-import com.hameed.inventario.model.dto.ProductDTO;
+import com.hameed.inventario.model.dto.create.ProductCreateDTO;
+import com.hameed.inventario.model.dto.update.ProductDTO;
 import com.hameed.inventario.model.entity.Category;
 import com.hameed.inventario.model.entity.Product;
 import com.hameed.inventario.model.entity.UnitOfMeasure;
@@ -41,21 +41,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductCreateDTO productCreateDTO) {
+    public void updateProduct (ProductDTO productDTO) {
+        Long productId = productDTO.getId();
         productRepository.findById(productId).ifPresentOrElse(
                 product -> {
                     // map fields of dto to product
-                    product.setProductName(productCreateDTO.getProductName());
-                    product.setProductCode(productCreateDTO.getProductCode());
-                    product.setDescription(productCreateDTO.getDescription());
-                    product.setBarcode(productCreateDTO.getBarcode());
-                    product.setCurrentPrice(productCreateDTO.getCurrentPrice());
-                    product.setCurrentCost(productCreateDTO.getCurrentCost());
-                    product.setQuantity(productCreateDTO.getQuantity());
-                    product.setImageUrl(productCreateDTO.getImageUrl());
+                    product.setProductName(productDTO.getProductName());
+                    product.setProductCode(productDTO.getProductCode());
+                    product.setDescription(productDTO.getDescription());
+                    product.setBarcode(productDTO.getBarcode());
+                    product.setCurrentPrice(productDTO.getCurrentPrice());
+                    product.setCurrentCost(productDTO.getCurrentCost());
+                    product.setQuantity(productDTO.getQuantity());
+                    product.setImageUrl(productDTO.getImageUrl());
                     // calling services to get category and uom
-                    Category productCategory = categoryService.getCategoryEntityById(productCreateDTO.getCategoryId());
-                    UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productCreateDTO.getPrimaryUomId());
+                    Category productCategory = categoryService.getCategoryEntityById(productDTO.getCategory().getId());
+                    UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productDTO.getPrimaryUom().getId());
                     product.setCategory(productCategory);
                     product.setPrimaryUom(primaryUom);
 

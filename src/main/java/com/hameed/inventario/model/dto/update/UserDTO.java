@@ -1,4 +1,4 @@
-package com.hameed.inventario.model.dto;
+package com.hameed.inventario.model.dto.update;
 
 import java.util.Set;
 

@@ -1,7 +1,7 @@
 package com.hameed.inventario.service;
 
-import com.hameed.inventario.model.dto.UserCreateDTO;
-import com.hameed.inventario.model.dto.UserDTO;
+import com.hameed.inventario.model.dto.create.UserCreateDTO;
+import com.hameed.inventario.model.dto.update.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

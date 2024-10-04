@@ -2,12 +2,13 @@ package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.ProductReturnMapper;
-import com.hameed.inventario.model.dto.ProductReturnCreateDTO;
-import com.hameed.inventario.model.dto.ProductReturnDTO;
+import com.hameed.inventario.model.dto.create.ProductReturnCreateDTO;
+import com.hameed.inventario.model.dto.update.ProductReturnDTO;
 import com.hameed.inventario.model.entity.Product;
 import com.hameed.inventario.model.entity.ProductReturn;
 import com.hameed.inventario.model.entity.Customer;
 import com.hameed.inventario.repository.ProductReturnRepository;
+import com.hameed.inventario.service.InventoryStockService;
 import com.hameed.inventario.service.ProductService;
 import com.hameed.inventario.service.ProductReturnService;
 import com.hameed.inventario.service.CustomerService;
@@ -22,12 +23,17 @@ public class ProductReturnServiceImpl implements ProductReturnService {
     private final ProductReturnRepository productReturnRepository;
     private final ProductService productService;
     private final CustomerService customerService;
+    private final InventoryStockService inventoryStockService;
 
     @Autowired
-    public ProductReturnServiceImpl(ProductReturnRepository productReturnRepository, ProductService productService, CustomerService customerService) {
+    public ProductReturnServiceImpl(ProductReturnRepository productReturnRepository,
+                                    ProductService productService,
+                                    CustomerService customerService,
+                                    InventoryStockService inventoryStockService) {
         this.productReturnRepository = productReturnRepository;
         this.productService = productService;
         this.customerService = customerService;
+        this.inventoryStockService = inventoryStockService;
     }
 
     @Override
@@ -39,17 +45,21 @@ public class ProductReturnServiceImpl implements ProductReturnService {
         productReturn.setProduct(productReturnProduct);
         productReturn.setCustomer(customer);
         productReturnRepository.save(productReturn);
+
+        // increase the stock for the product again
+        inventoryStockService.increaseStock(productReturnProduct.getId(), productReturn.getQuantityReturned());
     }
 
     @Override
-    public void updateProductReturn(Long productReturnId, ProductReturnCreateDTO productReturnCreateDTO) {
+    public void updateProductReturn(ProductReturnDTO productReturnDTO) {
+        Long productReturnId = productReturnDTO.getProduct().getId();
         productReturnRepository.findById(productReturnId).ifPresentOrElse(
                 productReturn -> {
                     // map fields of dto to productReturn
                     
                     // calling services to get product and uom
-                    Product productReturnProduct = productService.getProductEntityById(productReturnCreateDTO.getProductId());
-                    Customer customer = customerService.getCustomerEntityById(productReturnCreateDTO.getCustomerId());
+                    Product productReturnProduct = productService.getProductEntityById(productReturnDTO.getProduct().getId());
+                    Customer customer = customerService.getCustomerEntityById(productReturnDTO.getCustomer().getId());
                     productReturn.setProduct(productReturnProduct);
                     productReturn.setCustomer(customer);
 

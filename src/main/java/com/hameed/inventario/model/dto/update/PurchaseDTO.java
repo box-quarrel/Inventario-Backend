@@ -1,4 +1,4 @@
-package com.hameed.inventario.model.dto;
+package com.hameed.inventario.model.dto.update;
 
 import lombok.Data;
 
@@ -6,6 +6,8 @@ import java.util.List;
 
 @Data
 public class PurchaseDTO {
+    private Long id;
+
     private String purchaseNumber;
 
     private String purchaseStatus;
@@ -16,7 +18,7 @@ public class PurchaseDTO {
 
     private String notes;
 
-    private String supplierName;
+    private SupplierDTO supplier;
 
-    private List<POLineDTO> poLineCreateDTOS;
+    private List<POLineDTO> poLineDTOS;
 }

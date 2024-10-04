@@ -1,7 +1,7 @@
 package com.hameed.inventario.service;
 
-import com.hameed.inventario.model.dto.ProductReturnCreateDTO;
-import com.hameed.inventario.model.dto.ProductReturnDTO;
+import com.hameed.inventario.model.dto.create.ProductReturnCreateDTO;
+import com.hameed.inventario.model.dto.update.ProductReturnDTO;
 import com.hameed.inventario.model.entity.ProductReturn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ public interface ProductReturnService {
 
     // Update an existing productReturn
     //
-    public void updateProductReturn(Long productReturnId, ProductReturnCreateDTO productReturnCreateDTO);
+    public void updateProductReturn (ProductReturnDTO productReturnDTO);
 
     // Remove a productReturn
     public void removeProductReturn(Long productReturnId);

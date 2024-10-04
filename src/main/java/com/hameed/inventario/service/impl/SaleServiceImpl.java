@@ -3,12 +3,14 @@ package com.hameed.inventario.service.impl;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.SaleItemMapper;
 import com.hameed.inventario.mapper.SaleMapper;
-import com.hameed.inventario.model.dto.SaleItemCreateDTO;
-import com.hameed.inventario.model.dto.SaleCreateDTO;
-import com.hameed.inventario.model.dto.SaleDTO;
+import com.hameed.inventario.model.dto.create.SaleItemCreateDTO;
+import com.hameed.inventario.model.dto.create.SaleCreateDTO;
+import com.hameed.inventario.model.dto.update.SaleDTO;
+import com.hameed.inventario.model.dto.update.SaleItemDTO;
 import com.hameed.inventario.model.entity.*;
 import com.hameed.inventario.repository.SaleRepository;
 import com.hameed.inventario.service.InventoryStockService;
+import com.hameed.inventario.service.ProductService;
 import com.hameed.inventario.service.SaleService;
 import com.hameed.inventario.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,14 +29,19 @@ import java.util.stream.Collectors;
 public class SaleServiceImpl implements SaleService {
 
     private final SaleRepository saleRepository;
+    private final ProductService productService;
     private final CustomerService customerService;
     private final InventoryStockService inventoryStockService;
 
     @Autowired
-    public SaleServiceImpl(SaleRepository saleRepository, CustomerService customerService, InventoryStockService inventoryStockService) {
+    public SaleServiceImpl(SaleRepository saleRepository,
+                           ProductService productService,
+                           CustomerService customerService,
+                           InventoryStockService inventoryStockService) {
         this.saleRepository = saleRepository;
         this.customerService = customerService;
         this.inventoryStockService = inventoryStockService;
+        this.productService = productService;
     }
 
     @Override
@@ -52,8 +60,15 @@ public class SaleServiceImpl implements SaleService {
             inventoryStockService.decreaseStock(saleItemCreateDTO.getProductId(), saleItemCreateDTO.getQuantity());
         }
         // convert to entity sale items and add to sale object
-        Set<SaleItem> saleItems =  saleItemCreateDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemCreateDTOToSaleItem).collect(Collectors.toSet());
-        sale.setSaleItems(saleItems);
+        Set<SaleItem> saleItems =  saleItemCreateDTOS.stream().map(
+                    saleItemCreateDTO -> {
+                        SaleItem saleItem = SaleItemMapper.INSTANCE.saleItemCreateDTOToSaleItem(saleItemCreateDTO);
+                        Product product = productService.getProductEntityById(saleItemCreateDTO.getProductId());
+                        saleItem.setProduct(product);
+                        return saleItem;
+                    }
+                ).collect(Collectors.toSet());
+        saleItems.forEach(sale::addSaleItem);
 
         // create sale number using date part and sequential part
         String salesNumber = this.generateSalesNumber();
@@ -69,19 +84,21 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     // this update should be restricted to very specific users
-    public void updateSale(Long saleId, SaleCreateDTO saleCreateDTO) {
+    public void updateSale(SaleDTO saleDTO) {
+        Long saleId = saleDTO.getId();
         saleRepository.findById(saleId).ifPresentOrElse(
                 sale -> {
-                    sale.setDiscount(saleCreateDTO.getDiscount());
-                    sale.setTotalAmount(saleCreateDTO.getTotalAmount());
+                    sale.setDiscount(saleDTO.getDiscount());
+                    sale.setTotalAmount(saleDTO.getTotalAmount());
                     // getting the customer and setting it
-                    Customer customer = customerService.getCustomerEntityById(saleCreateDTO.getCustomerId());
+                    Customer customer = customerService.getCustomerEntityById(saleDTO.getCustomer().getId());
                     sale.setCustomer(customer);
 
                     // get lines from DTO and add it to po
-                    Set<SaleItemCreateDTO> saleItemCreateDTOS = saleCreateDTO.getSaleItemCreateDTOS();
-                    Set<SaleItem> saleItems =  saleItemCreateDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemCreateDTOToSaleItem).collect(Collectors.toSet());
-                    sale.setSaleItems(saleItems);
+                    Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItemDTOS();
+                    Set<SaleItem> saleItems =  saleItemDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemDTOToSaleItem).collect(Collectors.toSet());
+                    sale.setSaleItems(new HashSet<>());
+                    saleItems.forEach(sale::addSaleItem);
 
                     // save
                     saleRepository.save(sale);

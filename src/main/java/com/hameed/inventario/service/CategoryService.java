@@ -1,18 +1,16 @@
 package com.hameed.inventario.service;
 
-import com.hameed.inventario.model.dto.CategoryDTO;
+import com.hameed.inventario.model.dto.update.CategoryDTO;
 import com.hameed.inventario.model.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Set;
-
 public interface CategoryService {
     // Create a new category
-    public void createCategory(CategoryDTO categoryDTO);
+    public void addCategory(CategoryDTO categoryDTO);
 
     // Update an existing category
-    public void updateCategory(Long categoryId, CategoryDTO categoryDTO);
+    public void updateCategory(CategoryDTO categoryDTO);
 
     // Remove a category by its ID
     // handle cases where the category is linked to other entities (such as products)

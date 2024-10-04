@@ -1,9 +1,11 @@
-package com.hameed.inventario.model.dto;
+package com.hameed.inventario.model.dto.update;
 
 import lombok.Data;
 
 @Data
 public class POLineDTO {
+
+    private int id;
 
     private int requestedQuantity;
 
@@ -11,5 +13,5 @@ public class POLineDTO {
 
     private Double unitPrice;
 
-    private String productName;
+    private ProductDTO product;
 }

@@ -1,7 +1,7 @@
 package com.hameed.inventario.service;
 
-import com.hameed.inventario.model.dto.ProductCreateDTO;
-import com.hameed.inventario.model.dto.ProductDTO;
+import com.hameed.inventario.model.dto.create.ProductCreateDTO;
+import com.hameed.inventario.model.dto.update.ProductDTO;
 import com.hameed.inventario.model.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ public interface ProductService {
     public void addProduct(ProductCreateDTO productCreateDTO);
 
     // Update an existing product
-    public void updateProduct(Long productId, ProductCreateDTO productCreateDTO);
+    public void updateProduct (ProductDTO productDTO);
 
     // Remove a product
     public void removeProduct(Long productId);

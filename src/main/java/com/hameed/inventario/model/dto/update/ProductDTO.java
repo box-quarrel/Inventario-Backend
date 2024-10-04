@@ -1,9 +1,10 @@
-package com.hameed.inventario.model.dto;
+package com.hameed.inventario.model.dto.update;
 
 import lombok.Data;
 
 @Data
 public class ProductDTO {
+    private Long id;
     private String productName;
     private String productCode;
     private String description;
@@ -12,6 +13,6 @@ public class ProductDTO {
     private Double currentCost;
     private int quantity;
     private String imageUrl;
-    private String categoryName;
-    private String primaryUomCode;
+    private CategoryDTO category;
+    private UnitOfMeasureDTO primaryUom;
 }

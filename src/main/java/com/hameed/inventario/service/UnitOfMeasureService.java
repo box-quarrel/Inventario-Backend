@@ -1,7 +1,7 @@
 package com.hameed.inventario.service;
 
 
-import com.hameed.inventario.model.dto.UnitOfMeasureDTO;
+import com.hameed.inventario.model.dto.update.UnitOfMeasureDTO;
 import com.hameed.inventario.model.entity.UnitOfMeasure;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +11,7 @@ public interface UnitOfMeasureService {
     public void createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
 
     // Update an existing UnitOfMeasure
-    public void updateUnitOfMeasure(Long unitOfMeasureId, UnitOfMeasureDTO unitOfMeasureDTO);
+    public void updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
 
     // Remove a UnitOfMeasure by its ID (handle cases where the UnitOfMeasure is linked to other entities)
     public void deleteUnitOfMeasure(Long unitOfMeasureId);

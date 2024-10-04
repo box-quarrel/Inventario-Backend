@@ -1,9 +1,11 @@
-package com.hameed.inventario.model.dto;
+package com.hameed.inventario.model.dto.update;
 
 import lombok.Data;
 
 @Data
 public class CustomerDTO {
+
+    private Long id;
     
     private String customerName;
 
