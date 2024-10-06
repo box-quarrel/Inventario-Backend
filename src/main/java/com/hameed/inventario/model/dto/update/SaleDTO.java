@@ -11,5 +11,5 @@ public class SaleDTO {
     private Double totalAmount;
     private Double discount;
     private CustomerDTO customer;
-    private Set<SaleItemDTO> saleItemDTOS;
+    private Set<SaleItemDTO> saleItems;
 }

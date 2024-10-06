@@ -64,6 +64,7 @@ public class SaleServiceImpl implements SaleService {
                     saleItemCreateDTO -> {
                         SaleItem saleItem = SaleItemMapper.INSTANCE.saleItemCreateDTOToSaleItem(saleItemCreateDTO);
                         Product product = productService.getProductEntityById(saleItemCreateDTO.getProductId());
+                        product.setCurrentPrice(saleItem.getUnitPrice());
                         saleItem.setProduct(product);
                         return saleItem;
                     }
@@ -95,7 +96,7 @@ public class SaleServiceImpl implements SaleService {
                     sale.setCustomer(customer);
 
                     // get lines from DTO and add it to po
-                    Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItemDTOS();
+                    Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItems();
                     Set<SaleItem> saleItems =  saleItemDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemDTOToSaleItem).collect(Collectors.toSet());
                     sale.setSaleItems(new HashSet<>());
                     saleItems.forEach(sale::addSaleItem);

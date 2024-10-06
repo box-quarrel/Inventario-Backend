@@ -96,7 +96,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                     purchaseOrder.setSupplier(supplier);
 
                     // get lines from DTO and add it to po
-                    List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPoLineDTOS();
+                    List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPurchaseLines();
                     List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(POLineMapper.INSTANCE::poLineDTOToPurchaseLine).toList();
                     purchaseOrder.setPurchaseLines(new ArrayList<>());
                     purchaseLines.forEach(purchaseOrder::addPurchaseLine);

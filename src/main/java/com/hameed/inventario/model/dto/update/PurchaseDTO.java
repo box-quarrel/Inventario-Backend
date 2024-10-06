@@ -20,5 +20,5 @@ public class PurchaseDTO {
 
     private SupplierDTO supplier;
 
-    private List<POLineDTO> poLineDTOS;
+    private List<POLineDTO> purchaseLines; // change this to purchaseLines
 }
