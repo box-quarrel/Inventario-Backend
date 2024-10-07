@@ -5,6 +5,7 @@ import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.POLineMapper;
 import com.hameed.inventario.mapper.PurchaseMapper;
 import com.hameed.inventario.model.dto.create.POLineCreateDTO;
+import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
 import com.hameed.inventario.model.dto.update.POLineDTO;
 import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
 import com.hameed.inventario.model.dto.update.PurchaseDTO;
@@ -49,7 +50,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public String addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO) {
+    public PurchaseResponseDTO addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO) {
         // Map the PurchaseCreateDTO to PurchaseOrder object
         PurchaseOrder purchaseOrder = PurchaseMapper.INSTANCE.purchaseCreateDTOToPurchaseOrder(purchaseCreateDTO);
 
@@ -79,35 +80,35 @@ public class PurchaseServiceImpl implements PurchaseService {
         //save
         purchaseRepository.save(purchaseOrder);
 
-        // return PO number
-        return purchaseNumber;
+        // return response
+        return new PurchaseResponseDTO(purchaseNumber);
     }
 
     @Override
     // this update should be restricted to very specific users
-    public void updatePurchase(PurchaseDTO purchaseDTO) {
+    public PurchaseDTO updatePurchase(PurchaseDTO purchaseDTO) {
         Long purchaseId = purchaseDTO.getId();
-        purchaseRepository.findById(purchaseId).ifPresentOrElse(
-                purchaseOrder -> {
-                    purchaseOrder.setDiscount(purchaseDTO.getDiscount());
-                    purchaseOrder.setTotalAmount(purchaseDTO.getTotalAmount());
-                    // getting the supplier and setting it
-                    Supplier supplier = supplierService.getSupplierEntityById(purchaseDTO.getSupplier().getId());
-                    purchaseOrder.setSupplier(supplier);
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseId);
+        if(optionalPurchaseOrder.isPresent()) {
+            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+            // map fields of dto to purchaseOrder
+            purchaseOrder.setDiscount(purchaseDTO.getDiscount());
+            purchaseOrder.setTotalAmount(purchaseDTO.getTotalAmount());
+            // getting the supplier and setting it
+            Supplier supplier = supplierService.getSupplierEntityById(purchaseDTO.getSupplier().getId());
+            purchaseOrder.setSupplier(supplier);
 
-                    // get lines from DTO and add it to po
-                    List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPurchaseLines();
-                    List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(POLineMapper.INSTANCE::poLineDTOToPurchaseLine).toList();
-                    purchaseOrder.setPurchaseLines(new ArrayList<>());
-                    purchaseLines.forEach(purchaseOrder::addPurchaseLine);
+            // get lines from DTO and add it to po
+            List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPurchaseLines();
+            List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(POLineMapper.INSTANCE::poLineDTOToPurchaseLine).toList();
+            purchaseOrder.setPurchaseLines(new ArrayList<>());
+            purchaseLines.forEach(purchaseOrder::addPurchaseLine);
 
-                    // save
-                    purchaseRepository.save(purchaseOrder);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Purchase Order with this Id: " + purchaseId + " could not be found");
-                }
-        );
+            // return the updated DTO
+            return PurchaseMapper.INSTANCE.purchaseOrderToPurchaseDTO(purchaseOrder);
+        } else {
+            throw new ResourceNotFoundException("Purchase order with this Id: " + purchaseId + " could not be found");
+        }
     }
 
     @Override
@@ -133,47 +134,47 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public void receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
+    public PurchaseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
         Long purchaseOrderId = receiveOrderDTO.getPurchaseOrderId();
-        purchaseRepository.findById(purchaseOrderId).ifPresentOrElse(
-                purchaseOrder -> {
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseOrderId);
+        if (optionalPurchaseOrder.isPresent()) {
+            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+            // Create a map from ReceivedLineDTO list for efficient lookup
+            Map<Long, Integer> receivedQuantities = receiveOrderDTO.getReceivedLines()
+                    .stream()
+                    .collect(Collectors.toMap(ReceivedLineDTO::getPurchaseLineId, ReceivedLineDTO::getReceivedQuantity));
 
-                    // Create a map from ReceivedLineDTO list for efficient lookup
-                    Map<Long, Integer> receivedQuantities = receiveOrderDTO.getReceivedLines()
-                            .stream()
-                            .collect(Collectors.toMap(ReceivedLineDTO::getPurchaseLineId, ReceivedLineDTO::getReceivedQuantity));
-
-                    // Iterate through each purchase line and update the received quantity
-                    purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
-                        if (receivedQuantities.containsKey(purchaseLine.getId())) {
-                            purchaseLine.setReceivedQuantity(receivedQuantities.get(purchaseLine.getId()));
-                            // increase stock of the product with the newly received quantity
-                            inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
-                            // add the supplier to the list of suppliers of each product in the PO
-                            purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
-                            // update the current cost of the product based on the unit price of the po line
-                            purchaseLine.getProduct().setCurrentCost(purchaseLine.getUnitPrice());
-                        }
-                    });
-
-                    // change status of the PO based on the received quantity against the ordered quantity
-                    int totalRequested = purchaseOrder.getPurchaseLines().stream().map(PurchaseLine::getRequestedQuantity).reduce(0, Integer::sum);
-                    int totalReceived = purchaseOrder.getPurchaseLines().stream().map(PurchaseLine::getReceivedQuantity).reduce(0, Integer::sum);
-
-                    if (totalRequested > totalReceived) {
-                        purchaseOrder.setPurchaseStatus(PurchaseStatus.PARTIALLY_RECEIVED.toString());
-                    } else {
-                        purchaseOrder.setPurchaseStatus(PurchaseStatus.RECEIVED.toString());
-                    }
-
-                    // save to repository
-                    purchaseRepository.save(purchaseOrder);
-
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Purchase Order with this Purchase Order Id: " + purchaseOrderId + " could not be found");
+            // Iterate through each purchase line and update the received quantity
+            purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
+                if (receivedQuantities.containsKey(purchaseLine.getId())) {
+                    purchaseLine.setReceivedQuantity(receivedQuantities.get(purchaseLine.getId()));
+                    // increase stock of the product with the newly received quantity
+                    inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
+                    // add the supplier to the list of suppliers of each product in the PO
+                    purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
+                    // update the current cost of the product based on the unit price of the po line
+                    purchaseLine.getProduct().setCurrentCost(purchaseLine.getUnitPrice());
                 }
-        );
+            });
+
+            // change status of the PO based on the received quantity against the ordered quantity
+            int totalRequested = purchaseOrder.getPurchaseLines().stream().map(PurchaseLine::getRequestedQuantity).reduce(0, Integer::sum);
+            int totalReceived = purchaseOrder.getPurchaseLines().stream().map(PurchaseLine::getReceivedQuantity).reduce(0, Integer::sum);
+
+            if (totalRequested > totalReceived) {
+                purchaseOrder.setPurchaseStatus(PurchaseStatus.PARTIALLY_RECEIVED.toString());
+            } else {
+                purchaseOrder.setPurchaseStatus(PurchaseStatus.RECEIVED.toString());
+            }
+
+            // save to repository
+            purchaseRepository.save(purchaseOrder);
+
+            // return the received purchase order
+            return PurchaseMapper.INSTANCE.purchaseOrderToPurchaseDTO(purchaseOrder);
+        } else {
+            throw new ResourceNotFoundException("Purchase Order with this Purchase Order Id: " + purchaseOrderId + " could not be found");
+        }
     }
 
     private String generatePONumber() {

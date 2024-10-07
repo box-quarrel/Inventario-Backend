@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface CustomerService {
     // add a new customer
-    public void addCustomer(CustomerDTO customerDTO);
+    public CustomerDTO addCustomer(CustomerDTO customerDTO);
 
     // Update an existing customer
-    public void updateCustomer(CustomerDTO customerDTO);
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO);
 
     // Remove a Customer by its ID
     // handle cases where the Customer is linked to other entities (sales and product returns)

@@ -1,6 +1,7 @@
 package com.hameed.inventario.service;
 
 import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
+import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
 import com.hameed.inventario.model.dto.update.PurchaseDTO;
 import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
 import com.hameed.inventario.model.entity.PurchaseOrder;
@@ -10,11 +11,11 @@ import org.springframework.data.domain.Pageable;
 public interface PurchaseService {
 
     // Create a new purchase, returns purchaseNumber
-    public String addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO);
+    public PurchaseResponseDTO addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO);
 
     // Update an existing purchase
     // TODO: this should be authorization restricted
-    public void updatePurchase (PurchaseDTO purchaseDTO);
+    public PurchaseDTO updatePurchase (PurchaseDTO purchaseDTO);
 
     // Remove a purchase
     // TODO: this should be authorization restricted
@@ -28,5 +29,5 @@ public interface PurchaseService {
 
     public PurchaseOrder getPurchaseEntityById(Long purchaseId);
 
-    public void receiveOrder(ReceiveOrderDTO receiveOrderDTO);
+    public PurchaseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO);
 }

@@ -1,11 +1,14 @@
 package com.hameed.inventario.controller;
 
+import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
+import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.update.CategoryDTO;
 import com.hameed.inventario.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,32 +23,36 @@ public class CategoryController {
     }
 
     @GetMapping
-    public Page<CategoryDTO> getAllCategories(
+    public ResponseEntity<PaginatedResponseDTO<CategoryDTO>> getAllCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return categoryService.getAllCategories(pageable);
+        Page<CategoryDTO> categoryDTOPage = categoryService.getAllCategories(PageRequest.of(page, size));
+        return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Categories Retrieved Successfully", categoryDTOPage)); // 200 OK
     }
 
 
     @GetMapping("/{id}")
-    public CategoryDTO getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<ResponseDTO<CategoryDTO>> getCategoryById(@PathVariable Long id) {
+        CategoryDTO categoryDTO = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(new ResponseDTO<>(200, "Category Retrieved Successfully", categoryDTO)); // 200 OK
     }
 
     @PostMapping
-    public void addCategory(@RequestBody CategoryDTO categoryDTO) {
-        categoryService.addCategory(categoryDTO);
+    public  ResponseEntity<ResponseDTO<CategoryDTO>> addCategory(@RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO resultCategoryDTO = categoryService.addCategory(categoryDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Created Successfully", resultCategoryDTO));  // 201 CREATED
     }
 
     @PutMapping
-    public void updateCategory(@RequestBody CategoryDTO categoryDTO) {
-        categoryService.updateCategory(categoryDTO);
+    public ResponseEntity<ResponseDTO<CategoryDTO>> updateCategory(@RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO resultCategoryDTO = categoryService.updateCategory(categoryDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Updated Successfully", resultCategoryDTO));  // 201 CREATED
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<CategoryDTO>> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Category Deleted Successfully"));  // 204 NO_CONTENT
     }
 
 

@@ -5,6 +5,7 @@ import com.hameed.inventario.mapper.SaleItemMapper;
 import com.hameed.inventario.mapper.SaleMapper;
 import com.hameed.inventario.model.dto.create.SaleItemCreateDTO;
 import com.hameed.inventario.model.dto.create.SaleCreateDTO;
+import com.hameed.inventario.model.dto.response.SaleResponseDTO;
 import com.hameed.inventario.model.dto.update.SaleDTO;
 import com.hameed.inventario.model.dto.update.SaleItemDTO;
 import com.hameed.inventario.model.entity.*;
@@ -45,7 +46,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public String sell(SaleCreateDTO saleCreateDTO) {
+    public SaleResponseDTO sell(SaleCreateDTO saleCreateDTO) {
         // Map the SaleCreateDTO to Sale object
         Sale sale = SaleMapper.INSTANCE.saleCreateDTOToSale(saleCreateDTO);
 
@@ -77,37 +78,37 @@ public class SaleServiceImpl implements SaleService {
 
 
         //save
+
         saleRepository.save(sale);
 
         // return PO number
-        return salesNumber;
+        return new SaleResponseDTO(salesNumber);
     }
 
     @Override
     // this update should be restricted to very specific users
-    public void updateSale(SaleDTO saleDTO) {
+    public SaleDTO updateSale(SaleDTO saleDTO) {
         Long saleId = saleDTO.getId();
-        saleRepository.findById(saleId).ifPresentOrElse(
-                sale -> {
-                    sale.setDiscount(saleDTO.getDiscount());
-                    sale.setTotalAmount(saleDTO.getTotalAmount());
-                    // getting the customer and setting it
-                    Customer customer = customerService.getCustomerEntityById(saleDTO.getCustomer().getId());
-                    sale.setCustomer(customer);
+        Optional<Sale> optionalSale = saleRepository.findById(saleId);
+        if(optionalSale.isPresent()) {
+            Sale sale = optionalSale.get();
+            sale.setDiscount(saleDTO.getDiscount());
+            sale.setTotalAmount(saleDTO.getTotalAmount());
+            // getting the customer and setting it
+            Customer customer = customerService.getCustomerEntityById(saleDTO.getCustomer().getId());
+            sale.setCustomer(customer);
 
-                    // get lines from DTO and add it to po
-                    Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItems();
-                    Set<SaleItem> saleItems =  saleItemDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemDTOToSaleItem).collect(Collectors.toSet());
-                    sale.setSaleItems(new HashSet<>());
-                    saleItems.forEach(sale::addSaleItem);
+            // get lines from DTO and add it to po
+            Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItems();
+            Set<SaleItem> saleItems =  saleItemDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemDTOToSaleItem).collect(Collectors.toSet());
+            sale.setSaleItems(new HashSet<>());
+            saleItems.forEach(sale::addSaleItem);
 
-                    // save
-                    saleRepository.save(sale);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Sale  with this Id: " + saleId + " could not be found");
-                }
-        );
+            // return the updated DTO
+            return SaleMapper.INSTANCE.saleToSaleDTO(sale);
+        } else {
+            throw new ResourceNotFoundException("Sale with this Id: " + saleId + " could not be found");
+        }
     }
 
     @Override

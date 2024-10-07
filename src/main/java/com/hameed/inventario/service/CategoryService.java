@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
     // Create a new category
-    public void addCategory(CategoryDTO categoryDTO);
+    public CategoryDTO addCategory(CategoryDTO categoryDTO);
 
     // Update an existing category
-    public void updateCategory(CategoryDTO categoryDTO);
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO);
 
     // Remove a category by its ID
     // handle cases where the category is linked to other entities (such as products)

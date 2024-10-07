@@ -9,10 +9,10 @@ import org.springframework.data.domain.Pageable;
 public interface ProductService {
 
     // Create a new product
-    public void addProduct(ProductCreateDTO productCreateDTO);
+    public ProductDTO addProduct(ProductCreateDTO productCreateDTO);
 
     // Update an existing product
-    public void updateProduct (ProductDTO productDTO);
+    public ProductDTO updateProduct (ProductDTO productDTO);
 
     // Remove a product
     public void removeProduct(Long productId);

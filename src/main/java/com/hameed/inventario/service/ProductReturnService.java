@@ -9,11 +9,11 @@ import org.springframework.data.domain.Pageable;
 public interface ProductReturnService {
 
     // Create a new productReturn
-    public void addProductReturn(ProductReturnCreateDTO productReturnCreateDTO);
+    public ProductReturnDTO addProductReturn(ProductReturnCreateDTO productReturnCreateDTO);
 
     // Update an existing productReturn
     //
-    public void updateProductReturn (ProductReturnDTO productReturnDTO);
+    public ProductReturnDTO updateProductReturn (ProductReturnDTO productReturnDTO);
 
     // Remove a productReturn
     public void removeProductReturn(Long productReturnId);

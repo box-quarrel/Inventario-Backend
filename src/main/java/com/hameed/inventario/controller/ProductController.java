@@ -2,12 +2,15 @@ package com.hameed.inventario.controller;
 
 
 import com.hameed.inventario.model.dto.create.ProductCreateDTO;
+import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
+import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.update.ProductDTO;
 import com.hameed.inventario.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,31 +25,36 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<ProductDTO> getAllProducts(
+    public ResponseEntity<PaginatedResponseDTO<ProductDTO>> getAllCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return productService.getAllProducts(pageable);
+        Page<ProductDTO> productDTOPage = productService.getAllProducts(PageRequest.of(page, size));
+        return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Products Retrieved Successfully", productDTOPage)); // 200 OK
     }
 
+
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
+    public ResponseEntity<ResponseDTO<ProductDTO>> getProductById(@PathVariable Long id) {
+        ProductDTO productDTO = productService.getProductById(id);
+        return ResponseEntity.ok(new ResponseDTO<>(200, "Product Retrieved Successfully", productDTO)); // 200 OK
     }
 
     @PostMapping
-    public void createProduct(@RequestBody ProductCreateDTO productCreateDTO) {
-        productService.addProduct(productCreateDTO);
+    public  ResponseEntity<ResponseDTO<ProductDTO>> addProduct(@RequestBody ProductCreateDTO productCreateDTO) {
+        ProductDTO resultProductDTO = productService.addProduct(productCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Product Created Successfully", resultProductDTO));  // 201 CREATED
     }
 
     @PutMapping
-    public void updateProduct(@RequestBody ProductDTO productDTO) {
-        productService.updateProduct(productDTO);
+    public ResponseEntity<ResponseDTO<ProductDTO>> updateProduct(@RequestBody ProductDTO productDTO) {
+        ProductDTO resultProductDTO = productService.updateProduct(productDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Product Updated Successfully", resultProductDTO));  // 201 CREATED
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<ProductDTO>> deleteProduct(@PathVariable Long id) {
         productService.removeProduct(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Product Deleted Successfully"));  // 204 NO_CONTENT
     }
     
 }

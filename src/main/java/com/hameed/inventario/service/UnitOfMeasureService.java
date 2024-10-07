@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface UnitOfMeasureService {
     // Create a new unitOfMeasure
-    public void createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
+    public UnitOfMeasureDTO createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
 
     // Update an existing UnitOfMeasure
-    public void updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
+    public UnitOfMeasureDTO updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO);
 
     // Remove a UnitOfMeasure by its ID (handle cases where the UnitOfMeasure is linked to other entities)
     public void deleteUnitOfMeasure(Long unitOfMeasureId);

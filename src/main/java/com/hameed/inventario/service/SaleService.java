@@ -1,6 +1,7 @@
 package com.hameed.inventario.service;
 
 import com.hameed.inventario.model.dto.create.SaleCreateDTO;
+import com.hameed.inventario.model.dto.response.SaleResponseDTO;
 import com.hameed.inventario.model.dto.update.SaleDTO;
 import com.hameed.inventario.model.entity.Sale;
 import org.springframework.data.domain.Page;
@@ -9,11 +10,11 @@ import org.springframework.data.domain.Pageable;
 public interface SaleService {
 
     // Create a new sale, returns salesNumber
-    public String sell(SaleCreateDTO saleCreateDTO);
+    public SaleResponseDTO sell(SaleCreateDTO saleCreateDTO);
 
     // Update an existing sale.
     // TODO: this should be authorization restricted
-    public void updateSale (SaleDTO saleDTO);
+    public SaleDTO updateSale (SaleDTO saleDTO);
 
     // Remove a sale
     // TODO: this should be authorization restricted

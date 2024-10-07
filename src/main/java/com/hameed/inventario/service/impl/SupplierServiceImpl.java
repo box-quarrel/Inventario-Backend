@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SupplierServiceImpl implements SupplierService {
 
@@ -22,13 +24,14 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public void addSupplier(SupplierDTO supplierDTO) {
+    public SupplierDTO addSupplier(SupplierDTO supplierDTO) {
         Supplier supplier = SupplierMapper.INSTANCE.supplierDTOToSupplier(supplierDTO);
         supplierRepository.save(supplier);
+        return SupplierMapper.INSTANCE.supplierToSupplierDTO(supplier);
     }
 
     @Override
-    public void updateSupplier(SupplierDTO supplierDTO) {
+    public SupplierDTO updateSupplier(SupplierDTO supplierDTO) {
         Long supplierId = supplierDTO.getId();
         supplierRepository.findById(supplierId).ifPresentOrElse(
                 supplier -> {
@@ -46,6 +49,24 @@ public class SupplierServiceImpl implements SupplierService {
                     throw new ResourceNotFoundException("Supplier with this Id: " + supplierId + " could not be found");
                 }
         );
+        Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
+        if(optionalSupplier.isPresent()) {
+            Supplier supplier = optionalSupplier.get();
+            // map fields of dto to supplier
+            supplier.setSupplierName(supplierDTO.getSupplierName());
+            supplier.setContactName(supplierDTO.getContactName());
+            supplier.setContactPhone(supplierDTO.getContactPhone());
+            supplier.setEmail(supplierDTO.getEmail());
+            supplier.setAddress(supplierDTO.getAddress());
+
+            // save
+            supplierRepository.save(supplier);
+
+            // return the updated DTO
+            return SupplierMapper.INSTANCE.supplierToSupplierDTO(supplier);
+        } else {
+            throw new ResourceNotFoundException("Supplier with this Id: " + supplierId + " could not be found");
+        }
     }
 
     @Override

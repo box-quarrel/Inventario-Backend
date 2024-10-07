@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProductReturnServiceImpl implements ProductReturnService {
 
@@ -37,7 +39,7 @@ public class ProductReturnServiceImpl implements ProductReturnService {
     }
 
     @Override
-    public void addProductReturn(ProductReturnCreateDTO productReturnCreateDTO) {
+    public ProductReturnDTO addProductReturn(ProductReturnCreateDTO productReturnCreateDTO) {
         ProductReturn productReturn = ProductReturnMapper.INSTANCE.productReturnCreateDTOToProductReturn(productReturnCreateDTO);
         // calling services to get product and uom
         Product productReturnProduct = productService.getProductEntityById(productReturnCreateDTO.getProductId());
@@ -48,28 +50,31 @@ public class ProductReturnServiceImpl implements ProductReturnService {
 
         // increase the stock for the product again
         inventoryStockService.increaseStock(productReturnProduct.getId(), productReturn.getQuantityReturned());
+
+        return ProductReturnMapper.INSTANCE.productReturnToProductReturnDTO(productReturn);
     }
 
     @Override
-    public void updateProductReturn(ProductReturnDTO productReturnDTO) {
+    public ProductReturnDTO updateProductReturn(ProductReturnDTO productReturnDTO) {
         Long productReturnId = productReturnDTO.getProduct().getId();
-        productReturnRepository.findById(productReturnId).ifPresentOrElse(
-                productReturn -> {
-                    // map fields of dto to productReturn
-                    
-                    // calling services to get product and uom
-                    Product productReturnProduct = productService.getProductEntityById(productReturnDTO.getProduct().getId());
-                    Customer customer = customerService.getCustomerEntityById(productReturnDTO.getCustomer().getId());
-                    productReturn.setProduct(productReturnProduct);
-                    productReturn.setCustomer(customer);
+        Optional<ProductReturn> optionalProductReturn = productReturnRepository.findById(productReturnId);
+        if(optionalProductReturn.isPresent()) {
+            ProductReturn productReturn = optionalProductReturn.get();
+            // map fields of dto to productReturn
+            // calling services to get product and uom
+            Product productReturnProduct = productService.getProductEntityById(productReturnDTO.getProduct().getId());
+            Customer customer = customerService.getCustomerEntityById(productReturnDTO.getCustomer().getId());
+            productReturn.setProduct(productReturnProduct);
+            productReturn.setCustomer(customer);
 
-                    // save
-                    productReturnRepository.save(productReturn);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("ProductReturn with this Id: " + productReturnId + " could not be found");
-                }
-        );
+            // save
+            productReturnRepository.save(productReturn);
+
+            // return the updated DTO
+            return ProductReturnMapper.INSTANCE.productReturnToProductReturnDTO(productReturn);
+        } else {
+            throw new ResourceNotFoundException("ProductReturn with this Id: " + productReturnDTO + " could not be found");
+        }
     }
 
     @Override

@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -30,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addProduct(ProductCreateDTO productCreateDTO) {
+    public ProductDTO addProduct(ProductCreateDTO productCreateDTO) {
         Product product = ProductMapper.INSTANCE.productCreateDTOToProduct(productCreateDTO);
         // calling services to get category and uom
         Category productCategory = categoryService.getCategoryEntityById(productCreateDTO.getCategoryId());
@@ -38,35 +40,38 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(productCategory);
         product.setPrimaryUom(primaryUom);
         productRepository.save(product);
+        return ProductMapper.INSTANCE.productToProductDTO(product);
     }
 
     @Override
-    public void updateProduct (ProductDTO productDTO) {
+    public ProductDTO updateProduct (ProductDTO productDTO) {
         Long productId = productDTO.getId();
-        productRepository.findById(productId).ifPresentOrElse(
-                product -> {
-                    // map fields of dto to product
-                    product.setProductName(productDTO.getProductName());
-                    product.setProductCode(productDTO.getProductCode());
-                    product.setDescription(productDTO.getDescription());
-                    product.setBarcode(productDTO.getBarcode());
-                    product.setCurrentPrice(productDTO.getCurrentPrice());
-                    product.setCurrentCost(productDTO.getCurrentCost());
-                    product.setQuantity(productDTO.getQuantity());
-                    product.setImageUrl(productDTO.getImageUrl());
-                    // calling services to get category and uom
-                    Category productCategory = categoryService.getCategoryEntityById(productDTO.getCategory().getId());
-                    UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productDTO.getPrimaryUom().getId());
-                    product.setCategory(productCategory);
-                    product.setPrimaryUom(primaryUom);
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if(optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            // map fields of dto to product
+            product.setProductName(productDTO.getProductName());
+            product.setProductCode(productDTO.getProductCode());
+            product.setDescription(productDTO.getDescription());
+            product.setBarcode(productDTO.getBarcode());
+            product.setCurrentPrice(productDTO.getCurrentPrice());
+            product.setCurrentCost(productDTO.getCurrentCost());
+            product.setQuantity(productDTO.getQuantity());
+            product.setImageUrl(productDTO.getImageUrl());
+            // calling services to get category and uom
+            Category productCategory = categoryService.getCategoryEntityById(productDTO.getCategory().getId());
+            UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productDTO.getPrimaryUom().getId());
+            product.setCategory(productCategory);
+            product.setPrimaryUom(primaryUom);
 
-                    // save
-                    productRepository.save(product);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
-                }
-        );
+            // save
+            productRepository.save(product);
+
+            // return the updated DTO
+            return ProductMapper.INSTANCE.productToProductDTO(product);
+        } else {
+            throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
+        }
     }
 
     @Override

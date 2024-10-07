@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -23,32 +25,34 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public void addCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO addCategory(CategoryDTO categoryDTO) {
         // map to Category
         CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
         Category category = categoryMapper.categoryDTOToCategory(categoryDTO);
         // save
         categoryRepository.save(category);
+        return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
     }
 
     @Override
-    public void updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         Long categoryId = categoryDTO.getId();
-        categoryRepository.findById(categoryId).ifPresentOrElse(
-                category -> {
-                    // map fields from dto to category
-                    category.setCategoryName(categoryDTO.getCategoryName());
-                    category.setCategoryCode(categoryDTO.getCategoryCode());
-                    category.setDescription(categoryDTO.getDescription());
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+        if(optionalCategory.isPresent()) {
+            Category category = optionalCategory.get();
+            // map fields from dto to category
+            category.setCategoryName(categoryDTO.getCategoryName());
+            category.setCategoryCode(categoryDTO.getCategoryCode());
+            category.setDescription(categoryDTO.getDescription());
 
-                    // save
-                    categoryRepository.save(category);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Category with this Id: " + categoryId + " could not be found");
-                }
-        );
+            // save
+            categoryRepository.save(category);
 
+            // return the updated DTO
+            return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
+        } else {
+            throw new ResourceNotFoundException("Category with this Id: " + categoryId + " could not be found");
+        }
     }
 
     @Override

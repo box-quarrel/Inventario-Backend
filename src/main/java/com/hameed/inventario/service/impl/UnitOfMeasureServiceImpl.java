@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
@@ -23,27 +25,31 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
 
     @Override
-    public void createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
+    public UnitOfMeasureDTO createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
         UnitOfMeasure unitOfMeasure = UnitOfMeasureMapper.INSTANCE.unitOfMeasureDTOToUnitOfMeasure(unitOfMeasureDTO);
         uomRepository.save(unitOfMeasure);
+        return UnitOfMeasureMapper.INSTANCE.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
     }
 
     @Override
-    public void updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
+    public UnitOfMeasureDTO updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
         Long unitOfMeasureId = unitOfMeasureDTO.getId();
-        uomRepository.findById(unitOfMeasureId).ifPresentOrElse(
-                unitOfMeasure -> {
-                    // map fields of dto to unitOfMeasure
-                    unitOfMeasure.setUomName(unitOfMeasureDTO.getUomName());
-                    unitOfMeasure.setUomCode(unitOfMeasureDTO.getUomCode());
-                    unitOfMeasure.setDescription(unitOfMeasureDTO.getDescription());
-                    // save
-                    uomRepository.save(unitOfMeasure);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("UnitOfMeasure with this Id: " + unitOfMeasureId + " could not be found");
-                }
-        );
+        Optional<UnitOfMeasure> optionalUnitOfMeasure = uomRepository.findById(unitOfMeasureId);
+        if(optionalUnitOfMeasure.isPresent()) {
+            UnitOfMeasure unitOfMeasure = optionalUnitOfMeasure.get();
+            // map fields of dto to unitOfMeasure
+            unitOfMeasure.setUomName(unitOfMeasureDTO.getUomName());
+            unitOfMeasure.setUomCode(unitOfMeasureDTO.getUomCode());
+            unitOfMeasure.setDescription(unitOfMeasureDTO.getDescription());
+
+            // save
+            uomRepository.save(unitOfMeasure);
+
+            // return the updated DTO
+            return UnitOfMeasureMapper.INSTANCE.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
+        } else {
+            throw new ResourceNotFoundException("UnitOfMeasure with this Id: " + unitOfMeasureId + " could not be found");
+        }
     }
 
     @Override

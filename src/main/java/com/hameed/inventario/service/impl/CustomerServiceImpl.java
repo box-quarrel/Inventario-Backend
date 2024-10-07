@@ -5,49 +5,51 @@ import com.hameed.inventario.mapper.CustomerMapper;
 import com.hameed.inventario.model.dto.update.CustomerDTO;
 import com.hameed.inventario.model.entity.Customer;
 import com.hameed.inventario.repository.CustomerRepository;
-import com.hameed.inventario.repository.ProductReturnRepository;
 import com.hameed.inventario.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
-    private final ProductReturnRepository productReturnRepository;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, ProductReturnRepository productReturnRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository =  customerRepository;
-        this.productReturnRepository = productReturnRepository;
     }
 
 
     @Override
-    public void addCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO addCustomer(CustomerDTO customerDTO) {
         Customer customer = CustomerMapper.INSTANCE.customerDTOToCustomer(customerDTO);
         customerRepository.save(customer);
+        return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
     }
 
     @Override
-    public void updateCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
         Long customerId = customerDTO.getId();
-        customerRepository.findById(customerId).ifPresentOrElse(
-                customer -> {
-                    // map fields of dto to customer
-                    customer.setCustomerName(customerDTO.getCustomerName());
-                    customer.setEmail(customerDTO.getEmail());
-                    customer.setPhone(customerDTO.getPhone());
-                    customer.setAddress(customerDTO.getAddress());
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        if(optionalCustomer.isPresent()) {
+            Customer customer = optionalCustomer.get();
+            // map fields of dto to customer
+            customer.setCustomerName(customerDTO.getCustomerName());
+            customer.setEmail(customerDTO.getEmail());
+            customer.setPhone(customerDTO.getPhone());
+            customer.setAddress(customerDTO.getAddress());
 
-                    // save
-                    customerRepository.save(customer);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Customer with this Id: " + customerId + " could not be found");
-                }
-        );
+            // save
+            customerRepository.save(customer);
+
+            // return the updated DTO
+            return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
+        } else {
+            throw new ResourceNotFoundException("Customer with this Id: " + customerId + " could not be found");
+        }
     }
 
     @Override
