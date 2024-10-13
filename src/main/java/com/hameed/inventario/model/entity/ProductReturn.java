@@ -2,13 +2,15 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "product_returns", schema = "inventario-directory")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductReturn extends AbstractEntity{
 
     @ManyToOne

@@ -26,72 +26,48 @@ public class ProductReturnServiceImpl implements ProductReturnService {
     private final ProductService productService;
     private final CustomerService customerService;
     private final InventoryStockService inventoryStockService;
+    private final ProductReturnMapper productReturnMapper;
 
     @Autowired
     public ProductReturnServiceImpl(ProductReturnRepository productReturnRepository,
                                     ProductService productService,
                                     CustomerService customerService,
-                                    InventoryStockService inventoryStockService) {
+                                    InventoryStockService inventoryStockService,
+                                    ProductReturnMapper productReturnMapper) {
         this.productReturnRepository = productReturnRepository;
         this.productService = productService;
         this.customerService = customerService;
         this.inventoryStockService = inventoryStockService;
+        this.productReturnMapper = productReturnMapper;
     }
 
     @Override
     public ProductReturnDTO addProductReturn(ProductReturnCreateDTO productReturnCreateDTO) {
-        ProductReturn productReturn = ProductReturnMapper.INSTANCE.productReturnCreateDTOToProductReturn(productReturnCreateDTO);
+        ProductReturn productReturn = productReturnMapper.productReturnCreateDTOToProductReturn(productReturnCreateDTO);
         // calling services to get product and uom
         Product productReturnProduct = productService.getProductEntityById(productReturnCreateDTO.getProductId());
         Customer customer = customerService.getCustomerEntityById(productReturnCreateDTO.getCustomerId());
         productReturn.setProduct(productReturnProduct);
         productReturn.setCustomer(customer);
-        productReturnRepository.save(productReturn);
+        // save
+        ProductReturn resultProductReturn = productReturnRepository.save(productReturn);
 
         // increase the stock for the product again
-        inventoryStockService.increaseStock(productReturnProduct.getId(), productReturn.getQuantityReturned());
+        inventoryStockService.increaseStock(resultProductReturn.getId(), resultProductReturn.getQuantityReturned());
 
-        return ProductReturnMapper.INSTANCE.productReturnToProductReturnDTO(productReturn);
-    }
-
-    @Override
-    public ProductReturnDTO updateProductReturn(ProductReturnDTO productReturnDTO) {
-        Long productReturnId = productReturnDTO.getProduct().getId();
-        Optional<ProductReturn> optionalProductReturn = productReturnRepository.findById(productReturnId);
-        if(optionalProductReturn.isPresent()) {
-            ProductReturn productReturn = optionalProductReturn.get();
-            // map fields of dto to productReturn
-            // calling services to get product and uom
-            Product productReturnProduct = productService.getProductEntityById(productReturnDTO.getProduct().getId());
-            Customer customer = customerService.getCustomerEntityById(productReturnDTO.getCustomer().getId());
-            productReturn.setProduct(productReturnProduct);
-            productReturn.setCustomer(customer);
-
-            // save
-            productReturnRepository.save(productReturn);
-
-            // return the updated DTO
-            return ProductReturnMapper.INSTANCE.productReturnToProductReturnDTO(productReturn);
-        } else {
-            throw new ResourceNotFoundException("ProductReturn with this Id: " + productReturnDTO + " could not be found");
-        }
-    }
-
-    @Override
-    public void removeProductReturn(Long productReturnId) {
-        productReturnRepository.deleteById(productReturnId);
+        return productReturnMapper.productReturnToProductReturnDTO(resultProductReturn);
     }
 
     @Override
     public ProductReturnDTO getProductReturnById(Long productReturnId) {
         ProductReturn productReturn = getProductReturnEntityById(productReturnId);
-        return ProductReturnMapper.INSTANCE.productReturnToProductReturnDTO(productReturn);
+        return productReturnMapper.productReturnToProductReturnDTO(productReturn);
     }
 
     @Override
     public Page<ProductReturnDTO> getAllProductReturns(Pageable pageable) {
         Page<ProductReturn> pageProductReturns = productReturnRepository.findAll(pageable);
-        return pageProductReturns.map(ProductReturnMapper.INSTANCE::productReturnToProductReturnDTO);
+        return pageProductReturns.map(productReturnMapper::productReturnToProductReturnDTO);
     }
 
     @Override

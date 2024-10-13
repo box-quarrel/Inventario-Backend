@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface PurchaseMapper {
     // for a singleton mapper
-    PurchaseMapper  INSTANCE = Mappers.getMapper(PurchaseMapper.class);
+//    PurchaseMapper  INSTANCE = Mappers.getMapper(PurchaseMapper.class);
 
     PurchaseDTO purchaseOrderToPurchaseDTO(PurchaseOrder purchase);
 

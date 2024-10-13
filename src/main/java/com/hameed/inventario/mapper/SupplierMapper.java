@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface SupplierMapper {
     // for a singleton mapper
-    SupplierMapper  INSTANCE = Mappers.getMapper(SupplierMapper.class);
+//    SupplierMapper  INSTANCE = Mappers.getMapper(SupplierMapper.class);
 
     SupplierDTO supplierToSupplierDTO(Supplier supplier);
 

@@ -11,13 +11,6 @@ public interface ProductReturnService {
     // Create a new productReturn
     public ProductReturnDTO addProductReturn(ProductReturnCreateDTO productReturnCreateDTO);
 
-    // Update an existing productReturn
-    //
-    public ProductReturnDTO updateProductReturn (ProductReturnDTO productReturnDTO);
-
-    // Remove a productReturn
-    public void removeProductReturn(Long productReturnId);
-
     // Get all productReturns with pagination
     public Page<ProductReturnDTO> getAllProductReturns(Pageable pageable);
 

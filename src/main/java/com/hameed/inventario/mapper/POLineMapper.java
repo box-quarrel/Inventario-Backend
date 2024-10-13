@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface POLineMapper {
     // for a singleton mapper
-    POLineMapper  INSTANCE = Mappers.getMapper(POLineMapper.class);
+//    POLineMapper  INSTANCE = Mappers.getMapper(POLineMapper.class);
 
     POLineDTO purchaseLineToPOLineDTO(PurchaseLine purchaseLine);
 

@@ -1,5 +1,6 @@
 package com.hameed.inventario.service.impl;
 
+import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.UnitOfMeasureMapper;
 import com.hameed.inventario.model.dto.update.UnitOfMeasureDTO;
@@ -17,18 +18,27 @@ import java.util.Optional;
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
     private final UOMRepository uomRepository;
+    private final UnitOfMeasureMapper unitOfMeasureMapper;
 
     @Autowired
-    public UnitOfMeasureServiceImpl(UOMRepository uomRepository) {
+    public UnitOfMeasureServiceImpl(UOMRepository uomRepository, UnitOfMeasureMapper unitOfMeasureMapper) {
         this.uomRepository = uomRepository;
+        this.unitOfMeasureMapper = unitOfMeasureMapper;
     }
 
 
     @Override
     public UnitOfMeasureDTO createUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
-        UnitOfMeasure unitOfMeasure = UnitOfMeasureMapper.INSTANCE.unitOfMeasureDTOToUnitOfMeasure(unitOfMeasureDTO);
-        uomRepository.save(unitOfMeasure);
-        return UnitOfMeasureMapper.INSTANCE.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
+        // map to unit of measure object
+        UnitOfMeasure unitOfMeasure = unitOfMeasureMapper.unitOfMeasureDTOToUnitOfMeasure(unitOfMeasureDTO);
+        // service-validation
+        if (uomRepository.findByUomCode(unitOfMeasureDTO.getUomCode()).isPresent()) {
+            throw new DuplicateCodeException("Unit Of Measure code " + unitOfMeasure.getUomCode() + " already exists");
+        }
+        // save
+        UnitOfMeasure resultUnitOfMeasure =  uomRepository.save(unitOfMeasure);
+        // return the result as DTO
+        return unitOfMeasureMapper.unitOfMeasureToUnitOfMeasureDTO(resultUnitOfMeasure);
     }
 
     @Override
@@ -43,10 +53,10 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
             unitOfMeasure.setDescription(unitOfMeasureDTO.getDescription());
 
             // save
-            uomRepository.save(unitOfMeasure);
+            UnitOfMeasure resultUnitOfMeasure =  uomRepository.save(unitOfMeasure);
 
             // return the updated DTO
-            return UnitOfMeasureMapper.INSTANCE.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
+            return unitOfMeasureMapper.unitOfMeasureToUnitOfMeasureDTO(resultUnitOfMeasure);
         } else {
             throw new ResourceNotFoundException("UnitOfMeasure with this Id: " + unitOfMeasureId + " could not be found");
         }
@@ -70,13 +80,13 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
     @Override
     public UnitOfMeasureDTO getUnitOfMeasureById(Long unitOfMeasureId) {
         UnitOfMeasure unitOfMeasure = getUnitOfMeasureEntityById(unitOfMeasureId);
-        return UnitOfMeasureMapper.INSTANCE.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
+        return unitOfMeasureMapper.unitOfMeasureToUnitOfMeasureDTO(unitOfMeasure);
     }
 
     @Override
     public Page<UnitOfMeasureDTO> getAllUnitOfMeasures(Pageable pageable) {
         Page<UnitOfMeasure> pageUnitOfMeasures = uomRepository.findAll(pageable);
-        return pageUnitOfMeasures.map(UnitOfMeasureMapper.INSTANCE::unitOfMeasureToUnitOfMeasureDTO);
+        return pageUnitOfMeasures.map(unitOfMeasureMapper::unitOfMeasureToUnitOfMeasureDTO);
     }
 
     @Override

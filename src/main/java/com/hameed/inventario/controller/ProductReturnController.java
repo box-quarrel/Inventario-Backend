@@ -46,16 +46,5 @@ public class ProductReturnController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "ProductReturn Created Successfully", resultProductReturnDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<ProductReturnDTO>> updateProductReturn(@RequestBody ProductReturnDTO productReturnDTO) {
-        ProductReturnDTO resultProductReturnDTO = productReturnService.updateProductReturn(productReturnDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "ProductReturn Updated Successfully", resultProductReturnDTO));  // 201 CREATED
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<ProductReturnDTO>> deleteProductReturn(@PathVariable Long id) {
-        productReturnService.removeProductReturn(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "ProductReturn Deleted Successfully"));  // 204 NO_CONTENT
-    }
-
+    // product returns are immutable, no update or delete
 }

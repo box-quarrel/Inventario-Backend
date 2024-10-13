@@ -48,15 +48,5 @@ public class SaleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Sale Created Successfully", saleResponseDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<SaleDTO>> updateSale(@RequestBody SaleDTO saleDTO) {
-        SaleDTO resultSaleDTO = saleService.updateSale(saleDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Sale Updated Successfully", resultSaleDTO));  // 201 CREATED
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<SaleDTO>> deleteSale(@PathVariable Long id) {
-        saleService.removeSale(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Sale Deleted Successfully"));  // 204 NO_CONTENT
-    }
+    // sales are immutable, no update or delete
 }

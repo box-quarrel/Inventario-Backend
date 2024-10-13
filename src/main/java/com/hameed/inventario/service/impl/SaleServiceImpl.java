@@ -33,22 +33,28 @@ public class SaleServiceImpl implements SaleService {
     private final ProductService productService;
     private final CustomerService customerService;
     private final InventoryStockService inventoryStockService;
+    private final SaleMapper saleMapper;
+    private final SaleItemMapper saleItemMapper;
 
     @Autowired
     public SaleServiceImpl(SaleRepository saleRepository,
                            ProductService productService,
                            CustomerService customerService,
-                           InventoryStockService inventoryStockService) {
+                           InventoryStockService inventoryStockService,
+                           SaleMapper saleMapper,
+                           SaleItemMapper saleItemMapper) {
         this.saleRepository = saleRepository;
         this.customerService = customerService;
         this.inventoryStockService = inventoryStockService;
         this.productService = productService;
+        this.saleMapper = saleMapper;
+        this.saleItemMapper = saleItemMapper;
     }
 
     @Override
     public SaleResponseDTO sell(SaleCreateDTO saleCreateDTO) {
         // Map the SaleCreateDTO to Sale object
-        Sale sale = SaleMapper.INSTANCE.saleCreateDTOToSale(saleCreateDTO);
+        Sale sale = saleMapper.saleCreateDTOToSale(saleCreateDTO);
 
         // getting the customer and setting it
         Customer customer = customerService.getCustomerEntityById(saleCreateDTO.getCustomerId());
@@ -63,7 +69,7 @@ public class SaleServiceImpl implements SaleService {
         // convert to entity sale items and add to sale object
         Set<SaleItem> saleItems =  saleItemCreateDTOS.stream().map(
                     saleItemCreateDTO -> {
-                        SaleItem saleItem = SaleItemMapper.INSTANCE.saleItemCreateDTOToSaleItem(saleItemCreateDTO);
+                        SaleItem saleItem = saleItemMapper.saleItemCreateDTOToSaleItem(saleItemCreateDTO);
                         Product product = productService.getProductEntityById(saleItemCreateDTO.getProductId());
                         product.setCurrentPrice(saleItem.getUnitPrice());
                         saleItem.setProduct(product);
@@ -78,7 +84,6 @@ public class SaleServiceImpl implements SaleService {
 
 
         //save
-
         saleRepository.save(sale);
 
         // return PO number
@@ -86,47 +91,15 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    // this update should be restricted to very specific users
-    public SaleDTO updateSale(SaleDTO saleDTO) {
-        Long saleId = saleDTO.getId();
-        Optional<Sale> optionalSale = saleRepository.findById(saleId);
-        if(optionalSale.isPresent()) {
-            Sale sale = optionalSale.get();
-            sale.setDiscount(saleDTO.getDiscount());
-            sale.setTotalAmount(saleDTO.getTotalAmount());
-            // getting the customer and setting it
-            Customer customer = customerService.getCustomerEntityById(saleDTO.getCustomer().getId());
-            sale.setCustomer(customer);
-
-            // get lines from DTO and add it to po
-            Set<SaleItemDTO> saleItemDTOS = saleDTO.getSaleItems();
-            Set<SaleItem> saleItems =  saleItemDTOS.stream().map(SaleItemMapper.INSTANCE::saleItemDTOToSaleItem).collect(Collectors.toSet());
-            sale.setSaleItems(new HashSet<>());
-            saleItems.forEach(sale::addSaleItem);
-
-            // return the updated DTO
-            return SaleMapper.INSTANCE.saleToSaleDTO(sale);
-        } else {
-            throw new ResourceNotFoundException("Sale with this Id: " + saleId + " could not be found");
-        }
-    }
-
-    @Override
-    // this update should be restricted to very specific users
-    public void removeSale(Long saleId) {
-        saleRepository.deleteById(saleId);
-    }
-
-    @Override
     public Page<SaleDTO> getAllSales(Pageable pageable) {
         Page<Sale> pageSales = saleRepository.findAll(pageable);
-        return pageSales.map(SaleMapper.INSTANCE::saleToSaleDTO);
+        return pageSales.map(saleMapper::saleToSaleDTO);
     }
 
     @Override
     public SaleDTO getSaleById(Long saleId) {
         Sale sale = this.getSaleEntityById(saleId);
-        return SaleMapper.INSTANCE.saleToSaleDTO(sale);
+        return saleMapper.saleToSaleDTO(sale);
     }
 
     @Override
@@ -139,13 +112,13 @@ public class SaleServiceImpl implements SaleService {
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // Fetch the latest PO number from the database (assuming POs are sequential)
-        Optional<Sale> lastPO = saleRepository.findFirstByOrderByIdDesc();
+        Optional<Sale> lastSale = saleRepository.findFirstByOrderByIdDesc();
 
         String sequencePart;
-        if (lastPO.isPresent()) {
-            String lastPONumber = lastPO.get().getSalesNumber();
+        if (lastSale.isPresent()) {
+            String lastSalesNumber = lastSale.get().getSalesNumber();
             // Extract the numeric sequence and increment it
-            String lastSequence = lastPONumber.split("-")[1];
+            String lastSequence = lastSalesNumber.split("-")[1];
             int newSequence = Integer.parseInt(lastSequence) + 1;
             sequencePart = String.format("%04d", newSequence); // Keep 4 digits
         } else {
@@ -153,7 +126,7 @@ public class SaleServiceImpl implements SaleService {
         }
 
         // Combine the date and sequence to form the PO number
-        // Example of returned PO number: PO20251001-0001
-        return "PO" + datePart + "-" + sequencePart;
+        // Example of returned PO number: SN20251001-0001
+        return "SN" + datePart + "-" + sequencePart;
     }
 }

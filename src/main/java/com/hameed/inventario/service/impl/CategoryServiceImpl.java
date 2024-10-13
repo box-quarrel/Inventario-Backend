@@ -1,11 +1,14 @@
 package com.hameed.inventario.service.impl;
 
+import com.hameed.inventario.exception.DuplicateCodeException;
+import com.hameed.inventario.exception.InvalidDataException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CategoryMapper;
 import com.hameed.inventario.model.dto.update.CategoryDTO;
 import com.hameed.inventario.model.entity.Category;
 import com.hameed.inventario.repository.CategoryRepository;
 import com.hameed.inventario.service.CategoryService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,21 +20,36 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
 
     @Override
-    public CategoryDTO addCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO addCategory (CategoryDTO categoryDTO) {
         // map to Category
-        CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
         Category category = categoryMapper.categoryDTOToCategory(categoryDTO);
-        // save
-        categoryRepository.save(category);
-        return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
+
+        // service-validations
+        if (categoryRepository.findByCategoryCode(category.getCategoryCode()).isPresent()) {
+            throw new DuplicateCodeException("Category code " + category.getCategoryCode() + " already exists");
+        }
+
+        try{
+            // save
+            Category resultCategory = categoryRepository.save(category);
+
+            // return the result
+            return categoryMapper.categoryToCategoryDTO(resultCategory);
+
+        } catch (ConstraintViolationException exception) {
+            throw new InvalidDataException("Invalid data: " + exception.getMessage());
+        }
+
     }
 
     @Override
@@ -46,10 +64,10 @@ public class CategoryServiceImpl implements CategoryService {
             category.setDescription(categoryDTO.getDescription());
 
             // save
-            categoryRepository.save(category);
+            Category resultCategory = categoryRepository.save(category);
 
             // return the updated DTO
-            return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
+            return categoryMapper.categoryToCategoryDTO(resultCategory);
         } else {
             throw new ResourceNotFoundException("Category with this Id: " + categoryId + " could not be found");
         }
@@ -76,7 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = getCategoryEntityById(categoryId);
 
         // get the mapper and map to category dto
-        return CategoryMapper.INSTANCE.categoryToCategoryDTO(category);
+        return categoryMapper.categoryToCategoryDTO(category);
     }
 
     @Override
@@ -84,7 +102,7 @@ public class CategoryServiceImpl implements CategoryService {
         // get all categories from by repo
         Page<Category> categoriesPage = categoryRepository.findAll(pageable);
         // map all categories to DTOs
-        return categoriesPage.map(CategoryMapper.INSTANCE::categoryToCategoryDTO);
+        return categoriesPage.map(categoryMapper::categoryToCategoryDTO);
     }
 
     @Override

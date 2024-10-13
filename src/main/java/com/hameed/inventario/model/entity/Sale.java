@@ -3,8 +3,7 @@ package com.hameed.inventario.model.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +12,9 @@ import java.util.Set;
 @Table(name = "sales", schema = "inventario-directory")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Sale extends AbstractEntity{
 
     @Column(name = "sales_number")

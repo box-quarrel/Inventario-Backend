@@ -12,14 +12,6 @@ public interface SaleService {
     // Create a new sale, returns salesNumber
     public SaleResponseDTO sell(SaleCreateDTO saleCreateDTO);
 
-    // Update an existing sale.
-    // TODO: this should be authorization restricted
-    public SaleDTO updateSale (SaleDTO saleDTO);
-
-    // Remove a sale
-    // TODO: this should be authorization restricted
-    public void removeSale(Long saleId);
-
     // Get all sales with pagination
     public Page<SaleDTO> getAllSales(Pageable pageable);
 
@@ -27,4 +19,6 @@ public interface SaleService {
     public SaleDTO getSaleById(Long saleId);
 
     public Sale getSaleEntityById(Long saleId);
+
+    // sales are immutable, you cannot delete or update already created sales
 }

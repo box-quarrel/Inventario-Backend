@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     // for a singleton mapper
-    CategoryMapper  INSTANCE = Mappers.getMapper(CategoryMapper.class);
+//    CategoryMapper  INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
     CategoryDTO categoryToCategoryDTO(Category category);
 

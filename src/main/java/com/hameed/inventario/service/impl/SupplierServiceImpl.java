@@ -17,38 +17,25 @@ import java.util.Optional;
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
+    private final SupplierMapper supplierMapper;
 
     @Autowired
-    public SupplierServiceImpl(SupplierRepository supplierRepository) {
+    public SupplierServiceImpl(SupplierRepository supplierRepository,
+                               SupplierMapper supplierMapper) {
         this.supplierRepository = supplierRepository;
+        this.supplierMapper = supplierMapper;
     }
 
     @Override
     public SupplierDTO addSupplier(SupplierDTO supplierDTO) {
-        Supplier supplier = SupplierMapper.INSTANCE.supplierDTOToSupplier(supplierDTO);
-        supplierRepository.save(supplier);
-        return SupplierMapper.INSTANCE.supplierToSupplierDTO(supplier);
+        Supplier supplier = supplierMapper.supplierDTOToSupplier(supplierDTO);
+        Supplier resultSupplier = supplierRepository.save(supplier);
+        return supplierMapper.supplierToSupplierDTO(resultSupplier);
     }
 
     @Override
     public SupplierDTO updateSupplier(SupplierDTO supplierDTO) {
         Long supplierId = supplierDTO.getId();
-        supplierRepository.findById(supplierId).ifPresentOrElse(
-                supplier -> {
-                    // map fields of dto to supplier
-                    supplier.setSupplierName(supplierDTO.getSupplierName());
-                    supplier.setContactName(supplierDTO.getContactName());
-                    supplier.setContactPhone(supplierDTO.getContactPhone());
-                    supplier.setEmail(supplierDTO.getEmail());
-                    supplier.setAddress(supplierDTO.getAddress());
-
-                    // save
-                    supplierRepository.save(supplier);
-                },
-                () -> {
-                    throw new ResourceNotFoundException("Supplier with this Id: " + supplierId + " could not be found");
-                }
-        );
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
         if(optionalSupplier.isPresent()) {
             Supplier supplier = optionalSupplier.get();
@@ -60,10 +47,10 @@ public class SupplierServiceImpl implements SupplierService {
             supplier.setAddress(supplierDTO.getAddress());
 
             // save
-            supplierRepository.save(supplier);
+            Supplier resultSupplier = supplierRepository.save(supplier);
 
             // return the updated DTO
-            return SupplierMapper.INSTANCE.supplierToSupplierDTO(supplier);
+            return supplierMapper.supplierToSupplierDTO(resultSupplier);
         } else {
             throw new ResourceNotFoundException("Supplier with this Id: " + supplierId + " could not be found");
         }
@@ -88,13 +75,13 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public SupplierDTO getSupplierById(Long supplierId) {
         Supplier supplier = getSupplierEntityById(supplierId);
-        return SupplierMapper.INSTANCE.supplierToSupplierDTO(supplier);
+        return supplierMapper.supplierToSupplierDTO(supplier);
     }
 
     @Override
     public Page<SupplierDTO> getAllSuppliers(Pageable pageable) {
         Page<Supplier> pageSuppliers = supplierRepository.findAll(pageable);
-        return pageSuppliers.map(SupplierMapper.INSTANCE::supplierToSupplierDTO);
+        return pageSuppliers.map(supplierMapper::supplierToSupplierDTO);
     }
 
     @Override

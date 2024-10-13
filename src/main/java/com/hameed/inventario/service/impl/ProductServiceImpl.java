@@ -1,5 +1,6 @@
 package com.hameed.inventario.service.impl;
 
+import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.ProductMapper;
 import com.hameed.inventario.model.dto.create.ProductCreateDTO;
@@ -23,24 +24,32 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final UnitOfMeasureService unitOfMeasureService;
+    private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, UnitOfMeasureService unitOfMeasureService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, UnitOfMeasureService unitOfMeasureService,
+                              ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
         this.unitOfMeasureService = unitOfMeasureService;
+        this.productMapper = productMapper;
     }
 
     @Override
     public ProductDTO addProduct(ProductCreateDTO productCreateDTO) {
-        Product product = ProductMapper.INSTANCE.productCreateDTOToProduct(productCreateDTO);
+        // map productCreateDTO to Product
+        Product product = productMapper.productCreateDTOToProduct(productCreateDTO);
+        // service-validation
+        if (productRepository.findByProductCode(product.getProductCode()).isPresent()) {
+            throw new DuplicateCodeException("Product code " + product.getProductCode() + " already exists");
+        }
         // calling services to get category and uom
         Category productCategory = categoryService.getCategoryEntityById(productCreateDTO.getCategoryId());
         UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productCreateDTO.getPrimaryUomId());
         product.setCategory(productCategory);
         product.setPrimaryUom(primaryUom);
-        productRepository.save(product);
-        return ProductMapper.INSTANCE.productToProductDTO(product);
+        Product resultProduct = productRepository.save(product);
+        return productMapper.productToProductDTO(resultProduct);
     }
 
     @Override
@@ -65,10 +74,10 @@ public class ProductServiceImpl implements ProductService {
             product.setPrimaryUom(primaryUom);
 
             // save
-            productRepository.save(product);
+            Product resultProduct = productRepository.save(product);
 
             // return the updated DTO
-            return ProductMapper.INSTANCE.productToProductDTO(product);
+            return productMapper.productToProductDTO(resultProduct);
         } else {
             throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
         }
@@ -76,19 +85,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void removeProduct(Long productId) {
-        productRepository.deleteById(productId);
+        productRepository.findById(productId).ifPresentOrElse(
+                productRepository::delete,
+                () -> {
+                    throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
+                }
+        );
     }
 
     @Override
     public ProductDTO getProductById(Long productId) {
         Product product = getProductEntityById(productId);
-        return ProductMapper.INSTANCE.productToProductDTO(product);
+        return productMapper.productToProductDTO(product);
     }
 
     @Override
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         Page<Product> pageProducts = productRepository.findAll(pageable);
-        return pageProducts.map(ProductMapper.INSTANCE::productToProductDTO);
+        return pageProducts.map(productMapper::productToProductDTO);
     }
 
     @Override

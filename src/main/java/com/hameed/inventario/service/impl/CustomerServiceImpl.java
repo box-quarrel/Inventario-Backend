@@ -16,18 +16,20 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerMapper customerMapper) {
         this.customerRepository =  customerRepository;
+        this.customerMapper = customerMapper;
     }
 
 
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
-        Customer customer = CustomerMapper.INSTANCE.customerDTOToCustomer(customerDTO);
-        customerRepository.save(customer);
-        return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
+        Customer customer = customerMapper.customerDTOToCustomer(customerDTO);
+        Customer resutlCustomer = customerRepository.save(customer);
+        return customerMapper.customerToCustomerDTO(resutlCustomer);
     }
 
     @Override
@@ -43,10 +45,10 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setAddress(customerDTO.getAddress());
 
             // save
-            customerRepository.save(customer);
+            Customer resultCustomer = customerRepository.save(customer);
 
             // return the updated DTO
-            return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
+            return customerMapper.customerToCustomerDTO(resultCustomer);
         } else {
             throw new ResourceNotFoundException("Customer with this Id: " + customerId + " could not be found");
         }
@@ -71,13 +73,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO getCustomerById(Long customerId) {
         Customer customer = getCustomerEntityById(customerId);
-        return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
+        return customerMapper.customerToCustomerDTO(customer);
     }
 
     @Override
     public Page<CustomerDTO> getAllCustomers(Pageable pageable) {
         Page<Customer> pageCustomers = customerRepository.findAll(pageable);
-        return pageCustomers.map(CustomerMapper.INSTANCE::customerToCustomerDTO);
+        return pageCustomers.map(customerMapper::customerToCustomerDTO);
     }
 
     @Override

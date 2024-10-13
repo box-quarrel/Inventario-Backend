@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UnitOfMeasureMapper {
     // for a singleton mapper
-    UnitOfMeasureMapper  INSTANCE = Mappers.getMapper(UnitOfMeasureMapper.class);
+//    UnitOfMeasureMapper  INSTANCE = Mappers.getMapper(UnitOfMeasureMapper.class);
 
     UnitOfMeasureDTO unitOfMeasureToUnitOfMeasureDTO(UnitOfMeasure unitOfMeasure);
 
