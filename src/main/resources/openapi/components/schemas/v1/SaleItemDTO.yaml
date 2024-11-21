@@ -1,0 +1,19 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific sale item
+  quantity:
+    type: integer
+    format: int32
+  unitPrice:
+    type: number
+    format: double
+  product:
+    $ref: "ProductDTO.yaml"
+required:
+  - id
+  - quantity
+  - unitPrice
+  - product

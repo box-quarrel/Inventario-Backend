@@ -1,0 +1,13 @@
+type: object
+properties:
+  purchaseLineId:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific order line
+  receivedQuantity:
+    type: integer
+    format: int32
+    description: The quantity of the received product, this is useful because not always the supplier can deliver all the requested quantity
+required:
+  - purchaseLineId
+  - receivedQuantity

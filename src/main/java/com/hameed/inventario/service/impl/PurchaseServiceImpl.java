@@ -109,6 +109,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             Supplier supplier = supplierService.getSupplierEntityById(purchaseDTO.getSupplier().getId());
             purchaseOrder.setSupplier(supplier);
 
+
             // get lines from DTO and add it to po
             List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPurchaseLines();
             List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(poLineMapper::poLineDTOToPurchaseLine).toList();

@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific supplier
+  supplierName:
+    type: string
+  contactName:
+    type: string
+  contactPhone:
+    type: string
+    maxLength: 15
+    minLength: 7
+    example: (+20)10236482399
+    nullable: true
+  email:
+    type: string
+    maxLength: 255
+    minLength: 3
+    example: test@example.com
+    nullable: true
+  address:
+    type: string
+required:
+  - id
+  - supplierName
+  - contactPhone

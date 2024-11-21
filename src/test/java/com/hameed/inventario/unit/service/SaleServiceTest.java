@@ -1,25 +1,16 @@
-package com.hameed.inventario;
+package com.hameed.inventario.unit.service;
 
 
-import com.hameed.inventario.exception.RecordCannotBeModifiedException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.POLineMapper;
 import com.hameed.inventario.mapper.SaleMapper;
-import com.hameed.inventario.model.dto.create.SaleItemCreateDTO;
 import com.hameed.inventario.model.dto.create.SaleCreateDTO;
 import com.hameed.inventario.model.dto.response.SaleResponseDTO;
 import com.hameed.inventario.model.dto.update.SaleDTO;
-import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
 import com.hameed.inventario.model.dto.update.CustomerDTO;
-import com.hameed.inventario.model.entity.Product;
-import com.hameed.inventario.model.entity.SaleItem;
 import com.hameed.inventario.model.entity.Sale;
 import com.hameed.inventario.model.entity.Customer;
 import com.hameed.inventario.repository.SaleRepository;
-import com.hameed.inventario.service.InventoryStockService;
-import com.hameed.inventario.service.ProductService;
-import com.hameed.inventario.service.SaleService;
-import com.hameed.inventario.service.CustomerService;
 import com.hameed.inventario.service.impl.InventoryStockServiceImpl;
 import com.hameed.inventario.service.impl.ProductServiceImpl;
 import com.hameed.inventario.service.impl.SaleServiceImpl;
@@ -32,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 

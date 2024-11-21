@@ -1,0 +1,93 @@
+get:
+  tags:
+    - Supplier
+  operationId: getAllSuppliers
+  parameters:
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    - name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 10
+  responses:
+    "200":
+      description: OK
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/responses/v1/PaginatedResponseDTOSupplierDTO.yaml"
+
+post:
+  tags:
+    - Supplier
+  operationId: addSupplier
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/v1/SupplierDTO.yaml"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOSupplierDTO.yaml"
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+
+
+put:
+  tags:
+    - Supplier
+  operationId: updateSupplier
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/v1/SupplierDTO.yaml"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOSupplierDTO.yaml"
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"

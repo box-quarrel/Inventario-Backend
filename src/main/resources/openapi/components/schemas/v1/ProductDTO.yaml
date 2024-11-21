@@ -1,0 +1,41 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific product
+  productName:
+    type: string
+    description: Full Name of the Product
+    example: "TestProductName"
+  productCode:
+    type: string
+    description: Short Code to identify the product
+    example: "PROD01"
+  description:
+    type: string
+  barcode:
+    type: string
+  currentPrice:
+    type: number
+    format: double
+  currentCost:
+    type: number
+    format: double
+  quantity:
+    type: integer
+    format: int32
+  imageUrl:
+    type: string
+    format: URI
+  category:
+    $ref: "CategoryDTO.yaml"
+  primaryUom:
+    $ref: "UnitOfMeasureDTO.yaml"
+required:
+  - id
+  - productCode
+  - currentPrice
+  - quantity
+  - category
+  - primaryUom

@@ -1,4 +1,4 @@
-package com.hameed.inventario;
+package com.hameed.inventario.unit.service;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CustomerMapper;
@@ -9,8 +9,6 @@ import com.hameed.inventario.service.impl.CustomerServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;

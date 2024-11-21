@@ -1,0 +1,91 @@
+get:
+  tags:
+    - Purchase Order
+  operationId: getAllPurchaseOrders
+  parameters:
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    - name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 10
+  responses:
+    "200":
+      description: OK
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/responses/v1/PaginatedResponseDTOPurchaseDTO.yaml"
+
+post:
+  tags:
+    - Purchase Order
+  operationId: addPurchaseOrder
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/v1/PurchaseCreateDTO.yaml"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+put:
+  tags:
+    - Purchase Order
+  operationId: updatePurchaseOrder
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/v1/PurchaseDTO.yaml"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"

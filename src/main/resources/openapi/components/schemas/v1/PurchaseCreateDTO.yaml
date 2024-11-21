@@ -1,0 +1,20 @@
+type: object
+properties:
+  totalAmount:
+    type: number
+    format: double
+  notes:
+    type: string
+    description: Any special requests with the order
+    nullable: true
+  supplierId:
+    type: integer
+    format: int64
+  poLineCreateDTOS:
+    type: array
+    items:
+      $ref: "POLineCreateDTO.yaml"
+required:
+  - totalAmount
+  - supplierId
+  - poLineCreateDTOs

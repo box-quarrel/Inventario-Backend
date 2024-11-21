@@ -1,14 +1,12 @@
-package com.hameed.inventario;
+package com.hameed.inventario.unit.service;
 
 
-import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.ProductReturnMapper;
 import com.hameed.inventario.model.dto.create.ProductReturnCreateDTO;
 import com.hameed.inventario.model.dto.update.*;
 import com.hameed.inventario.model.entity.*;
 import com.hameed.inventario.repository.ProductReturnRepository;
-import com.hameed.inventario.service.InventoryStockService;
 import com.hameed.inventario.service.impl.CustomerServiceImpl;
 import com.hameed.inventario.service.impl.InventoryStockServiceImpl;
 import com.hameed.inventario.service.impl.ProductReturnServiceImpl;

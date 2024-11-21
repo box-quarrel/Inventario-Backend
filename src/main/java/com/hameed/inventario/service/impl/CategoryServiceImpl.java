@@ -1,14 +1,12 @@
 package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.exception.DuplicateCodeException;
-import com.hameed.inventario.exception.InvalidDataException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CategoryMapper;
 import com.hameed.inventario.model.dto.update.CategoryDTO;
 import com.hameed.inventario.model.entity.Category;
 import com.hameed.inventario.repository.CategoryRepository;
 import com.hameed.inventario.service.CategoryService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,17 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DuplicateCodeException("Category code " + category.getCategoryCode() + " already exists");
         }
 
-        try{
-            // save
-            Category resultCategory = categoryRepository.save(category);
+        // save
+        Category resultCategory = categoryRepository.save(category);
 
-            // return the result
-            return categoryMapper.categoryToCategoryDTO(resultCategory);
-
-        } catch (ConstraintViolationException exception) {
-            throw new InvalidDataException("Invalid data: " + exception.getMessage());
-        }
-
+        // return the result
+        return categoryMapper.categoryToCategoryDTO(resultCategory);
     }
 
     @Override

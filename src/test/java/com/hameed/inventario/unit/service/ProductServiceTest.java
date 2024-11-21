@@ -1,4 +1,4 @@
-package com.hameed.inventario;
+package com.hameed.inventario.unit.service;
 
 
 import com.hameed.inventario.exception.DuplicateCodeException;

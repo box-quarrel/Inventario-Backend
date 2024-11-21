@@ -1,0 +1,18 @@
+type: object
+properties:
+  customerId:
+    type: integer
+    format: int64
+  productId:
+    type: integer
+    format: int64
+  quantityReturned:
+    type: integer
+    format: int32
+  reason:
+    type: string
+
+required:
+  - customerId
+  - productId
+  - quantityReturned

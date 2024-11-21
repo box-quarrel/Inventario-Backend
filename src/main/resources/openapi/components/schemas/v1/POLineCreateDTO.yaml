@@ -1,0 +1,15 @@
+type: object
+properties:
+  productId:
+    type: integer
+    format: int64
+  requestedQuantity:
+    type: integer
+    format: int32
+  unitPrice:
+    type: number
+    format: double
+required:
+  - productId
+  - requestedQuantity
+  - unitPrice

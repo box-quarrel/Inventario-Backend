@@ -1,25 +1,18 @@
-package com.hameed.inventario;
+package com.hameed.inventario.unit.service;
 
 import com.hameed.inventario.enums.PurchaseStatus;
 import com.hameed.inventario.exception.RecordCannotBeModifiedException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.POLineMapper;
 import com.hameed.inventario.mapper.PurchaseMapper;
-import com.hameed.inventario.model.dto.create.POLineCreateDTO;
 import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
 import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
 import com.hameed.inventario.model.dto.update.PurchaseDTO;
 import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
 import com.hameed.inventario.model.dto.update.SupplierDTO;
-import com.hameed.inventario.model.entity.Product;
-import com.hameed.inventario.model.entity.PurchaseLine;
 import com.hameed.inventario.model.entity.PurchaseOrder;
 import com.hameed.inventario.model.entity.Supplier;
 import com.hameed.inventario.repository.PurchaseRepository;
-import com.hameed.inventario.service.InventoryStockService;
-import com.hameed.inventario.service.ProductService;
-import com.hameed.inventario.service.PurchaseService;
-import com.hameed.inventario.service.SupplierService;
 import com.hameed.inventario.service.impl.InventoryStockServiceImpl;
 import com.hameed.inventario.service.impl.ProductServiceImpl;
 import com.hameed.inventario.service.impl.PurchaseServiceImpl;

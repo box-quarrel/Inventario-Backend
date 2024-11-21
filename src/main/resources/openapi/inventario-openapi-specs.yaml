@@ -1,0 +1,72 @@
+openapi: 3.0.1
+info:
+  title: Inventario OpenAPI definition
+  description: "An API for a web-based system to manage inventory stocks and handle stocks analytics"
+  version: 1.0.0
+  contact:
+    email: pshameed99@gmail.com
+servers:
+  - url: http://localhost:8080/inventario/api/v1
+
+tags:
+  - name: User
+    description: Operations about user management
+  - name: Customer
+    description: Operations about customer management
+  - name: Product
+    description: Operations about product management
+  - name: Category
+    description: Operations about category management
+  - name: Supplier
+    description: Operations about supplier management
+  - name: Purchase Order
+    description: Operations about purchase order management
+  - name: Sale
+    description: Operations about sales management
+  - name: Unit Of Measure
+    description: Operations about unit of measure management
+  - name: Product Return
+    description: Operations about product return management
+
+paths:
+  # GetALL/Update/Add Entities
+  /products:
+    $ref: "/paths/v1/products.yaml"
+  /customers:
+    $ref: "/paths/v1/customers.yaml"
+  /suppliers:
+    $ref: "/paths/v1/suppliers.yaml"
+  /categories:
+    $ref: "/paths/v1/categories.yaml"
+  /unit-of-measures:
+    $ref: "/paths/v1/unit-of-measures.yaml"
+  /purchase-orders:
+    $ref: "/paths/v1/purchase-orders.yaml"
+  /sales:
+    $ref: "/paths/v1/sales.yaml"
+  /product-returns:
+    $ref: "paths/v1/product-returns.yaml"
+
+  # Get/Delete an Entity By ID
+  /products/{id}:
+    $ref: "/paths/v1/products_{id}.yaml"
+  /customers/{id}:
+    $ref: "/paths/v1/customers_{id}.yaml"
+  /suppliers/{id}:
+    $ref: "/paths/v1/suppliers_{id}.yaml"
+  /categories/{id}:
+    $ref: "/paths/v1/categories_{id}.yaml"
+  /unit-of-measures/{id}:
+    $ref: "/paths/v1/unit-of-measures_{id}.yaml"
+  /purchase-orders/{id}:
+    $ref: "/paths/v1/purchase-orders_{id}.yaml"
+  /sales/{id}:
+    $ref: "/paths/v1/sales_{id}.yaml"
+  /product-returns/{id}:
+    $ref: "/paths/v1/product-returns_{id}.yaml"
+
+  # Non-standard CRUD Operations
+  /purchase-orders/receive:
+    $ref: "/paths/v1/purchase-orders_receive.yaml"
+
+

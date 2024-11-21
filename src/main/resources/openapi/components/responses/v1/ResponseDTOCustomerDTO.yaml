@@ -1,0 +1,10 @@
+type: object
+properties:
+  status:
+    type: integer
+    format: int32
+  message:
+    type: string
+    example: "Customer Retrieved Successfully"
+  data:
+    $ref: "../../schemas/v1/CustomerDTO.yaml"

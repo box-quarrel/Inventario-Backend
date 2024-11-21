@@ -1,0 +1,24 @@
+get:
+  tags:
+    - ProductReturn
+  operationId: getProductReturnById
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "200":
+      description: OK
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOProductReturnDTO.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"

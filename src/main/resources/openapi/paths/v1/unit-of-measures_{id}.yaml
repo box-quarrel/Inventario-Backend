@@ -1,0 +1,48 @@
+get:
+  tags:
+    - Unit Of Measure
+  operationId: getUnitOfMeasureById
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "200":
+      description: OK
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOUnitOfMeasureDTO.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+delete:
+  tags:
+    - Unit Of Measure
+  operationId: deleteUnitOfMeasure
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "204":
+      description: No Content
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/schemas/v1/UnitOfMeasureDTO.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"

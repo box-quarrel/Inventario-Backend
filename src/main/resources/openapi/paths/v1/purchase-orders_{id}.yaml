@@ -1,0 +1,54 @@
+get:
+  tags:
+    - Purchase Order
+  operationId: getPurchaseById
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "200":
+      description: OK
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+delete:
+  tags:
+    - Purchase Order
+  operationId: deletePurchase
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "204":
+      description: No Content
+      content:
+        application/hal+json:
+          schema:
+            $ref: "../../components/schemas/v1/PurchaseDTO.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"

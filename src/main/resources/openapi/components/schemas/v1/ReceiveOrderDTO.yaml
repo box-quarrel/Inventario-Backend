@@ -1,0 +1,12 @@
+type: object
+properties:
+  purchaseOrderId:
+    type: integer
+    format: int64
+  receivedLines:
+    type: array
+    items:
+      $ref: "ReceivedLineDTO.yaml"
+required:
+  - purchaseOrderId
+  - receivedLines
