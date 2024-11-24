@@ -6,6 +6,7 @@ import com.hameed.inventario.model.dto.update.SupplierDTO;
 import com.hameed.inventario.model.dto.update.SupplierDTO;
 import com.hameed.inventario.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/inventario/api/v1/suppliers")
 public class SupplierController {
+    // properties
+    @Value("${pageSize}")
+    private int pageSize;
 
     private final SupplierService supplierService;
 
@@ -26,9 +30,10 @@ public class SupplierController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<SupplierDTO>> getAllSuppliers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<SupplierDTO> supplierDTOPage = supplierService.getAllSuppliers(PageRequest.of(page, size));
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer size) {
+        int finalPageSize = (size == null) ? pageSize : size;
+        Page<SupplierDTO> supplierDTOPage = supplierService.getAllSuppliers(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Suppliers Retrieved Successfully", supplierDTOPage)); // 200 OK
     }
 

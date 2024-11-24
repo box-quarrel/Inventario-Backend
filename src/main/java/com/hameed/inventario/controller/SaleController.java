@@ -9,6 +9,7 @@ import com.hameed.inventario.model.dto.update.SaleDTO;
 import com.hameed.inventario.model.dto.update.SaleDTO;
 import com.hameed.inventario.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/inventario/api/v1/sales")
 public class SaleController {
+    // properties
+    @Value("${pageSize}")
+    private int pageSize;
 
     private final SaleService saleService;
 
@@ -29,9 +33,10 @@ public class SaleController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<SaleDTO>> getAllSales(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<SaleDTO> saleDTOPage = saleService.getAllSales(PageRequest.of(page, size));
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer size) {
+        int finalPageSize = (size == null) ? pageSize : size;
+        Page<SaleDTO> saleDTOPage = saleService.getAllSales(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Sales Retrieved Successfully", saleDTOPage)); // 200 OK
     }
 

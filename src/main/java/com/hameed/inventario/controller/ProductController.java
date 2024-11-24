@@ -7,6 +7,7 @@ import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.update.ProductDTO;
 import com.hameed.inventario.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/inventario/api/v1/products")
 public class ProductController {
 
+    // properties
+    @Value("${pageSize}")
+    private int pageSize;
+
     private final ProductService productService;
 
     @Autowired
@@ -26,9 +31,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<ProductDTO>> getAllCategories(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<ProductDTO> productDTOPage = productService.getAllProducts(PageRequest.of(page, size));
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer size) {
+        int finalPageSize = (size == null) ? pageSize : size;
+        Page<ProductDTO> productDTOPage = productService.getAllProducts(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Products Retrieved Successfully", productDTOPage)); // 200 OK
     }
 
