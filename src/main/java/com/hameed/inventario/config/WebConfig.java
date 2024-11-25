@@ -14,6 +14,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(requestLoggingInterceptor)
-                .addPathPatterns("/inventario/api/**");  // Adjust to intercept the appropriate paths
+                .addPathPatterns("/inventario/**");  // Adjust to intercept the appropriate paths
     }
 }

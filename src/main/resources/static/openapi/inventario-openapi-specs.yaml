@@ -31,42 +31,42 @@ tags:
 paths:
   # GetALL/Update/Add Entities
   /products:
-    $ref: "/paths/v1/products.yaml"
+    $ref: "paths/v1/products.yaml"
   /customers:
-    $ref: "/paths/v1/customers.yaml"
+    $ref: "paths/v1/customers.yaml"
   /suppliers:
-    $ref: "/paths/v1/suppliers.yaml"
+    $ref: "paths/v1/suppliers.yaml"
   /categories:
-    $ref: "/paths/v1/categories.yaml"
+    $ref: "paths/v1/categories.yaml"
   /unit-of-measures:
-    $ref: "/paths/v1/unit-of-measures.yaml"
+    $ref: "paths/v1/unit-of-measures.yaml"
   /purchase-orders:
-    $ref: "/paths/v1/purchase-orders.yaml"
+    $ref: "paths/v1/purchase-orders.yaml"
   /sales:
-    $ref: "/paths/v1/sales.yaml"
+    $ref: "paths/v1/sales.yaml"
   /product-returns:
     $ref: "paths/v1/product-returns.yaml"
 
   # Get/Delete an Entity By ID
   /products/{id}:
-    $ref: "/paths/v1/products_{id}.yaml"
+    $ref: "paths/v1/products_{id}.yaml"
   /customers/{id}:
-    $ref: "/paths/v1/customers_{id}.yaml"
+    $ref: "paths/v1/customers_{id}.yaml"
   /suppliers/{id}:
-    $ref: "/paths/v1/suppliers_{id}.yaml"
+    $ref: "paths/v1/suppliers_{id}.yaml"
   /categories/{id}:
-    $ref: "/paths/v1/categories_{id}.yaml"
+    $ref: "paths/v1/categories_{id}.yaml"
   /unit-of-measures/{id}:
-    $ref: "/paths/v1/unit-of-measures_{id}.yaml"
+    $ref: "paths/v1/unit-of-measures_{id}.yaml"
   /purchase-orders/{id}:
-    $ref: "/paths/v1/purchase-orders_{id}.yaml"
+    $ref: "paths/v1/purchase-orders_{id}.yaml"
   /sales/{id}:
-    $ref: "/paths/v1/sales_{id}.yaml"
+    $ref: "paths/v1/sales_{id}.yaml"
   /product-returns/{id}:
-    $ref: "/paths/v1/product-returns_{id}.yaml"
+    $ref: "paths/v1/product-returns_{id}.yaml"
 
   # Non-standard CRUD Operations
   /purchase-orders/receive:
-    $ref: "/paths/v1/purchase-orders_receive.yaml"
+    $ref: "paths/v1/purchase-orders_receive.yaml"
 
 
