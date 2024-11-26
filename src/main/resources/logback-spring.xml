@@ -1,23 +1,47 @@
 <configuration>
     <!-- Appender for writing logs to a file -->
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/application.log</file> <!-- Specify your log file path -->
 
         <!-- Logstash Encoder for structured JSON logs -->
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+
+        <!-- Trigger policy: rolling based on size -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize> <!-- Rotate when file size exceeds 10MB -->
+        </triggeringPolicy>
+
+        <!-- Naming policy for rolled-over logs -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>logs/application.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex> <!-- Keep the latest 5 log files -->
+        </rollingPolicy>
+
     </appender>
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
 
     <!-- Root logger -->
     <root level="INFO">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ROLLING_FILE"/>
     </root>
 
     <!-- Specific loggers for your packages -->
     <logger name="com.hameed.inventario.controller" level="INFO">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ROLLING_FILE"/>
     </logger>
 
     <logger name="com.hameed.inventario.service" level="INFO">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ROLLING_FILE"/>
     </logger>
 </configuration>
