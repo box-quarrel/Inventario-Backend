@@ -25,13 +25,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/problems/internal-server-error"));
-        errorResponseDTO.setTitle("Internal Server Error");
-        errorResponseDTO.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-        errorResponseDTO.setInstance(URI.create("/error"));
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/internal-server-error"))
+                .title("Internal Server Error")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .detail(ex.getMessage())
+                .instance(URI.create("/error"))
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");
@@ -45,12 +46,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/problems/resource-not-found"));
-        errorResponseDTO.setTitle("Resource Not Found");
-        errorResponseDTO.setStatus(HttpStatus.NOT_FOUND.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/resource-not-found"))
+                .title("Resource Not Found")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");
@@ -67,12 +69,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleDuplicateCodeException(DuplicateCodeException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/problems/duplicate-code"));
-        errorResponseDTO.setTitle("Duplicate Code");
-        errorResponseDTO.setStatus(HttpStatus.CONFLICT.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/duplicate-code"))
+                .title("Duplicate Code")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
     }
@@ -81,12 +88,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleRecordCannotBeModifiedException(RecordCannotBeModifiedException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/problems/record-cannot-be-modified"));
-        errorResponseDTO.setTitle("Record Cannot be Modified");
-        errorResponseDTO.setStatus(HttpStatus.CONFLICT.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/record-cannot-be-modified"))
+                .title("Record Cannot be Modified")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");
@@ -100,12 +108,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleInventoryOutOfStockException(InventoryOutOfStockException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/problems/inventory-out-of-stock"));
-        errorResponseDTO.setTitle("Inventory out of Stock");
-        errorResponseDTO.setStatus(HttpStatus.CONFLICT.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/inventory-out-of-stock"))
+                .title("Inventory out of Stock")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");
@@ -123,13 +132,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/validation-error"));
-        errorResponseDTO.setTitle("Validation Error");
-        errorResponseDTO.setStatus(HttpStatus.BAD_REQUEST.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-//        error.setInstance(URI.create("/current-endpoint")); // Use the actual endpoint causing the error
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/validation-error"))
+                .title("Validation Error")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .detail(ex.getMessage())
+//        .instance(URI.create("/current-endpoint")) // Uncomment and use the actual endpoint causing the error
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");
@@ -142,13 +152,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 
         // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-        errorResponseDTO.setType(URI.create("https://example.com/database-error"));
-        errorResponseDTO.setTitle("Database Constraint Violation");
-        errorResponseDTO.setStatus(HttpStatus.CONFLICT.value());
-        errorResponseDTO.setDetail(ex.getMessage());
-//        error.setInstance(URI.create("/current-endpoint")); // Use the actual endpoint causing the error
-        errorResponseDTO.setTimestamp(ZonedDateTime.now().toString());
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/database-error"))
+                .title("Database Constraint Violation")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+//        .instance(URI.create("/current-endpoint")) // Uncomment and use the actual endpoint causing the error
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
 
         // Logging
         String requestId = MDC.get("requestId");

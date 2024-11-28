@@ -1,0 +1,52 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific purchaser order
+    readOnly: true
+  purchaseNumber:
+    type: string
+    format: uuid
+    readOnly: true
+  purchaseStatus:
+    type: string
+    enum:
+      - "PENDING"
+      - "RECEIVED"
+      - "PARTIALLY_RECEIVED"
+    description: Defines the status of the purchase order, note that order is mutable only if it is in PENDING state
+  discount:
+    type: number
+    format: double
+    description: Defines the percentage of discount applied to the total amount (NOT for each order line)
+    example: 15
+    default: 0
+    nullable: true
+  totalAmount:
+    type: number
+    format: double
+  notes:
+    type: string
+    description: Any special requests with the order
+    nullable: true
+  supplier:
+    $ref: "../basic/SupplierDTO.yaml"
+  purchaseLines:
+    type: array
+    items:
+      $ref: "POLineResponseDTO.yaml"
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this purchase order. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this purchase order. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true

@@ -15,7 +15,12 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOSaleDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/response/SaleResponseDTO.yaml"
     "404":
       description: Not Found
       content:

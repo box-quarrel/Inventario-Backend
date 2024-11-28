@@ -1,0 +1,43 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific supplier
+    readOnly: true
+  supplierName:
+    type: string
+  contactName:
+    type: string
+  contactPhone:
+    type: string
+    maxLength: 15
+    minLength: 7
+    example: (+20)10236482399
+    nullable: true
+  email:
+    type: string
+    maxLength: 255
+    minLength: 3
+    example: test@example.com
+    nullable: true
+  address:
+    type: string
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    readOnly: true
+    nullable: true
+required:
+  - supplierName
+  - contactName
+  - contactPhone

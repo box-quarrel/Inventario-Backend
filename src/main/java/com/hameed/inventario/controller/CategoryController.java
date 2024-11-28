@@ -2,7 +2,7 @@ package com.hameed.inventario.controller;
 
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
-import com.hameed.inventario.model.dto.update.CategoryDTO;
+import com.hameed.inventario.model.dto.basic.CategoryDTO;
 import com.hameed.inventario.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +49,10 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Created Successfully", resultCategoryDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<CategoryDTO>> updateCategory(@RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO resultCategoryDTO = categoryService.updateCategory(categoryDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO<CategoryDTO>> updateCategory(@PathVariable Long id,
+                                                                   @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO resultCategoryDTO = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Updated Successfully", resultCategoryDTO));  // 201 CREATED
     }
 

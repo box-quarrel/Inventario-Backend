@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific sale item
+    readOnly: true
+  quantity:
+    type: integer
+    format: int32
+  unitPrice:
+    type: number
+    format: double
+  product:
+    $ref: "ProductResponseDTO.yaml"
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this supplier. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this supplier. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true

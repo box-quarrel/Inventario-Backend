@@ -3,8 +3,8 @@ package com.hameed.inventario.service.impl;
 import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.ProductMapper;
-import com.hameed.inventario.model.dto.create.ProductCreateDTO;
-import com.hameed.inventario.model.dto.update.ProductDTO;
+import com.hameed.inventario.model.dto.request.ProductRequestDTO;
+import com.hameed.inventario.model.dto.response.ProductResponseDTO;
 import com.hameed.inventario.model.entity.Category;
 import com.hameed.inventario.model.entity.Product;
 import com.hameed.inventario.model.entity.UnitOfMeasure;
@@ -36,40 +36,40 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO addProduct(ProductCreateDTO productCreateDTO) {
+    public ProductResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
         // map productCreateDTO to Product
-        Product product = productMapper.productCreateDTOToProduct(productCreateDTO);
+        Product product = productMapper.ProductRequestDTOToProduct(productRequestDTO);
         // service-validation
         if (productRepository.findByProductCode(product.getProductCode()).isPresent()) {
             throw new DuplicateCodeException("Product code " + product.getProductCode() + " already exists");
         }
         // calling services to get category and uom
-        Category productCategory = categoryService.getCategoryEntityById(productCreateDTO.getCategoryId());
-        UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productCreateDTO.getPrimaryUomId());
+        Category productCategory = categoryService.getCategoryEntityById(productRequestDTO.getCategoryId());
+        UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productRequestDTO.getPrimaryUomId());
         product.setCategory(productCategory);
         product.setPrimaryUom(primaryUom);
         Product resultProduct = productRepository.save(product);
-        return productMapper.productToProductDTO(resultProduct);
+        return productMapper.productToProductResponseDTO(resultProduct);
     }
 
     @Override
-    public ProductDTO updateProduct (ProductDTO productDTO) {
-        Long productId = productDTO.getId();
+    public ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
+
         Optional<Product> optionalProduct = productRepository.findById(productId);
         if(optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
             // map fields of dto to product
-            product.setProductName(productDTO.getProductName());
-            product.setProductCode(productDTO.getProductCode());
-            product.setDescription(productDTO.getDescription());
-            product.setBarcode(productDTO.getBarcode());
-            product.setCurrentPrice(productDTO.getCurrentPrice());
-            product.setCurrentCost(productDTO.getCurrentCost());
-            product.setQuantity(productDTO.getQuantity());
-            product.setImageUrl(productDTO.getImageUrl());
+            product.setProductName(productRequestDTO.getProductName());
+            product.setProductCode(productRequestDTO.getProductCode());
+            product.setDescription(productRequestDTO.getDescription());
+            product.setBarcode(productRequestDTO.getBarcode());
+            product.setCurrentPrice(productRequestDTO.getCurrentPrice());
+            product.setCurrentCost(productRequestDTO.getCurrentCost());
+            product.setQuantity(productRequestDTO.getQuantity());
+            product.setImageUrl(productRequestDTO.getImageUrl());
             // calling services to get category and uom
-            Category productCategory = categoryService.getCategoryEntityById(productDTO.getCategory().getId());
-            UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productDTO.getPrimaryUom().getId());
+            Category productCategory = categoryService.getCategoryEntityById(productRequestDTO.getCategoryId());
+            UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productRequestDTO.getPrimaryUomId());
             product.setCategory(productCategory);
             product.setPrimaryUom(primaryUom);
 
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
             Product resultProduct = productRepository.save(product);
 
             // return the updated DTO
-            return productMapper.productToProductDTO(resultProduct);
+            return productMapper.productToProductResponseDTO(resultProduct);
         } else {
             throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
         }
@@ -94,15 +94,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long productId) {
+    public ProductResponseDTO getProductById(Long productId) {
         Product product = getProductEntityById(productId);
-        return productMapper.productToProductDTO(product);
+        return productMapper.productToProductResponseDTO(product);
     }
 
     @Override
-    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+    public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
         Page<Product> pageProducts = productRepository.findAll(pageable);
-        return pageProducts.map(productMapper::productToProductDTO);
+        return pageProducts.map(productMapper::productToProductResponseDTO);
     }
 
     @Override

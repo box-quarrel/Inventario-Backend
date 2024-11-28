@@ -1,0 +1,30 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific product return
+    readOnly: true
+  customer:
+    $ref: "../basic/CustomerDTO.yaml"
+  product:
+    $ref: "ProductResponseDTO.yaml"
+  quantityReturned:
+    type: integer
+    format: int32
+  reason:
+    type: string
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this product returns. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this product return. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true

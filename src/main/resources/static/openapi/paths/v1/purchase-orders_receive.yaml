@@ -6,7 +6,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/ReceiveOrderDTO.yaml"
+          $ref: "../../components/schemas/v1/request/ReceiveOrderDTO.yaml"
     required: true
   responses:
     "201":
@@ -14,7 +14,12 @@ put:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/response/PurchaseResponseDTO.yaml"
     "400":
       description: Bad Request
       content:

@@ -1,0 +1,40 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific the sale
+    readOnly: true
+  salesNumber:
+    type: string
+    format: uuid
+  totalAmount:
+    type: number
+    format: double
+  discount:
+    type: number
+    format: double
+    description: Defines the percentage of discount applied to the total amount (NOT for each order line)
+    example: 15
+    nullable: true
+  customer:
+    $ref: "../basic/CustomerDTO.yaml"
+  saleItems:
+    uniqueItems: true
+    type: array
+    items:
+      $ref: "SaleItemResponseDTO.yaml"
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this sale. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this sale. This is only accessible to authorized users.
+    readOnly: true
+    nullable: true

@@ -3,7 +3,7 @@ package com.hameed.inventario.service.impl;
 import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.UnitOfMeasureMapper;
-import com.hameed.inventario.model.dto.update.UnitOfMeasureDTO;
+import com.hameed.inventario.model.dto.basic.UnitOfMeasureDTO;
 import com.hameed.inventario.model.entity.UnitOfMeasure;
 import com.hameed.inventario.repository.UOMRepository;
 import com.hameed.inventario.service.UnitOfMeasureService;
@@ -42,8 +42,8 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
     }
 
     @Override
-    public UnitOfMeasureDTO updateUnitOfMeasure(UnitOfMeasureDTO unitOfMeasureDTO) {
-        Long unitOfMeasureId = unitOfMeasureDTO.getId();
+    public UnitOfMeasureDTO updateUnitOfMeasure(Long unitOfMeasureId, UnitOfMeasureDTO unitOfMeasureDTO) {
+
         Optional<UnitOfMeasure> optionalUnitOfMeasure = uomRepository.findById(unitOfMeasureId);
         if(optionalUnitOfMeasure.isPresent()) {
             UnitOfMeasure unitOfMeasure = optionalUnitOfMeasure.get();

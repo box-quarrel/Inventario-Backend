@@ -3,11 +3,9 @@ package com.hameed.inventario.service.impl;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.SaleItemMapper;
 import com.hameed.inventario.mapper.SaleMapper;
-import com.hameed.inventario.model.dto.create.SaleItemCreateDTO;
-import com.hameed.inventario.model.dto.create.SaleCreateDTO;
+import com.hameed.inventario.model.dto.request.SaleItemRequestDTO;
+import com.hameed.inventario.model.dto.request.SaleRequestDTO;
 import com.hameed.inventario.model.dto.response.SaleResponseDTO;
-import com.hameed.inventario.model.dto.update.SaleDTO;
-import com.hameed.inventario.model.dto.update.SaleItemDTO;
 import com.hameed.inventario.model.entity.*;
 import com.hameed.inventario.repository.SaleRepository;
 import com.hameed.inventario.service.InventoryStockService;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,25 +49,25 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public SaleResponseDTO sell(SaleCreateDTO saleCreateDTO) {
+    public SaleResponseDTO sell(SaleRequestDTO saleRequestDTO) {
         // Map the SaleCreateDTO to Sale object
-        Sale sale = saleMapper.saleCreateDTOToSale(saleCreateDTO);
+        Sale sale = saleMapper.saleRequestDTOToSale(saleRequestDTO);
 
         // getting the customer and setting it
-        Customer customer = customerService.getCustomerEntityById(saleCreateDTO.getCustomerId());
+        Customer customer = customerService.getCustomerEntityById(saleRequestDTO.getCustomerId());
         sale.setCustomer(customer);
 
         // get lines from DTO
-        Set<SaleItemCreateDTO> saleItemCreateDTOS = saleCreateDTO.getSaleItemCreateDTOS();
+        Set<SaleItemRequestDTO> saleItemRequestDTOS = saleRequestDTO.getSaleItemRequestDTOS();
         // update inventory stock
-        for (SaleItemCreateDTO saleItemCreateDTO : saleItemCreateDTOS) {
-            inventoryStockService.decreaseStock(saleItemCreateDTO.getProductId(), saleItemCreateDTO.getQuantity());
+        for (SaleItemRequestDTO saleItemRequestDTO : saleItemRequestDTOS) {
+            inventoryStockService.decreaseStock(saleItemRequestDTO.getProductId(), saleItemRequestDTO.getQuantity());
         }
         // convert to entity sale items and add to sale object
-        Set<SaleItem> saleItems =  saleItemCreateDTOS.stream().map(
-                    saleItemCreateDTO -> {
-                        SaleItem saleItem = saleItemMapper.saleItemCreateDTOToSaleItem(saleItemCreateDTO);
-                        Product product = productService.getProductEntityById(saleItemCreateDTO.getProductId());
+        Set<SaleItem> saleItems =  saleItemRequestDTOS.stream().map(
+                saleItemRequestDTO -> {
+                        SaleItem saleItem = saleItemMapper.SaleItemRequestDTOToSaleItem(saleItemRequestDTO);
+                        Product product = productService.getProductEntityById(saleItemRequestDTO.getProductId());
                         product.setCurrentPrice(saleItem.getUnitPrice());
                         saleItem.setProduct(product);
                         return saleItem;
@@ -87,19 +84,19 @@ public class SaleServiceImpl implements SaleService {
         saleRepository.save(sale);
 
         // return PO number
-        return new SaleResponseDTO(salesNumber);
+        return saleMapper.saleToSaleResponseDTO(sale);
     }
 
     @Override
-    public Page<SaleDTO> getAllSales(Pageable pageable) {
+    public Page<SaleResponseDTO> getAllSales(Pageable pageable) {
         Page<Sale> pageSales = saleRepository.findAll(pageable);
-        return pageSales.map(saleMapper::saleToSaleDTO);
+        return pageSales.map(saleMapper::saleToSaleResponseDTO);
     }
 
     @Override
-    public SaleDTO getSaleById(Long saleId) {
+    public SaleResponseDTO getSaleById(Long saleId) {
         Sale sale = this.getSaleEntityById(saleId);
-        return saleMapper.saleToSaleDTO(sale);
+        return saleMapper.saleToSaleResponseDTO(sale);
     }
 
     @Override

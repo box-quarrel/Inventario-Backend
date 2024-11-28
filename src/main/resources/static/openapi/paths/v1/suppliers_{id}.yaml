@@ -15,7 +15,12 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOSupplierDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/basic/SupplierDTO.yaml"
     "404":
       description: Not Found
       content:
@@ -39,7 +44,8 @@ delete:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/schemas/v1/SupplierDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
     "404":
       description: Not Found
       content:

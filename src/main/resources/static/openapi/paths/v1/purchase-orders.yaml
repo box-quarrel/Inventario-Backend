@@ -23,7 +23,14 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/responses/v1/PaginatedResponseDTOPurchaseDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/PurchaseResponseDTO.yaml"
 
 post:
   tags:
@@ -33,7 +40,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/PurchaseCreateDTO.yaml"
+          $ref: "../../components/schemas/v1//request/PurchaseRequestDTO.yaml"
     required: true
   responses:
     "201":
@@ -41,7 +48,14 @@ post:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/PurchaseResponseDTO.yaml"
     "400":
       description: Bad Request
       content:
@@ -54,6 +68,7 @@ post:
         application/json:
           schema:
             $ref: "../../components/responses/Problem.yaml"
+
 put:
   tags:
     - Purchase Order
@@ -62,7 +77,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/PurchaseDTO.yaml"
+          $ref: "../../components/schemas/v1/request/PurchaseRequestDTO.yaml"
     required: true
   responses:
     "201":
@@ -70,7 +85,12 @@ put:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/request/PurchaseRequestDTO.yaml"
     "400":
       description: Bad Request
       content:

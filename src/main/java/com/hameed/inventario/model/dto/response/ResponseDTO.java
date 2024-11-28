@@ -2,6 +2,7 @@ package com.hameed.inventario.model.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 
 @Data

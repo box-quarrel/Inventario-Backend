@@ -2,8 +2,7 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +13,9 @@ import java.util.Set;
 @Table(name = "customers", schema = "inventario-directory")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Customer extends AbstractEntity {
 
     @Column(name = "name")
@@ -33,7 +35,7 @@ public class Customer extends AbstractEntity {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<ProductReturn> productReturns;
+    private List<ProductReturn> productReturns = new ArrayList<>();
 
     public void addSale(Sale sale) {
         if (sale != null) {

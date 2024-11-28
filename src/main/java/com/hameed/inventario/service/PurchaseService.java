@@ -1,9 +1,8 @@
 package com.hameed.inventario.service;
 
-import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
+import com.hameed.inventario.model.dto.request.PurchaseRequestDTO;
 import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
-import com.hameed.inventario.model.dto.update.PurchaseDTO;
-import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
+import com.hameed.inventario.model.dto.request.ReceiveOrderDTO;
 import com.hameed.inventario.model.entity.PurchaseOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,23 +10,23 @@ import org.springframework.data.domain.Pageable;
 public interface PurchaseService {
 
     // Create a new purchase, returns purchaseNumber
-    public PurchaseResponseDTO addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO);
+    public PurchaseResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseRequestDTO);
 
     // Update an existing purchase
     // TODO: this should be authorization restricted
-    public PurchaseDTO updatePurchase (PurchaseDTO purchaseDTO);
+    public PurchaseResponseDTO updatePurchase (Long purchaseId, PurchaseRequestDTO purchaseRequestDTO);
 
     // Remove a purchase
     // TODO: this should be authorization restricted
     public void removePurchase(Long purchaseId);
 
     // Get all purchases with pagination
-    public Page<PurchaseDTO> getAllPurchases(Pageable pageable);
+    public Page<PurchaseResponseDTO> getAllPurchases(Pageable pageable);
 
     // Get a purchase by ID
-    public PurchaseDTO getPurchaseById(Long purchaseId);
+    public PurchaseResponseDTO getPurchaseById(Long purchaseId);
 
     public PurchaseOrder getPurchaseEntityById(Long purchaseId);
 
-    public PurchaseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO);
+    public PurchaseResponseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO);
 }

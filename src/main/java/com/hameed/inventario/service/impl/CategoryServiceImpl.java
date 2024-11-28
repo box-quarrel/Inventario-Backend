@@ -3,7 +3,7 @@ package com.hameed.inventario.service.impl;
 import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CategoryMapper;
-import com.hameed.inventario.model.dto.update.CategoryDTO;
+import com.hameed.inventario.model.dto.basic.CategoryDTO;
 import com.hameed.inventario.model.entity.Category;
 import com.hameed.inventario.repository.CategoryRepository;
 import com.hameed.inventario.service.CategoryService;
@@ -45,8 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
-        Long categoryId = categoryDTO.getId();
+    public CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO) {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
         if(optionalCategory.isPresent()) {
             Category category = optionalCategory.get();
@@ -54,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setCategoryName(categoryDTO.getCategoryName());
             category.setCategoryCode(categoryDTO.getCategoryCode());
             category.setDescription(categoryDTO.getDescription());
+
 
             // save
             Category resultCategory = categoryRepository.save(category);

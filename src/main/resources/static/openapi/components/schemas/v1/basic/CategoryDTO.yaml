@@ -1,0 +1,38 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique identifier representing a specific category
+    readOnly: true
+  categoryName:
+    type: string
+    description: Full Name of the Category
+    example: "TestCategoryName"
+  categoryCode:
+    type: string
+    description: Short Code to identify the category
+    example: "TT01"
+  description:
+    type: string
+    description: Full Description of the type of products that fit in this category
+    example: "New Testing Category Number 1"
+    nullable: true
+  creationDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  lastUpdateDate:
+    $ref: "../../common/iso_timestamp.yaml"
+  createdBy:
+    type: string
+    description: The user who created this category. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    readOnly: true
+    nullable: true
+  lastUpdateBy:
+    type: string
+    description: The last user who modified this category. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    readOnly: true
+    nullable: true
+
+required:
+  - categoryName
+  - categoryCode

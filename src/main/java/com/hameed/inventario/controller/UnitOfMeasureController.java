@@ -2,7 +2,7 @@ package com.hameed.inventario.controller;
 
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
-import com.hameed.inventario.model.dto.update.UnitOfMeasureDTO;
+import com.hameed.inventario.model.dto.basic.UnitOfMeasureDTO;
 import com.hameed.inventario.service.UnitOfMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +49,9 @@ public class UnitOfMeasureController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Created Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> updateUnitOfMeasure(@RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
-        UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(unitOfMeasureDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> updateUnitOfMeasure(@PathVariable Long id, @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
+        UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(id, unitOfMeasureDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Updated Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
 

@@ -1,10 +1,10 @@
 package com.hameed.inventario.controller;
 
 
-import com.hameed.inventario.model.dto.create.ProductReturnCreateDTO;
+import com.hameed.inventario.model.dto.request.ProductReturnRequestDTO;
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
+import com.hameed.inventario.model.dto.response.ProductReturnResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
-import com.hameed.inventario.model.dto.update.ProductReturnDTO;
 import com.hameed.inventario.service.ProductReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,25 +31,25 @@ public class ProductReturnController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO<ProductReturnDTO>> getAllProductReturns(
+    public ResponseEntity<PaginatedResponseDTO<ProductReturnResponseDTO>> getAllProductReturns(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) Integer size) {
         int finalPageSize = (size == null) ? pageSize : size;
-        Page<ProductReturnDTO> productReturnDTOPage = productReturnService.getAllProductReturns(PageRequest.of(page, finalPageSize));
+        Page<ProductReturnResponseDTO> productReturnDTOPage = productReturnService.getAllProductReturns(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "ProductReturns Retrieved Successfully", productReturnDTOPage)); // 200 OK
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<ProductReturnDTO>> getProductReturnById(@PathVariable Long id) {
-        ProductReturnDTO productReturnDTO = productReturnService.getProductReturnById(id);
-        return ResponseEntity.ok(new ResponseDTO<>(200, "ProductReturn Retrieved Successfully", productReturnDTO)); // 200 OK
+    public ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> getProductReturnById(@PathVariable Long id) {
+        ProductReturnResponseDTO productReturnResponseDTO = productReturnService.getProductReturnById(id);
+        return ResponseEntity.ok(new ResponseDTO<>(200, "ProductReturn Retrieved Successfully", productReturnResponseDTO)); // 200 OK
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<ProductReturnDTO>> addProductReturn(@RequestBody ProductReturnCreateDTO productReturnCreateDTO) {
-        ProductReturnDTO resultProductReturnDTO = productReturnService.addProductReturn(productReturnCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "ProductReturn Created Successfully", resultProductReturnDTO));  // 201 CREATED
+    public  ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> addProductReturn(@RequestBody ProductReturnRequestDTO productReturnRequestDTO) {
+        ProductReturnResponseDTO resultProductReturnResponseDTO = productReturnService.addProductReturn(productReturnRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "ProductReturn Created Successfully", resultProductReturnResponseDTO));  // 201 CREATED
     }
 
     // product returns are immutable, no update or delete

@@ -2,7 +2,7 @@ package com.hameed.inventario.unit.service;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.SupplierMapper;
-import com.hameed.inventario.model.dto.update.SupplierDTO;
+import com.hameed.inventario.model.dto.basic.SupplierDTO;
 import com.hameed.inventario.model.entity.Supplier;
 import com.hameed.inventario.repository.SupplierRepository;
 import com.hameed.inventario.service.impl.SupplierServiceImpl;
@@ -15,9 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,10 +35,45 @@ public class SupplierServiceTest {
     @DisplayName("Supplier Added Successfully")
     public void testAddSupplier_shouldReturnAddedSupplierAsSupplierDTO() {
         //  --- Arrange ---
-        SupplierDTO supplierDTO = createSupplierDTO("Amazon", "test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
-        Supplier mockMappedSupplier = createSupplier("Amazon", "test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", null);
-        Supplier mockResultSupplier = createSupplier("Amazon", "test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", 1L);
-        SupplierDTO expectedSupplierDTO = createSupplierDTO(1L, "Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
+        // Using builder pattern to create SupplierDTO without id for initial creation
+        SupplierDTO supplierDTO = SupplierDTO.builder()
+                .supplierName("Amazon")
+                .contactName("test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+
+// Using builder pattern to create Supplier without id (for mockMappedSupplier)
+        Supplier mockMappedSupplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+        mockMappedSupplier.setId(null);  // Set the id as null for mockMappedSupplier
+
+// Using builder pattern to create Supplier with id (for mockResultSupplier)
+        Supplier mockResultSupplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+        mockResultSupplier.setId(1L);  // Set the id for mockResultSupplier
+
+// Using builder pattern to create SupplierDTO with id for expected result
+        SupplierDTO expectedSupplierDTO = SupplierDTO.builder()
+                .id(1L)
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+
 
         // Define behavior of the mocks
         Mockito.when(supplierMapper.supplierDTOToSupplier(supplierDTO)).thenReturn(mockMappedSupplier);
@@ -62,18 +95,55 @@ public class SupplierServiceTest {
     @DisplayName("Supplier updated successfully")
     public void testUpdateSupplier_shouldReturnSupplierAsSupplierDTO() {
         // --- Arrange ---
-        SupplierDTO supplierDTO = createSupplierDTO(1L, "Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
-        Supplier existingSupplier = createSupplier("Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", 1L);
-        Supplier updatedSupplier = createSupplier("Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", 1L);
-        SupplierDTO expectedSupplierDTO = createSupplierDTO(1L, "Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
+        Long supplierId = 1L;
+
+// Using builder pattern to create SupplierDTO without id for initial creation
+        SupplierDTO supplierDTO = SupplierDTO.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+
+// Using builder pattern to create Supplier with id for existingSupplier
+        Supplier existingSupplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+        existingSupplier.setId(supplierId);  // Set the id after creation
+
+// Using builder pattern to create Supplier with id for updatedSupplier
+        Supplier updatedSupplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+        updatedSupplier.setId(supplierId);  // Set the id after creation
+
+// Using builder pattern to create SupplierDTO with id for expected result
+        SupplierDTO expectedSupplierDTO = SupplierDTO.builder()
+                .id(supplierId)
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+
 
         // Define behavior of the mocks
-        Mockito.when(supplierRepository.findById(supplierDTO.getId())).thenReturn(Optional.of(existingSupplier));
+        Mockito.when(supplierRepository.findById(supplierId)).thenReturn(Optional.of(existingSupplier));
         Mockito.when(supplierRepository.save(existingSupplier)).thenReturn(updatedSupplier);
         Mockito.when(supplierMapper.supplierToSupplierDTO(updatedSupplier)).thenReturn(expectedSupplierDTO);
 
         // --- Act ---
-        SupplierDTO resultSupplierDTO = supplierService.updateSupplier(supplierDTO);
+        SupplierDTO resultSupplierDTO = supplierService.updateSupplier(supplierId, supplierDTO);
 
         // --- Assert ---
         assertAll(
@@ -87,14 +157,21 @@ public class SupplierServiceTest {
     @DisplayName("Supplier successfully not updated because id was not found")
     public void testUpdateSupplier_shouldThrowResourceNotFoundException() {
         // --- Arrange ---
-        SupplierDTO supplierDTO = createSupplierDTO(1L, "Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
+        Long supplierId = 1L;
+        SupplierDTO supplierDTO = SupplierDTO.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
 
         // Define behavior of the mocks
-        Mockito.when(supplierRepository.findById(supplierDTO.getId())).thenReturn(Optional.empty());
+        Mockito.when(supplierRepository.findById(supplierId)).thenReturn(Optional.empty());
 
 
         // --- Act and Assert ---
-        assertThrows(ResourceNotFoundException.class, () -> supplierService.updateSupplier(supplierDTO));
+        assertThrows(ResourceNotFoundException.class, () -> supplierService.updateSupplier(supplierId, supplierDTO));
     }
 
     @Test
@@ -102,7 +179,18 @@ public class SupplierServiceTest {
     public void testDeleteSupplier_shouldCallDeleteSupplierOnce() {
         // --- Arrange ---
         Long supplierId = 1L;
-        Supplier supplier = createSupplier("Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", 1L);
+
+        Supplier supplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .purchaseOrders(new ArrayList<>())
+                .products(new HashSet<>())
+                .build();
+        supplier.setId(supplierId);  // Set the id after using the builder
+
 
         // Define behavior of the mocks
         Mockito.when(supplierRepository.findById(supplierId)).thenReturn(Optional.of(supplier));
@@ -133,8 +221,28 @@ public class SupplierServiceTest {
     public void testGetSupplier_shouldReturnSupplierAsSupplierDTO() {
         //  --- Arrange ---
         Long supplierId = 1L;
-        Supplier mockResultSupplier = createSupplier("Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City", 1L);
-        SupplierDTO expectedSupplierDTO = createSupplierDTO(1L, "Amazon", "Test", "777-888-2222", "test@example.com", "303 Business St, Commerce City");
+
+// Using builder pattern to create Supplier with id
+        Supplier mockResultSupplier = Supplier.builder()
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+                .build();
+        mockResultSupplier.setId(supplierId);  // Set the id after creation
+
+// Using builder pattern to create SupplierDTO with id
+        SupplierDTO expectedSupplierDTO = SupplierDTO.builder()
+                .id(supplierId)
+                .supplierName("Amazon")
+                .contactName("Test")
+                .contactPhone("777-888-2222")
+                .email("test@example.com")
+                .address("303 Business St, Commerce City")
+
+                .build();
+
 
         // Define behavior of the mocks
         Mockito.when(supplierRepository.findById(supplierId)).thenReturn(Optional.of(mockResultSupplier));
@@ -163,39 +271,5 @@ public class SupplierServiceTest {
 
         // --- Act and Assert ---
         assertThrows(ResourceNotFoundException.class, () -> supplierService.getSupplierById(supplierId), "Expected ResourceNotFoundException to be thrown");
-    }
-
-
-
-    // some utility builder methods
-    private SupplierDTO createSupplierDTO(String name, String contactName, String contactPhone, String email, String address) {
-        SupplierDTO dto = new SupplierDTO();
-        dto.setSupplierName(name);
-        dto.setContactName(contactName);
-        dto.setContactPhone(contactPhone);
-        dto.setEmail(email);
-        dto.setAddress(address);
-        return dto;
-    }
-
-    private Supplier createSupplier(String name, String contactName, String contactPhone, String email, String address, Long id) {
-        Supplier supplier = new Supplier();
-        supplier.setSupplierName(name);
-        supplier.setContactName(contactName);
-        supplier.setContactPhone(contactPhone);
-        supplier.setEmail(email);
-        supplier.setAddress(address);
-        supplier.setProducts(new HashSet<>());
-        supplier.setPurchaseOrders(new ArrayList<>());
-        if (id != null) {
-            supplier.setId(id);
-        }
-        return supplier;
-    }
-
-    private SupplierDTO createSupplierDTO(Long id, String name, String contactName, String contactPhone, String email, String address) {
-        SupplierDTO dto = createSupplierDTO(name, contactName, contactPhone, email, address);
-        dto.setId(id);
-        return dto;
     }
 }

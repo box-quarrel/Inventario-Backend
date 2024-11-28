@@ -1,6 +1,6 @@
 get:
   tags:
-    - ProductReturn
+    - Product Return
   operationId: getAllProductReturns
   parameters:
     - name: page
@@ -23,17 +23,24 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/responses/v1/PaginatedResponseDTOProductReturnDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/ProductReturnResponseDTO.yaml"
 
 post:
   tags:
-    - ProductReturn
+    - Product Return
   operationId: addProductReturn
   requestBody:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/ProductReturnCreateDTO.yaml"
+          $ref: "../../components/schemas/v1//request/ProductReturnRequestDTO.yaml"
     required: true
   responses:
     "201":
@@ -41,7 +48,14 @@ post:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOProductReturnDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/ProductReturnResponseDTO.yaml"
     "400":
       description: Bad Request
       content:

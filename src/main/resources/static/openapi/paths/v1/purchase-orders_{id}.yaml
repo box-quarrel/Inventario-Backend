@@ -1,7 +1,7 @@
 get:
   tags:
     - Purchase Order
-  operationId: getPurchaseById
+  operationId: getPurchaseOrderById
   parameters:
     - name: id
       in: path
@@ -15,7 +15,12 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOPurchaseDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/response/PurchaseResponseDTO.yaml"
     "404":
       description: Not Found
       content:
@@ -39,7 +44,7 @@ delete:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/schemas/v1/PurchaseDTO.yaml"
+            $ref: "../../components/responses/v1/ResponseDTO.yaml"
     "404":
       description: Not Found
       content:

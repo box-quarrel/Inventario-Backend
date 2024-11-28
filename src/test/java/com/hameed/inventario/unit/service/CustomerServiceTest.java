@@ -2,7 +2,7 @@ package com.hameed.inventario.unit.service;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CustomerMapper;
-import com.hameed.inventario.model.dto.update.CustomerDTO;
+import com.hameed.inventario.model.dto.basic.CustomerDTO;
 import com.hameed.inventario.model.entity.Customer;
 import com.hameed.inventario.repository.CustomerRepository;
 import com.hameed.inventario.service.impl.CustomerServiceImpl;
@@ -37,10 +37,37 @@ public class CustomerServiceTest {
     @DisplayName("Customer Added Successfully")
     public void testAddCustomer_shouldReturnAddedCustomerAsCustomerDTO() {
         //  --- Arrange ---
-        CustomerDTO customerDTO = createCustomerDTO("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
-        Customer mockMappedCustomer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", null);
-        Customer mockResultCustomer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", 1L);
-        CustomerDTO expectedCustomerDTO = createCustomerDTO(1L, "Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
+        Customer mockMappedCustomer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
+        Customer mockResultCustomer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+        mockResultCustomer.setId(1L);  // Set the ID explicitly
+
+        CustomerDTO expectedCustomerDTO = CustomerDTO.builder()
+                .id(1L)
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
+
 
         // Define behavior of the mocks
         Mockito.when(customerMapper.customerDTOToCustomer(customerDTO)).thenReturn(mockMappedCustomer);
@@ -62,18 +89,50 @@ public class CustomerServiceTest {
     @DisplayName("Customer updated successfully")
     public void testUpdateCustomer_shouldReturnCustomerAsCustomerDTO() {
         // --- Arrange ---
-        CustomerDTO customerDTO = createCustomerDTO(1L, "Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
-        Customer existingCustomer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", 1L);
-        Customer updatedCustomer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", 1L);
-        CustomerDTO expectedCustomerDTO = createCustomerDTO(1L, "Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
+        Long customerId = 1L;
+        // CustomerDTO without an id during creation
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
+// Creating Customer entities
+        Customer existingCustomer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+        existingCustomer.setId(customerId);
+
+        Customer updatedCustomer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+        updatedCustomer.setId(customerId);
+
+// CustomerDTO with id for expected result
+        CustomerDTO expectedCustomerDTO = CustomerDTO.builder()
+                .id(customerId)
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
+
 
         // Define behavior of the mocks
-        Mockito.when(customerRepository.findById(customerDTO.getId())).thenReturn(Optional.of(existingCustomer));
+        Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
         Mockito.when(customerRepository.save(existingCustomer)).thenReturn(updatedCustomer);
         Mockito.when(customerMapper.customerToCustomerDTO(updatedCustomer)).thenReturn(expectedCustomerDTO);
 
         // --- Act ---
-        CustomerDTO resultCustomerDTO = customerService.updateCustomer(customerDTO);
+        CustomerDTO resultCustomerDTO = customerService.updateCustomer(customerId, customerDTO);
 
         // --- Assert ---
         assertAll(
@@ -87,14 +146,21 @@ public class CustomerServiceTest {
     @DisplayName("Customer successfully not updated because id was not found")
     public void testUpdateCustomer_shouldThrowResourceNotFoundException() {
         // --- Arrange ---
-        CustomerDTO customerDTO = createCustomerDTO(1L, "Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
+        Long customerId = 1L;
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
 
         // Define behavior of the mocks
-        Mockito.when(customerRepository.findById(customerDTO.getId())).thenReturn(Optional.empty());
+        Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
 
 
         // --- Act and Assert ---
-        assertThrows(ResourceNotFoundException.class, () -> customerService.updateCustomer(customerDTO));
+        assertThrows(ResourceNotFoundException.class, () -> customerService.updateCustomer(customerId, customerDTO));
     }
 
     @Test
@@ -102,7 +168,15 @@ public class CustomerServiceTest {
     public void testDeleteCustomer_shouldCallDeleteCustomerOnce() {
         // --- Arrange ---
         Long customerId = 1L;
-        Customer customer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", 1L);
+        Customer customer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .sales(new HashSet<>())
+                .productReturns(new ArrayList<>())
+                .build();
+        customer.setId(customerId);  // Set the id after using the builder
 
         // Define behavior of the mocks
         Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
@@ -133,8 +207,25 @@ public class CustomerServiceTest {
     public void testGetCustomer_shouldReturnCustomerAsCustomerDTO() {
         //  --- Arrange ---
         Long customerId = 1L;
-        Customer mockResultCustomer = createCustomer("Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten", 1L);
-        CustomerDTO expectedCustomerDTO = createCustomerDTO(1L, "Dan Bran", "danbran@example.com 1", "123456", "123 Main St, Manhaten");
+
+// Using builder pattern to create Customer
+        Customer mockResultCustomer = Customer.builder()
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+        mockResultCustomer.setId(customerId);  // Set the id after using the builder
+
+// Using builder pattern to create CustomerDTO
+        CustomerDTO expectedCustomerDTO = CustomerDTO.builder()
+                .id(customerId)
+                .customerName("Dan Bran")
+                .email("danbran@example.com 1")
+                .phone("123456")
+                .address("123 Main St, Manhaten")
+                .build();
+
 
         // Define behavior of the mocks
         Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(mockResultCustomer));
@@ -163,37 +254,5 @@ public class CustomerServiceTest {
 
         // --- Act and Assert ---
         assertThrows(ResourceNotFoundException.class, () -> customerService.getCustomerById(customerId), "Expected ResourceNotFoundException to be thrown");
-    }
-
-
-
-    // some utility builder methods
-    private CustomerDTO createCustomerDTO(String name, String email, String phone, String address) {
-        CustomerDTO dto = new CustomerDTO();
-        dto.setCustomerName(name);
-        dto.setEmail(email);
-        dto.setPhone(phone);
-        dto.setAddress(address);
-        return dto;
-    }
-
-    private Customer createCustomer(String name, String email, String phone, String address, Long id) {
-        Customer customer = new Customer();
-        customer.setCustomerName(name);
-        customer.setEmail(email);
-        customer.setPhone(phone);
-        customer.setAddress(address);
-        customer.setSales(new HashSet<>());
-        customer.setProductReturns(new ArrayList<>());
-        if (id != null) {
-            customer.setId(id);
-        }
-        return customer;
-    }
-
-    private CustomerDTO createCustomerDTO(Long id, String name, String email, String phone, String address) {
-        CustomerDTO dto = createCustomerDTO(name, email, phone, address);
-        dto.setId(id);
-        return dto;
     }
 }

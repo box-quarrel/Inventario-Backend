@@ -23,7 +23,14 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/responses/v1/PaginatedResponseDTOSaleDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/SaleResponseDTO.yaml"
 
 post:
   tags:
@@ -33,7 +40,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/SaleCreateDTO.yaml"
+          $ref: "../../components/schemas/v1//request/SaleRequestDTO.yaml"
     required: true
   responses:
     "201":
@@ -41,7 +48,14 @@ post:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOSaleDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1//response/SaleResponseDTO.yaml"
     "400":
       description: Bad Request
       content:

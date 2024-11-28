@@ -1,19 +1,18 @@
 package com.hameed.inventario.mapper;
 
-import com.hameed.inventario.model.dto.create.SaleItemCreateDTO;
-import com.hameed.inventario.model.dto.update.SaleItemDTO;
+import com.hameed.inventario.model.dto.request.SaleItemRequestDTO;
+import com.hameed.inventario.model.dto.response.SaleItemResponseDTO;
 import com.hameed.inventario.model.entity.SaleItem;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface SaleItemMapper {
     // for a singleton mapper
 //    SaleItemMapper  INSTANCE = Mappers.getMapper(SaleItemMapper.class);
 
-    SaleItemDTO saleItemToSaleItemDTO(SaleItem saleItem);
+    SaleItemResponseDTO saleItemToSaleItemResponseDTO(SaleItem saleItem);
 
-    SaleItem saleItemDTOToSaleItem(SaleItemDTO saleItemDTO);
+    SaleItem SaleItemResponseDTOToSaleItem(SaleItemResponseDTO saleItemResponseDTO);
 
-    SaleItem saleItemCreateDTOToSaleItem(SaleItemCreateDTO saleItemCreateDTO);
+    SaleItem SaleItemRequestDTOToSaleItem(SaleItemRequestDTO saleItemRequestDTO);
 }

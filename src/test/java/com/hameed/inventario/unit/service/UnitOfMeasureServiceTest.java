@@ -3,7 +3,7 @@ package com.hameed.inventario.unit.service;
 import com.hameed.inventario.exception.DuplicateCodeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.UnitOfMeasureMapper;
-import com.hameed.inventario.model.dto.update.UnitOfMeasureDTO;
+import com.hameed.inventario.model.dto.basic.UnitOfMeasureDTO;
 import com.hameed.inventario.model.entity.UnitOfMeasure;
 import com.hameed.inventario.repository.UOMRepository;
 import com.hameed.inventario.service.impl.UnitOfMeasureServiceImpl;
@@ -35,12 +35,33 @@ public class UnitOfMeasureServiceTest {
 
     @Test
     @DisplayName("UnitOfMeasure Added Successfully")
-    public void testAddUnitOfMeasure_shouldReturnAddedUnitOfMeasureAsUnitOfMeasureDTO() {
-        //  --- Arrange ---
-        UnitOfMeasureDTO unitOfMeasureDTO = createUnitOfMeasureDTO("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1");
-        UnitOfMeasure mockMappedUnitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", null);
-        UnitOfMeasure mockResultUnitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", 1L);
-        UnitOfMeasureDTO expectedUnitOfMeasureDTO = createUnitOfMeasureDTO(1L, "TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1");
+    public void testCreateUnitOfMeasure_shouldReturnAddedUnitOfMeasureAsDTO() {
+        // --- Arrange ---
+        UnitOfMeasureDTO unitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+
+        UnitOfMeasure mockMappedUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+
+        UnitOfMeasure mockResultUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+        mockResultUnitOfMeasure.setId(1L);
+
+        UnitOfMeasureDTO expectedUnitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .id(1L)
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureMapper.unitOfMeasureDTOToUnitOfMeasure(unitOfMeasureDTO)).thenReturn(mockMappedUnitOfMeasure);
@@ -52,18 +73,27 @@ public class UnitOfMeasureServiceTest {
 
         // --- Assert ---
         assertAll(
-                () -> assertNotNull(resultUnitOfMeasureDTO, "result unitOfMeasure DTO is null"),
-                () -> assertNotNull(resultUnitOfMeasureDTO.getId(), "result unitOfMeasure DTO does not include an ID"),
-                () -> assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unitOfMeasure DTO is not correct") // we can use this because lombok automatically generates a hasCode and equals methods for us
+                () -> assertNotNull(resultUnitOfMeasureDTO, "result unit of measure DTO is null"),
+                () -> assertNotNull(resultUnitOfMeasureDTO.getId(), "result unit of measure DTO does not include an ID"),
+                () -> assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unit of measure DTO is not correct")
         );
     }
 
     @Test
-    @DisplayName("UnitOfMeasure successfully not Added because unitOfMeasure code already exists")
-    public void testAddUnitOfMeasure_shouldThrowDuplicateCodeException() {
-        //  --- Arrange ---
-        UnitOfMeasureDTO unitOfMeasureDTO = createUnitOfMeasureDTO("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1");
-        UnitOfMeasure mockMappedUnitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", null);
+    @DisplayName("UnitOfMeasure not Added due to duplicate code")
+    public void testCreateUnitOfMeasure_shouldThrowDuplicateCodeException() {
+        // --- Arrange ---
+        UnitOfMeasureDTO unitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+
+        UnitOfMeasure mockMappedUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureMapper.unitOfMeasureDTOToUnitOfMeasure(unitOfMeasureDTO)).thenReturn(mockMappedUnitOfMeasure);
@@ -75,50 +105,85 @@ public class UnitOfMeasureServiceTest {
     }
 
     @Test
-    @DisplayName("UnitOfMeasure updated successfully")
-    public void testUpdateUnitOfMeasure_shouldReturnUnitOfMeasureAsUnitOfMeasureDTO() {
+    @DisplayName("UnitOfMeasure Updated Successfully")
+    public void testUpdateUnitOfMeasure_shouldReturnUpdatedUnitOfMeasureAsDTO() {
         // --- Arrange ---
-        UnitOfMeasureDTO unitOfMeasureDTO = createUnitOfMeasureDTO(1L, "TTU02", "TestUpdateUnitOfMeasure 1", "New Testing Updating UnitOfMeasure 1");
-        UnitOfMeasure existingUnitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", 1L);
-        UnitOfMeasure updatedUnitOfMeasure = createUnitOfMeasure("TTU02", "TestUpdateUnitOfMeasure 1", "New Testing Updating UnitOfMeasure 1", 1L);
-        UnitOfMeasureDTO expectedUnitOfMeasureDTO = createUnitOfMeasureDTO(1L, "TTU02", "TestUpdateUnitOfMeasure 1", "New Testing Updating UnitOfMeasure 1");
+        Long unitOfMeasureId = 1L;
+
+        UnitOfMeasureDTO unitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .uomCode("UOM02")
+                .uomName("Gram")
+                .description("Unit for small masses")
+                .build();
+
+        UnitOfMeasure existingUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+        existingUnitOfMeasure.setId(unitOfMeasureId);
+
+        UnitOfMeasure updatedUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM02")
+                .uomName("Gram")
+                .description("Unit for small masses")
+                .build();
+        updatedUnitOfMeasure.setId(unitOfMeasureId);
+
+        UnitOfMeasureDTO expectedUnitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .id(unitOfMeasureId)
+                .uomCode("UOM02")
+                .uomName("Gram")
+                .description("Unit for small masses")
+                .build();
 
         // Define behavior of the mocks
-        Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureDTO.getId())).thenReturn(Optional.of(existingUnitOfMeasure));
+        Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.of(existingUnitOfMeasure));
         Mockito.when(unitOfMeasureRepository.save(existingUnitOfMeasure)).thenReturn(updatedUnitOfMeasure);
         Mockito.when(unitOfMeasureMapper.unitOfMeasureToUnitOfMeasureDTO(updatedUnitOfMeasure)).thenReturn(expectedUnitOfMeasureDTO);
 
         // --- Act ---
-        UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(unitOfMeasureDTO);
+        UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(unitOfMeasureId, unitOfMeasureDTO);
 
         // --- Assert ---
         assertAll(
-                () -> assertNotNull(resultUnitOfMeasureDTO, "result updated unitOfMeasure DTO is null"),
-                () -> assertNotNull(resultUnitOfMeasureDTO.getId(), "result updated unitOfMeasure DTO does not include an ID"),
-                () -> assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unitOfMeasure DTO is not correct") // we can use this because lombok automatically generates a hasCode and equals methods for us
+                () -> assertNotNull(resultUnitOfMeasureDTO, "result updated unit of measure DTO is null"),
+                () -> assertNotNull(resultUnitOfMeasureDTO.getId(), "result updated unit of measure DTO does not include an ID"),
+                () -> assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unit of measure DTO is not correct")
         );
     }
 
     @Test
-    @DisplayName("UnitOfMeasure successfully not updated because id was not found")
+    @DisplayName("UnitOfMeasure not updated due to ID not found")
     public void testUpdateUnitOfMeasure_shouldThrowResourceNotFoundException() {
         // --- Arrange ---
-        UnitOfMeasureDTO unitOfMeasureDTO = createUnitOfMeasureDTO(1L, "TTU02", "TestUpdateUnitOfMeasure 1", "New Testing Updating UnitOfMeasure 1");
+        Long unitOfMeasureId = 1L;
+
+        UnitOfMeasureDTO unitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .uomCode("UOM02")
+                .uomName("Gram")
+                .description("Unit for small masses")
+                .build();
 
         // Define behavior of the mocks
-        Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureDTO.getId())).thenReturn(Optional.empty());
-
+        Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.empty());
 
         // --- Act and Assert ---
-        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.updateUnitOfMeasure(unitOfMeasureDTO));
+        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.updateUnitOfMeasure(unitOfMeasureId, unitOfMeasureDTO));
     }
 
     @Test
-    @DisplayName("UnitOfMeasure deleted successfully")
-    public void testDeleteUnitOfMeasure_shouldCallDeleteUnitOfMeasureOnce() {
+    @DisplayName("UnitOfMeasure Deleted Successfully")
+    public void testDeleteUnitOfMeasure_shouldCallDeleteOnce() {
         // --- Arrange ---
         Long unitOfMeasureId = 1L;
-        UnitOfMeasure unitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", 1L);
+        UnitOfMeasure unitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM02")
+                .uomName("Gram")
+                .description("Unit for small masses")
+                .products(new HashSet<>())
+                .build();
+        unitOfMeasure.setId(unitOfMeasureId);
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.of(unitOfMeasure));
@@ -131,26 +196,37 @@ public class UnitOfMeasureServiceTest {
     }
 
     @Test
-    @DisplayName("UnitOfMeasure successfully not deleted because unitOfMeasure was not found")
+    @DisplayName("UnitOfMeasure not deleted because it was not found")
     public void testDeleteUnitOfMeasure_shouldThrowResourceNotFoundException() {
         // --- Arrange ---
         Long unitOfMeasureId = 1L;
-
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.empty());
 
         // --- Act and Assert ---
-        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.deleteUnitOfMeasure(unitOfMeasureId), "Expected ResourceNotFoundException to be thrown");
+        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.deleteUnitOfMeasure(unitOfMeasureId));
     }
 
     @Test
-    @DisplayName("UnitOfMeasure retrieved successfully")
-    public void testGetUnitOfMeasure_shouldReturnUnitOfMeasureAsUnitOfMeasureDTO() {
-        //  --- Arrange ---
+    @DisplayName("UnitOfMeasure Retrieved Successfully")
+    public void testGetUnitOfMeasure_shouldReturnUnitOfMeasureAsDTO() {
+        // --- Arrange ---
         Long unitOfMeasureId = 1L;
-        UnitOfMeasure mockResultUnitOfMeasure = createUnitOfMeasure("TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1", 1L);
-        UnitOfMeasureDTO expectedUnitOfMeasureDTO = createUnitOfMeasureDTO(1L, "TT01", "TestUnitOfMeasure 1", "New Testing UnitOfMeasure 1");
+
+        UnitOfMeasure mockResultUnitOfMeasure = UnitOfMeasure.builder()
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
+        mockResultUnitOfMeasure.setId(unitOfMeasureId);
+
+        UnitOfMeasureDTO expectedUnitOfMeasureDTO = UnitOfMeasureDTO.builder()
+                .id(unitOfMeasureId)
+                .uomCode("UOM01")
+                .uomName("Kilogram")
+                .description("Unit for mass")
+                .build();
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.of(mockResultUnitOfMeasure));
@@ -160,53 +236,19 @@ public class UnitOfMeasureServiceTest {
         UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.getUnitOfMeasureById(unitOfMeasureId);
 
         // --- Assert ---
-        assertAll(
-                () -> assertNotNull(resultUnitOfMeasureDTO, "result unitOfMeasure DTO is null"),
-                () -> assertNotNull(resultUnitOfMeasureDTO.getId(), "result unitOfMeasure DTO does not include an ID"),
-                () -> assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unitOfMeasure DTO is not correct") // we can use this because lombok automatically generates a hasCode and equals methods for us
-        );
+        assertEquals(expectedUnitOfMeasureDTO, resultUnitOfMeasureDTO, "Expected unit of measure DTO is not correct");
     }
 
     @Test
-    @DisplayName("UnitOfMeasure successfully not retrieved because unitOfMeasure was not found")
+    @DisplayName("UnitOfMeasure not found by ID")
     public void testGetUnitOfMeasure_shouldThrowResourceNotFoundException() {
         // --- Arrange ---
         Long unitOfMeasureId = 1L;
-
 
         // Define behavior of the mocks
         Mockito.when(unitOfMeasureRepository.findById(unitOfMeasureId)).thenReturn(Optional.empty());
 
         // --- Act and Assert ---
-        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.getUnitOfMeasureById(unitOfMeasureId), "Expected ResourceNotFoundException to be thrown");
-    }
-
-
-
-    // some utility builder methods
-    private UnitOfMeasureDTO createUnitOfMeasureDTO(String code, String name, String description) {
-        UnitOfMeasureDTO dto = new UnitOfMeasureDTO();
-        dto.setUomCode(code);
-        dto.setUomName(name);
-        dto.setDescription(description);
-        return dto;
-    }
-
-    private UnitOfMeasure createUnitOfMeasure(String code, String name, String description, Long id) {
-        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-        unitOfMeasure.setUomCode(code);
-        unitOfMeasure.setUomName(name);
-        unitOfMeasure.setDescription(description);
-        unitOfMeasure.setProducts(new HashSet<>());
-        if (id != null) {
-            unitOfMeasure.setId(id);
-        }
-        return unitOfMeasure;
-    }
-
-    private UnitOfMeasureDTO createUnitOfMeasureDTO(Long id, String code, String name, String description) {
-        UnitOfMeasureDTO dto = createUnitOfMeasureDTO(code, name, description);
-        dto.setId(id);
-        return dto;
+        assertThrows(ResourceNotFoundException.class, () -> unitOfMeasureService.getUnitOfMeasureById(unitOfMeasureId));
     }
 }

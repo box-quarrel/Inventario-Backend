@@ -23,7 +23,14 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/responses/v1/PaginatedResponseDTOCustomerDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - type: object
+                properties:
+                  dataPage:
+                    type: array
+                    items:
+                      $ref: "../../components/schemas/v1/basic/CustomerDTO.yaml"
 
 post:
   tags:
@@ -33,7 +40,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/CustomerDTO.yaml"
+          $ref: "../../components/schemas/v1/basic/CustomerDTO.yaml"
     required: true
   responses:
     "201":
@@ -41,7 +48,12 @@ post:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOCustomerDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/basic/CustomerDTO.yaml"
     "400":
       description: Bad Request
       content:
@@ -64,7 +76,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/CustomerDTO.yaml"
+          $ref: "../../components/schemas/v1/basic/CustomerDTO.yaml"
     required: true
   responses:
     "201":
@@ -72,7 +84,12 @@ put:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOCustomerDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/basic/CustomerDTO.yaml"
     "400":
       description: Bad Request
       content:

@@ -1,11 +1,10 @@
 package com.hameed.inventario.controller;
 
-import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
+import com.hameed.inventario.model.dto.request.PurchaseRequestDTO;
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
-import com.hameed.inventario.model.dto.update.PurchaseDTO;
-import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
+import com.hameed.inventario.model.dto.request.ReceiveOrderDTO;
 import com.hameed.inventario.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,41 +30,41 @@ public class PurchaseOrderController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO<PurchaseDTO>> getAllPurchases(
+    public ResponseEntity<PaginatedResponseDTO<PurchaseResponseDTO>> getAllPurchases(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) Integer size) {
         int finalPageSize = (size == null) ? pageSize : size;
-        Page<PurchaseDTO> purchaseDTOPage = purchaseService.getAllPurchases(PageRequest.of(page, finalPageSize));
+        Page<PurchaseResponseDTO> purchaseDTOPage = purchaseService.getAllPurchases(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Purchase Orders Retrieved Successfully", purchaseDTOPage)); // 200 OK
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<PurchaseDTO>> getPurchaseById(@PathVariable Long id) {
-        PurchaseDTO purchaseDTO = purchaseService.getPurchaseById(id);
-        return ResponseEntity.ok(new ResponseDTO<>(200, "Purchase Order Retrieved Successfully", purchaseDTO)); // 200 OK
+    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> getPurchaseById(@PathVariable Long id) {
+        PurchaseResponseDTO purchaseResponseDTO = purchaseService.getPurchaseById(id);
+        return ResponseEntity.ok(new ResponseDTO<>(200, "Purchase Order Retrieved Successfully", purchaseResponseDTO)); // 200 OK
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> addPurchase(@RequestBody PurchaseCreateDTO purchaseCreateDTO) {
-        PurchaseResponseDTO purchaseResponseDTO = purchaseService.addPurchaseOrder(purchaseCreateDTO);
+    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> addPurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO) {
+        PurchaseResponseDTO purchaseResponseDTO = purchaseService.addPurchaseOrder(purchaseRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Purchase Order Created Successfully", purchaseResponseDTO));  // 201 CREATED
     }
 
     @PutMapping("/receive")
-    public ResponseEntity<ResponseDTO<PurchaseDTO>> receiveOrder (@RequestBody ReceiveOrderDTO receiveOrderDTO){
-        PurchaseDTO receivedOrderDTO = purchaseService.receiveOrder(receiveOrderDTO);
+    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> receiveOrder (@RequestBody ReceiveOrderDTO receiveOrderDTO){
+        PurchaseResponseDTO receivedOrderDTO = purchaseService.receiveOrder(receiveOrderDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Purchase Order Received Successfully", receivedOrderDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<PurchaseDTO>> updatePurchase(@RequestBody PurchaseDTO purchaseDTO) {
-        PurchaseDTO resultPurchaseDTO = purchaseService.updatePurchase(purchaseDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Purchase Updated Successfully", resultPurchaseDTO));  // 201 CREATED
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> updatePurchase(@PathVariable Long id, @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
+        PurchaseResponseDTO resultPurchaseResponseDTO = purchaseService.updatePurchase(id, purchaseRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Purchase Updated Successfully", resultPurchaseResponseDTO));  // 201 CREATED
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<PurchaseDTO>> deletePurchase(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> deletePurchase(@PathVariable Long id) {
         purchaseService.removePurchase(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Purchase Deleted Successfully"));  // 204 NO_CONTENT
 

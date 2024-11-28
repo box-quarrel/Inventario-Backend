@@ -2,7 +2,7 @@ package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.SupplierMapper;
-import com.hameed.inventario.model.dto.update.SupplierDTO;
+import com.hameed.inventario.model.dto.basic.SupplierDTO;
 import com.hameed.inventario.model.entity.Supplier;
 import com.hameed.inventario.repository.SupplierRepository;
 import com.hameed.inventario.service.SupplierService;
@@ -34,8 +34,8 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public SupplierDTO updateSupplier(SupplierDTO supplierDTO) {
-        Long supplierId = supplierDTO.getId();
+    public SupplierDTO updateSupplier(Long supplierId, SupplierDTO supplierDTO) {
+
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
         if(optionalSupplier.isPresent()) {
             Supplier supplier = optionalSupplier.get();

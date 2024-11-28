@@ -1,6 +1,6 @@
 get:
   tags:
-    - ProductReturn
+    - Product Return
   operationId: getProductReturnById
   parameters:
     - name: id
@@ -15,7 +15,12 @@ get:
       content:
         application/hal+json:
           schema:
-            $ref: "../../components/Responses/v1/ResponseDTOProductReturnDTO.yaml"
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/response/ProductReturnResponseDTO.yaml"
     "404":
       description: Not Found
       content:

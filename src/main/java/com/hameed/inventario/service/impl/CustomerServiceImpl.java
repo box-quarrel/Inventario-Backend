@@ -2,7 +2,7 @@ package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.CustomerMapper;
-import com.hameed.inventario.model.dto.update.CustomerDTO;
+import com.hameed.inventario.model.dto.basic.CustomerDTO;
 import com.hameed.inventario.model.entity.Customer;
 import com.hameed.inventario.repository.CustomerRepository;
 import com.hameed.inventario.service.CustomerService;
@@ -33,8 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
-        Long customerId = customerDTO.getId();
+    public CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTO) {
         Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
         if(optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();

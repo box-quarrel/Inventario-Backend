@@ -1,10 +1,9 @@
 package com.hameed.inventario.mapper;
 
-import com.hameed.inventario.model.dto.create.ProductCreateDTO;
-import com.hameed.inventario.model.dto.update.ProductDTO;
+import com.hameed.inventario.model.dto.request.ProductRequestDTO;
+import com.hameed.inventario.model.dto.response.ProductResponseDTO;
 import com.hameed.inventario.model.entity.Product;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -12,9 +11,9 @@ public interface ProductMapper {
 //    ProductMapper  INSTANCE = Mappers.getMapper(ProductMapper.class);
 
 
-    ProductDTO productToProductDTO(Product product);
+    ProductResponseDTO productToProductResponseDTO(Product product);
 
-    Product productDTOToProduct(ProductDTO productDTO);
+    Product ProductResponseDTOToProduct(ProductResponseDTO productResponseDTO);
 
-    Product productCreateDTOToProduct(ProductCreateDTO productCreateDTO);
+    Product ProductRequestDTOToProduct(ProductRequestDTO productRequestDTO);
 }

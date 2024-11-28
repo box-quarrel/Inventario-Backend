@@ -5,13 +5,12 @@ import com.hameed.inventario.exception.RecordCannotBeModifiedException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.POLineMapper;
 import com.hameed.inventario.mapper.PurchaseMapper;
-import com.hameed.inventario.model.dto.create.POLineCreateDTO;
+import com.hameed.inventario.model.dto.request.POLineRequestDTO;
+import com.hameed.inventario.model.dto.request.PurchaseRequestDTO;
 import com.hameed.inventario.model.dto.response.PurchaseResponseDTO;
-import com.hameed.inventario.model.dto.update.POLineDTO;
-import com.hameed.inventario.model.dto.create.PurchaseCreateDTO;
-import com.hameed.inventario.model.dto.update.PurchaseDTO;
-import com.hameed.inventario.model.dto.update.ReceiveOrderDTO;
-import com.hameed.inventario.model.dto.update.ReceivedLineDTO;
+import com.hameed.inventario.model.dto.response.POLineResponseDTO;
+import com.hameed.inventario.model.dto.request.ReceiveOrderDTO;
+import com.hameed.inventario.model.dto.request.ReceivedLineDTO;
 import com.hameed.inventario.model.entity.*;
 import com.hameed.inventario.repository.PurchaseRepository;
 import com.hameed.inventario.service.InventoryStockService;
@@ -57,23 +56,23 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public PurchaseResponseDTO addPurchaseOrder(PurchaseCreateDTO purchaseCreateDTO) {
+    public PurchaseResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseRequestDTO) {
         // Map the PurchaseCreateDTO to PurchaseOrder object
-        PurchaseOrder purchaseOrder = purchaseMapper.purchaseCreateDTOToPurchaseOrder(purchaseCreateDTO);
+        PurchaseOrder purchaseOrder = purchaseMapper.PurchaseRequestDTOToPurchaseOrder(purchaseRequestDTO);
 
         // getting the supplier and setting it
-        Supplier supplier = supplierService.getSupplierEntityById(purchaseCreateDTO.getSupplierId());
+        Supplier supplier = supplierService.getSupplierEntityById(purchaseRequestDTO.getSupplierId());
         purchaseOrder.setSupplier(supplier);
 
         // set the purchase status with pending
         purchaseOrder.setPurchaseStatus(PurchaseStatus.PENDING.toString());
 
         // get lines from DTO
-        List<POLineCreateDTO> poLineCreateDTOS = purchaseCreateDTO.getPoLineCreateDTOS();
-        List<PurchaseLine> purchaseLines =  poLineCreateDTOS.stream().map(
-                poLineCreateDTO -> {
-                    PurchaseLine purchaseLine = poLineMapper.poLineCreateDTOToPurchaseLine(poLineCreateDTO);
-                    Product product = productService.getProductEntityById(poLineCreateDTO.getProductId());
+        List<POLineRequestDTO> poLineRequestDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
+        List<PurchaseLine> purchaseLines =  poLineRequestDTOS.stream().map(
+                poLineRequestDTO -> {
+                    PurchaseLine purchaseLine = poLineMapper.poLineRequestDTOToPurchaseLine(poLineRequestDTO);
+                    Product product = productService.getProductEntityById(poLineRequestDTO.getProductId());
                     purchaseLine.setProduct(product);
                     return purchaseLine;
                 }
@@ -88,13 +87,13 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchaseRepository.save(purchaseOrder);
 
         // return response
-        return new PurchaseResponseDTO(purchaseNumber);
+        return purchaseMapper.purchaseOrderToPurchaseResponseDTO(purchaseOrder);
     }
 
     @Override
     // this update should be restricted to very specific users
-    public PurchaseDTO updatePurchase(PurchaseDTO purchaseDTO) {
-        Long purchaseId = purchaseDTO.getId();
+    public PurchaseResponseDTO updatePurchase(Long purchaseId, PurchaseRequestDTO purchaseRequestDTO) {
+
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseId);
         if(optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
@@ -103,16 +102,16 @@ public class PurchaseServiceImpl implements PurchaseService {
                 throw new RecordCannotBeModifiedException("Purchase Order " + purchaseOrder.getId() + " cannot be modified because it is already received");
             }
             // map fields of dto to purchaseOrder
-            purchaseOrder.setDiscount(purchaseDTO.getDiscount());
-            purchaseOrder.setTotalAmount(purchaseDTO.getTotalAmount());
+            purchaseOrder.setDiscount(purchaseRequestDTO.getDiscount());
+            purchaseOrder.setTotalAmount(purchaseRequestDTO.getTotalAmount());
             // getting the supplier and setting it
-            Supplier supplier = supplierService.getSupplierEntityById(purchaseDTO.getSupplier().getId());
+            Supplier supplier = supplierService.getSupplierEntityById(purchaseRequestDTO.getSupplierId());
             purchaseOrder.setSupplier(supplier);
 
 
             // get lines from DTO and add it to po
-            List<POLineDTO> purchaseLinesDTOS = purchaseDTO.getPurchaseLines();
-            List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(poLineMapper::poLineDTOToPurchaseLine).toList();
+            List<POLineRequestDTO> purchaseLinesDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
+            List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(poLineMapper::poLineRequestDTOToPurchaseLine).toList();
             purchaseOrder.setPurchaseLines(new ArrayList<>());
             purchaseLines.forEach(purchaseOrder::addPurchaseLine);
 
@@ -120,7 +119,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
 
             // return the updated DTO
-            return purchaseMapper.purchaseOrderToPurchaseDTO(resultPurchaseOrder);
+            return purchaseMapper.purchaseOrderToPurchaseResponseDTO(resultPurchaseOrder);
         } else {
             throw new ResourceNotFoundException("Purchase order with this Id: " + purchaseId + " could not be found");
         }
@@ -145,15 +144,15 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public Page<PurchaseDTO> getAllPurchases(Pageable pageable) {
+    public Page<PurchaseResponseDTO> getAllPurchases(Pageable pageable) {
         Page<PurchaseOrder> pagePurchaseOrders = purchaseRepository.findAll(pageable);
-        return pagePurchaseOrders.map(purchaseMapper::purchaseOrderToPurchaseDTO);
+        return pagePurchaseOrders.map(purchaseMapper::purchaseOrderToPurchaseResponseDTO);
     }
 
     @Override
-    public PurchaseDTO getPurchaseById(Long purchaseId) {
+    public PurchaseResponseDTO getPurchaseById(Long purchaseId) {
         PurchaseOrder purchaseOrder = this.getPurchaseEntityById(purchaseId);
-        return purchaseMapper.purchaseOrderToPurchaseDTO(purchaseOrder);
+        return purchaseMapper.purchaseOrderToPurchaseResponseDTO(purchaseOrder);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public PurchaseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
+    public PurchaseResponseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
         Long purchaseOrderId = receiveOrderDTO.getPurchaseOrderId();
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseOrderId);
         if (optionalPurchaseOrder.isPresent()) {
@@ -199,7 +198,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
 
             // return the received purchase order
-            return purchaseMapper.purchaseOrderToPurchaseDTO(resultPurchaseOrder);
+            return purchaseMapper.purchaseOrderToPurchaseResponseDTO(resultPurchaseOrder);
         } else {
             throw new ResourceNotFoundException("Purchase Order with this Purchase Order Id: " + purchaseOrderId + " could not be found");
         }

@@ -2,7 +2,7 @@ package com.hameed.inventario.controller;
 
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
-import com.hameed.inventario.model.dto.update.CustomerDTO;
+import com.hameed.inventario.model.dto.basic.CustomerDTO;
 import com.hameed.inventario.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +49,9 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Customer Created Successfully", resultCustomerDTO));  // 201 CREATED
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<CustomerDTO>> updateCustomer(@RequestBody CustomerDTO customerDTO) {
-        CustomerDTO resultCustomerDTO = customerService.updateCustomer(customerDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO<CustomerDTO>> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        CustomerDTO resultCustomerDTO = customerService.updateCustomer(id, customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Customer Updated Successfully", resultCustomerDTO));  // 201 CREATED
     }
 
