@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class ProductReturnResponseDTO {
     private Long id;
 
-    private CustomerDTO customer;
+    private String salesNumber;
 
     private ProductResponseDTO product;
 

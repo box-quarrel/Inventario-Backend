@@ -11,7 +11,5 @@ public class POLineRequestDTO {
 
     private int requestedQuantity;
 
-    private Double unitPrice;
-
 
 }

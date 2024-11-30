@@ -1,6 +1,6 @@
 type: object
 properties:
-  customerId:
+  saleId:
     type: integer
     format: int64
   productId:
@@ -13,6 +13,6 @@ properties:
     type: string
 
 required:
-  - customerId
+  - saleId
   - productId
   - quantityReturned

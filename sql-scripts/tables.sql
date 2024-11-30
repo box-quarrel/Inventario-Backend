@@ -1,4 +1,3 @@
-SHOW TABLES;
 -- Disable foreign key checks
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -13,6 +12,8 @@ DROP TABLE IF EXISTS Sale_Lines;
 DROP TABLE IF EXISTS PO_HEADER;
 DROP TABLE IF EXISTS PO_LINES;
 DROP TABLE IF EXISTS PRODUCT_RETURNS;
+DROP TABLE IF EXISTS PRICE_HISTORY;
+DROP TABLE IF EXISTS COST_HISTORY;
 DROP TABLE IF EXISTS Product_Supplier;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Authorities;
@@ -65,6 +66,33 @@ CREATE TABLE Products (
                           FOREIGN KEY (primary_uom_code) REFERENCES Unit_of_Measures(code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create PRICE_HISTORY Table
+CREATE TABLE PRICE_HISTORY (
+                               id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                               product_id BIGINT NOT NULL,
+                               old_price DOUBLE NOT NULL,
+                               new_price DOUBLE NOT NULL,
+                               creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                               created_by VARCHAR(255),
+                               last_update_by VARCHAR(255),
+                               last_update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create COST_HISTORY Table
+CREATE TABLE COST_HISTORY (
+                              id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                              product_id BIGINT NOT NULL,
+                              old_cost DOUBLE NOT NULL,
+                              new_cost DOUBLE NOT NULL,
+                              creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              created_by VARCHAR(255),
+                              last_update_by VARCHAR(255),
+                              last_update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                              FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 -- Create Suppliers Table
 CREATE TABLE Suppliers (
                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -106,8 +134,10 @@ CREATE TABLE Customers (
 CREATE TABLE Sales (
                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
                        sales_number varchar(50) unique NOT NULL,
+                       net_amount DOUBLE NOT NULL,  -- based on the discount type, this can be calculated by two means: 1- total_amount - discount_value , 2- total_amount - (total_amount*discount_value)
                        total_amount DOUBLE NOT NULL,
-                       discount DOUBLE,
+                       discount_value DOUBLE,   -- either an actual amount value or a percentage value
+                       discount_type DOUBLE,
                        customer_id BIGINT,
                        creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                        created_by VARCHAR(255),
@@ -120,7 +150,6 @@ CREATE TABLE Sales (
 CREATE TABLE Sale_Lines (
                             id BIGINT PRIMARY KEY AUTO_INCREMENT,
                             quantity INT NOT NULL,
-                            unit_price DOUBLE NOT NULL,
                             sale_id BIGINT,
                             product_id BIGINT,
                             creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -166,7 +195,7 @@ CREATE TABLE  PO_LINES (
 -- Create Returns Table
 CREATE TABLE  PRODUCT_RETURNS (
                                   id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                                  customer_id BIGINT,
+                                  sale_id BIGINT,
                                   product_id BIGINT,
                                   quantity_returned INT NOT NULL,
                                   reason TEXT,
@@ -174,7 +203,7 @@ CREATE TABLE  PRODUCT_RETURNS (
                                   created_by VARCHAR(255),
                                   last_update_by VARCHAR(255),
                                   last_update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                  FOREIGN KEY (customer_id) REFERENCES Customers(id),
+                                  FOREIGN KEY (sale_id) REFERENCES Sales(id),
                                   FOREIGN KEY (product_id) REFERENCES Products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

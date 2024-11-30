@@ -10,6 +10,4 @@ public class SaleItemRequestDTO {
     private Long productId;
 
     private int quantity;
-
-    private Double unitPrice;
 }

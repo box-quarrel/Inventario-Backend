@@ -1,11 +1,14 @@
 package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -58,6 +61,16 @@ public class Product extends AbstractEntity {
     )
     private Set<Supplier> suppliers;
 
+    // one-to-many relation with historical price/cost recording changes
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<PriceHistory> priceHistoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<CostHistory> costHistoryList = new ArrayList<>();
+
+
     public void addSupplier(Supplier supplier) {
         if (supplier != null) {
             if (suppliers == null) {
@@ -75,8 +88,34 @@ public class Product extends AbstractEntity {
             } else {
                 throw new IllegalStateException("Supplier has not been added to the list");
             }
+        }
+    }
 
+    public void setCurrentPrice(Double price) {
+        if (price != null) {
+            if (!price.equals(currentPrice)) {
+                if (priceHistoryList == null) {
+                    priceHistoryList = new ArrayList<>();
+                }
+                PriceHistory priceHistory = PriceHistory.builder().oldPrice(currentPrice).newPrice(price).build();
+                priceHistoryList.add(priceHistory);
+                priceHistory.setProduct(this);
+                currentPrice = price;
+            }
+        }
+    }
 
+    public void setCurrentCost(Double cost) {
+        if (cost != null) {
+            if (!cost.equals(currentCost)) {
+                if (costHistoryList == null) {
+                    costHistoryList = new ArrayList<>();
+                }
+                CostHistory costHistory = CostHistory.builder().oldCost(currentCost).newCost(cost).build();
+                costHistoryList.add(costHistory);
+                costHistory.setProduct(this);
+                currentCost = cost;
+            }
         }
     }
 

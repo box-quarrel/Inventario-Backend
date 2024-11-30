@@ -174,7 +174,6 @@ public class CustomerServiceTest {
                 .phone("123456")
                 .address("123 Main St, Manhaten")
                 .sales(new HashSet<>())
-                .productReturns(new ArrayList<>())
                 .build();
         customer.setId(customerId);  // Set the id after using the builder
 

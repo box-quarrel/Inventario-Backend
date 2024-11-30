@@ -168,4 +168,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseDTO);
     }
 
+    @ExceptionHandler(InvalidReturnQuantityException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidReturnQuantityException(InvalidReturnQuantityException ex) {
+
+        // Prepare Exception Response
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/return-quantiy-error"))
+                .title("Invalid Return Quantity")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+//        .instance(URI.create("/current-endpoint")) // Uncomment and use the actual endpoint causing the error
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseDTO);
+    }
+
 }

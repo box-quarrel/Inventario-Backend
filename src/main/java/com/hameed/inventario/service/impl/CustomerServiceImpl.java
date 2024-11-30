@@ -59,7 +59,6 @@ public class CustomerServiceImpl implements CustomerService {
                 customer -> {
                     // handling the link with other entities before deleting
                     customer.getSales().forEach(sale -> sale.setCustomer(null));
-                    customer.getProductReturns().forEach(productReturn -> productReturn.setCustomer(null));
 
                     customerRepository.delete(customer);
                 },

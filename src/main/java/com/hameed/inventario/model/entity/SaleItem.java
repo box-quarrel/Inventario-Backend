@@ -15,9 +15,6 @@ public class SaleItem extends AbstractEntity {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "unit_price")
-    private Double unitPrice;
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     // no need for managing backed reference since the product entity does not reference its purchases

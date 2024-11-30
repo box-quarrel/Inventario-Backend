@@ -7,7 +7,6 @@ properties:
     readOnly: true
   salesNumber:
     type: string
-    format: uuid
   totalAmount:
     type: number
     format: double
@@ -24,6 +23,11 @@ properties:
     type: array
     items:
       $ref: "SaleItemResponseDTO.yaml"
+  productReturns:
+    uniqueItems: true
+    type: array
+    items:
+      $ref: "ProductReturnResponseDTO.yaml"
   creationDate:
     $ref: "../../common/iso_timestamp.yaml"
   lastUpdateDate:

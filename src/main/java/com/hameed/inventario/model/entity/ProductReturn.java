@@ -14,9 +14,9 @@ import lombok.*;
 public class ProductReturn extends AbstractEntity{
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "sale_id")
     @JsonBackReference
-    private Customer customer;
+    private Sale sale;
 
     @OneToOne
     @JoinColumn(name = "product_id")

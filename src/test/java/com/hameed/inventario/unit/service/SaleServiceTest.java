@@ -79,7 +79,7 @@
 //        // --- Assert ---
 //        assertAll(
 //                () -> assertNotNull(saleResponseDTO, "result sale response DTO is null"),
-//                () -> assertNotNull(saleResponseDTO.getSaleNumber(), "result sale response DTO does not include the sale number")
+//                () -> assertNotNull(saleResponseDTO.getsalesNumber(), "result sale response DTO does not include the sale number")
 //        );
 //    }
 //

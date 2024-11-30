@@ -17,11 +17,37 @@ erDiagram
         datetime last_update_date
     }
 
+    PRICE_HISTORY {
+        int id PK
+        int product_id FK
+        decimal old_price
+        decimal new_price
+        datetime creation_date
+        string created_by
+        string last_update_by
+        datetime last_update_date
+    }
+
+    COST_HISTORY {
+        int id PK
+        int product_id FK
+        decimal old_cost
+        decimal new_cost
+        datetime creation_date
+        string created_by
+        string last_update_by
+        datetime last_update_date
+    }
+
     CATEGORIES {
         int id PK
         string name
         string code
         string description
+        datetime creation_date
+        string created_by
+        string last_update_by
+        datetime last_update_date
     }
 
     UNIT_OF_MEASURES {
@@ -29,13 +55,19 @@ erDiagram
         string name
         string code
         string description
+        datetime creation_date
+        string created_by
+        string last_update_by
+        datetime last_update_date
     }
 
     SALES {
         int id PK
         string sales_number
+        decimal net_amount
         decimal total_amount
-        decimal discount
+        decimal discount_value
+        decimal discount_type
         int customer_id FK
         datetime creation_date
         string created_by
@@ -46,7 +78,6 @@ erDiagram
     SALE_LINES {
         int id PK
         int quantity
-        decimal unit_price
         int sale_id FK
         int product_id FK
         datetime creation_date
@@ -84,8 +115,8 @@ erDiagram
 
     PRODUCTS_RETURNS {
         int id PK
-        int customer_id FK
         int product_id FK
+        int sale_id FK
         int quantity_returned
         string reason
         datetime creation_date
@@ -136,6 +167,8 @@ erDiagram
     }
 
     CATEGORIES ||--o{ PRODUCTS: "has many"
+    PRODUCTS ||--o{ PRICE_HISTORY: "records price changes"
+    PRODUCTS ||--o{ COST_HISTORY: "records cost changes"
     UNIT_OF_MEASURES ||--o{ PRODUCTS: "measured in"
     PRODUCTS ||--o{ SALE_LINES: "sold as"
     SALES ||--o{ SALE_LINES: "contains"
@@ -144,8 +177,8 @@ erDiagram
     SUPPLIERS ||--o{ PO_HEADER: "receives orders from"
     PO_HEADER ||--o{ PO_LINES: "includes"
     PRODUCTS ||--o{ PO_LINES: "ordered in"
-    CUSTOMERS ||--o{ PRODUCTS_RETURNS: "returns products"
     PRODUCTS ||--o{ PRODUCTS_RETURNS: "returned"
+    SALES ||--o{ PRODUCTS_RETURNS: "associated with"
     USER ||--o{ AUTHORITY: "has role"
     PRODUCTS ||--o{ PRODUCTS_SUPPLIERS: ""
     SUPPLIERS ||--o{ PRODUCTS_SUPPLIERS: ""

@@ -49,10 +49,10 @@ post:
         application/hal+json:
           schema:
             allOf:
-              - $ref: "../../components/responses/v1/PaginatedResponseDTO.yaml"
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
               - type: object
                 properties:
-                  dataPage:
+                  data:
                     type: array
                     items:
                       $ref: "../../components/schemas/v1//response/PurchaseResponseDTO.yaml"

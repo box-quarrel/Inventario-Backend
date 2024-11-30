@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,8 +99,6 @@ public class PurchaseServiceImpl implements PurchaseService {
                 throw new RecordCannotBeModifiedException("Purchase Order " + purchaseOrder.getId() + " cannot be modified because it is already received");
             }
             // map fields of dto to purchaseOrder
-            purchaseOrder.setDiscount(purchaseRequestDTO.getDiscount());
-            purchaseOrder.setTotalAmount(purchaseRequestDTO.getTotalAmount());
             // getting the supplier and setting it
             Supplier supplier = supplierService.getSupplierEntityById(purchaseRequestDTO.getSupplierId());
             purchaseOrder.setSupplier(supplier);
@@ -166,23 +161,39 @@ public class PurchaseServiceImpl implements PurchaseService {
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseOrderId);
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+
+
             // Create a map from ReceivedLineDTO list for efficient lookup
-            Map<Long, Integer> receivedQuantities = receiveOrderDTO.getReceivedLines()
-                    .stream()
-                    .collect(Collectors.toMap(ReceivedLineDTO::getPurchaseLineId, ReceivedLineDTO::getReceivedQuantity));
+//            Map<Long, Integer> receivedQuantities = receiveOrderDTO.getReceivedLines()
+//                    .stream()
+//                    .collect(Collectors.toMap(ReceivedLineDTO::getPurchaseLineId, ReceivedLineDTO::getReceivedQuantity));
 
             // Iterate through each purchase line and update the received quantity
+//            purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
+//                if (receivedQuantities.containsKey(purchaseLine.getId())) {
+//                    purchaseLine.setReceivedQuantity(receivedQuantities.get(purchaseLine.getId()));
+//                    // increase stock of the product with the newly received quantity
+//                    inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
+//                    // add the supplier to the list of suppliers of each product in the PO
+//                    purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
+//                    // update the current cost of the product based on the unit price of the received line
+//                    purchaseLine.getProduct().setCurrentCost(purchaseLine.getUnitPrice());
+//                }
+
             purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
-                if (receivedQuantities.containsKey(purchaseLine.getId())) {
-                    purchaseLine.setReceivedQuantity(receivedQuantities.get(purchaseLine.getId()));
+                Optional<ReceivedLineDTO> optionalReceivedLineDTO = receiveOrderDTO.getReceivedLines().stream().filter(receivedLineDTO -> Objects.equals(receivedLineDTO.getPurchaseLineId(), purchaseLine.getId())).findFirst();
+                if (optionalReceivedLineDTO.isPresent()) {
+                    ReceivedLineDTO receivedLine = optionalReceivedLineDTO.get();
+                    purchaseLine.setReceivedQuantity(receivedLine.getReceivedQuantity());
                     // increase stock of the product with the newly received quantity
                     inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
                     // add the supplier to the list of suppliers of each product in the PO
                     purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
-                    // update the current cost of the product based on the unit price of the po line
-                    purchaseLine.getProduct().setCurrentCost(purchaseLine.getUnitPrice());
+                    // update the current cost of the product based on the unit price of the received line
+                    purchaseLine.getProduct().setCurrentCost(receivedLine.getUnitPrice());
                 }
             });
+
 
             // change status of the PO based on the received quantity against the ordered quantity
             int totalRequested = purchaseOrder.getPurchaseLines().stream().map(PurchaseLine::getRequestedQuantity).reduce(0, Integer::sum);

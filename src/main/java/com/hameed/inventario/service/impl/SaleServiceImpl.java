@@ -1,5 +1,7 @@
 package com.hameed.inventario.service.impl;
 
+import com.hameed.inventario.enums.DiscountType;
+import com.hameed.inventario.exception.InvalidDiscountTypeException;
 import com.hameed.inventario.exception.ResourceNotFoundException;
 import com.hameed.inventario.mapper.SaleItemMapper;
 import com.hameed.inventario.mapper.SaleMapper;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,9 +51,10 @@ public class SaleServiceImpl implements SaleService {
         this.saleItemMapper = saleItemMapper;
     }
 
+    @Transactional
     @Override
     public SaleResponseDTO sell(SaleRequestDTO saleRequestDTO) {
-        // Map the SaleCreateDTO to Sale object
+        // Map the saleRequestDTO to Sale object
         Sale sale = saleMapper.saleRequestDTOToSale(saleRequestDTO);
 
         // getting the customer and setting it
@@ -68,7 +72,6 @@ public class SaleServiceImpl implements SaleService {
                 saleItemRequestDTO -> {
                         SaleItem saleItem = saleItemMapper.SaleItemRequestDTOToSaleItem(saleItemRequestDTO);
                         Product product = productService.getProductEntityById(saleItemRequestDTO.getProductId());
-                        product.setCurrentPrice(saleItem.getUnitPrice());
                         saleItem.setProduct(product);
                         return saleItem;
                     }

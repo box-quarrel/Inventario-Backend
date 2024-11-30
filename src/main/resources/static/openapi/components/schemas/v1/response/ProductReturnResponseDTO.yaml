@@ -5,8 +5,10 @@ properties:
     format: int64
     description: Unique identifier representing a specific product return
     readOnly: true
-  customer:
-    $ref: "../basic/CustomerDTO.yaml"
+  salesNumber:
+    type: string
+    description: Unique identifier representing the sale number
+    readOnly: true
   product:
     $ref: "ProductResponseDTO.yaml"
   quantityReturned:

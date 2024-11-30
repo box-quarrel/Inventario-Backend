@@ -4,6 +4,7 @@ import com.hameed.inventario.model.dto.request.ProductReturnRequestDTO;
 import com.hameed.inventario.model.dto.response.ProductReturnResponseDTO;
 import com.hameed.inventario.model.entity.ProductReturn;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductReturnMapper {
@@ -11,6 +12,7 @@ public interface ProductReturnMapper {
 //    ProductReturnMapper  INSTANCE = Mappers.getMapper(ProductReturnMapper.class);
 
 
+    @Mapping(source = "sale.salesNumber", target = "salesNumber")
     ProductReturnResponseDTO productReturnToProductReturnResponseDTO(ProductReturn productReturn);
 
     ProductReturn ProductReturnResponseDTOToProductReturn(ProductReturnResponseDTO productReturnResponseDTO);

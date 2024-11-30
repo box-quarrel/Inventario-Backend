@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductReturnRequestDTO {
-    private Long customerId;
+    private Long saleId;
 
     private Long productId;
 

@@ -15,8 +15,6 @@ public class SaleItemResponseDTO {
 
     private int quantity;
 
-    private Double unitPrice;
-
     private ProductResponseDTO product;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
