@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -42,6 +43,7 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
     }
 
     @Override
+    @Transactional
     public UnitOfMeasureDTO updateUnitOfMeasure(Long unitOfMeasureId, UnitOfMeasureDTO unitOfMeasureDTO) {
 
         Optional<UnitOfMeasure> optionalUnitOfMeasure = uomRepository.findById(unitOfMeasureId);
@@ -63,6 +65,7 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
     }
 
     @Override
+    @Transactional
     public void deleteUnitOfMeasure(Long unitOfMeasureId) {
         uomRepository.findById(unitOfMeasureId).ifPresentOrElse(
                 unitOfMeasure -> {

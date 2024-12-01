@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -45,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO) {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
         if(optionalCategory.isPresent()) {
@@ -66,6 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long categoryId) {
         categoryRepository.findById(categoryId).ifPresentOrElse(
                 category -> {

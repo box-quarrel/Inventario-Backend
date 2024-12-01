@@ -32,12 +32,12 @@ public class Supplier extends AbstractEntity{
     @Column(name = "address")
     private String address;
 
-    @ManyToMany(mappedBy = "suppliers")
+    @ManyToMany(mappedBy = "suppliers", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Product> products;
 
     // one-to-many relation with poh
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "supplier", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+//    @JsonManagedReference
     private List<PurchaseOrder> purchaseOrders;
 
     public void addProduct(Product product) {
@@ -48,6 +48,16 @@ public class Supplier extends AbstractEntity{
                 products.add(product);
                 product.getSuppliers().add(this);
             }
+    }
+
+    public void removeProduct(Product product) {
+        if (product != null) {
+            if (products != null && products.remove(product)) {
+                product.getSuppliers().remove(this);
+            } else {
+                throw new IllegalStateException("Product has not been added to the list");
+            }
+        }
     }
 
 

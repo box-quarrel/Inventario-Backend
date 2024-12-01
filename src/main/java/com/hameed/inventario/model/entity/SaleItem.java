@@ -17,12 +17,11 @@ public class SaleItem extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    // no need for managing backed reference since the product entity does not reference its purchases
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "sale_id")
-    @JsonBackReference
+    @JoinColumn(name = "sale_id", nullable = false)
+//    @JsonBackReference
     private Sale sale;
 
 }

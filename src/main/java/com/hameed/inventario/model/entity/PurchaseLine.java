@@ -28,7 +28,7 @@ public class PurchaseLine extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "po_header_id")
-    @JsonBackReference
+//    @JsonBackReference
     private PurchaseOrder purchaseOrder;
 
 }

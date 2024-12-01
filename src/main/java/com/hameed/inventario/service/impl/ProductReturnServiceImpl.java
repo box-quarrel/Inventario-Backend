@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductReturnServiceImpl implements ProductReturnService {
@@ -39,6 +40,7 @@ public class ProductReturnServiceImpl implements ProductReturnService {
     }
 
     @Override
+    @Transactional
     public ProductReturnResponseDTO addProductReturn(ProductReturnRequestDTO productReturnRequestDTO) {
         ProductReturn productReturn = productReturnMapper.ProductReturnRequestDTOToProductReturn(productReturnRequestDTO);
 

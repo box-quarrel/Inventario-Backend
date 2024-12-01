@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
         // map productCreateDTO to Product
         Product product = productMapper.ProductRequestDTOToProduct(productRequestDTO);
@@ -53,6 +55,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
 
         Optional<Product> optionalProduct = productRepository.findById(productId);
@@ -84,9 +87,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void removeProduct(Long productId) {
         productRepository.findById(productId).ifPresentOrElse(
-                productRepository::delete,
+                product -> {
+                    product.setCategory(null);
+                    product.setPrimaryUom(null);
+                    product.getSuppliers().forEach(supplier -> supplier.removeProduct(product));
+                    productRepository.delete(product);
+                },
                 () -> {
                     throw new ResourceNotFoundException("Product with this Id: " + productId + " could not be found");
                 }
@@ -108,5 +117,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductEntityById(Long productId) {
         return productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product with this Id: " + productId + " could not be found"));
+    }
+
+    @Override
+    public void saveProduct(Product product) {
+        productRepository.save(product);
     }
 }

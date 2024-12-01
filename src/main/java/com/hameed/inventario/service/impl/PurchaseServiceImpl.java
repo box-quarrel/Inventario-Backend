@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +54,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional
     public PurchaseResponseDTO addPurchaseOrder(PurchaseRequestDTO purchaseRequestDTO) {
         // Map the PurchaseCreateDTO to PurchaseOrder object
         PurchaseOrder purchaseOrder = purchaseMapper.PurchaseRequestDTOToPurchaseOrder(purchaseRequestDTO);
@@ -88,6 +90,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional
     // this update should be restricted to very specific users
     public PurchaseResponseDTO updatePurchase(Long purchaseId, PurchaseRequestDTO purchaseRequestDTO) {
 
@@ -121,6 +124,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional
     public void removePurchase(Long purchaseId) {
         purchaseRepository.findById(purchaseId).ifPresentOrElse(
                 purchaseOrder -> {
@@ -128,14 +132,13 @@ public class PurchaseServiceImpl implements PurchaseService {
                     if (!purchaseOrder.getPurchaseStatus().equals(PurchaseStatus.PENDING.toString())) {
                         throw new RecordCannotBeModifiedException("Purchase Order " + purchaseOrder.getId() + " cannot be modified because it is already received");
                     }
+                    purchaseOrder.setSupplier(null);
                     purchaseRepository.delete(purchaseOrder);
                 },
                 () -> {
                     throw new ResourceNotFoundException("Purchase order with this Id: " + purchaseId + " could not be found");
                 }
         );
-
-        purchaseRepository.deleteById(purchaseId);
     }
 
     @Override
@@ -156,6 +159,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional
     public PurchaseResponseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
         Long purchaseOrderId = receiveOrderDTO.getPurchaseOrderId();
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseOrderId);

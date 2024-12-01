@@ -6,6 +6,7 @@ import com.hameed.inventario.service.InventoryStockService;
 import com.hameed.inventario.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InventoryStockServiceImpl implements InventoryStockService {
@@ -18,19 +19,22 @@ public class InventoryStockServiceImpl implements InventoryStockService {
     }
 
     @Override
+    @Transactional
     public void increaseStock(Long productId, int quantity) {
         Product product = productService.getProductEntityById(productId);
         product.setQuantity(product.getQuantity() + quantity);
+        productService.saveProduct(product);
     }
 
     @Override
+    @Transactional
     public void decreaseStock(Long productId, int quantity) {
-        if (!checkStock(productId, quantity)) {
+        Product product = productService.getProductEntityById(productId);
+        if (product.getQuantity() < quantity) {
             throw new InventoryOutOfStockException("There is not enough stock in the inventory for product: " + productId + ", Quantity Requested: " + quantity);
         }
-
-        Product product = productService.getProductEntityById(productId);
         product.setQuantity(product.getQuantity() - quantity);
+        productService.saveProduct(product);
     }
 
     @Override

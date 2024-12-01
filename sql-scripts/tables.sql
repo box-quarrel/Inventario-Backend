@@ -137,7 +137,7 @@ CREATE TABLE Sales (
                        net_amount DOUBLE NOT NULL,  -- based on the discount type, this can be calculated by two means: 1- total_amount - discount_value , 2- total_amount - (total_amount*discount_value)
                        total_amount DOUBLE NOT NULL,
                        discount_value DOUBLE,   -- either an actual amount value or a percentage value
-                       discount_type DOUBLE,
+                       discount_type VARCHAR(50),
                        customer_id BIGINT,
                        creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                        created_by VARCHAR(255),

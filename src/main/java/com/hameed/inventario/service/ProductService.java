@@ -23,6 +23,10 @@ public interface ProductService {
     // Get a product by ID
     public ProductResponseDTO getProductById(Long productId);
 
+    // for retrieving the entity itself
     public Product getProductEntityById(Long productId);
+
+    // for direct persistence
+    public void saveProduct(Product product);
 }
 

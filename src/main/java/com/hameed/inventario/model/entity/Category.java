@@ -26,7 +26,7 @@ public class Category extends AbstractEntity{
     private String description;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    @JsonManagedReference
+//    @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 
 }

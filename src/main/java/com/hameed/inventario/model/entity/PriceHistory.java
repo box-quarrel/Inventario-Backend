@@ -20,7 +20,7 @@ public class PriceHistory extends AbstractEntity{
     private Double newPrice;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    @JsonBackReference
+    @JoinColumn(name = "product_id", nullable = false)
+//    @JsonBackReference
     private Product product;
 }

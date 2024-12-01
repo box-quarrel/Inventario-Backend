@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @Transactional
     public SupplierDTO updateSupplier(Long supplierId, SupplierDTO supplierDTO) {
 
         Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
@@ -57,6 +59,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @Transactional
     public void deleteSupplier(Long supplierId) {
         supplierRepository.findById(supplierId).ifPresentOrElse(
                 supplier -> {

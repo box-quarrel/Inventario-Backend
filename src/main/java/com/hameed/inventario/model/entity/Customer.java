@@ -30,17 +30,7 @@ public class Customer extends AbstractEntity {
     @Column(name = "address")
     private String address;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private Set<Sale> sales = new HashSet<>();
-
-    public void addSale(Sale sale) {
-        if (sale != null) {
-            if (sales == null) {
-                sales = new HashSet<>();
-            }
-            sales.add(sale);
-            sale.setCustomer(this);
-        }
-    }
 
 }

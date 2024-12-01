@@ -44,13 +44,12 @@ public class Product extends AbstractEntity {
     // references primary unit of measure
     @ManyToOne
     @JoinColumn(name = "primary_uom_code", referencedColumnName = "code")
-    // no need to manage the back reference since there is no reference for the products list in the unit of measure
     private UnitOfMeasure primaryUom;
 
     // many-to-one relation with category
     @ManyToOne
     @JoinColumn(name = "category_code", referencedColumnName = "code")
-    @JsonBackReference
+//    @JsonBackReference
     private Category category;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -62,12 +61,12 @@ public class Product extends AbstractEntity {
     private Set<Supplier> suppliers;
 
     // one-to-many relation with historical price/cost recording changes
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
     private List<PriceHistory> priceHistoryList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
     private List<CostHistory> costHistoryList = new ArrayList<>();
 
 

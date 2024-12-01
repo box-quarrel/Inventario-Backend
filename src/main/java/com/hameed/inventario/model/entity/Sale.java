@@ -38,16 +38,16 @@ public class Sale extends AbstractEntity{
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonBackReference
+//    @JsonBackReference
     private Customer customer;
 
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "sale",  cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    @JsonManagedReference
     private Set<SaleItem> saleItems = new HashSet<>();
 
-    @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
     private List<ProductReturn> productReturns = new ArrayList<>();
 
     public void addSaleItem(SaleItem saleItem) {

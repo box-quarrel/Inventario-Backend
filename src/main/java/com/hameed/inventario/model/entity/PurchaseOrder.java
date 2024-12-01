@@ -39,11 +39,11 @@ public class PurchaseOrder extends AbstractEntity{
 
     @ManyToOne
     @JoinColumn(name = "supplier_id")
-    @JsonBackReference
+//    @JsonBackReference
     private Supplier supplier;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    @JsonManagedReference
     private List<PurchaseLine> purchaseLines = new ArrayList<>();
 
     public void addPurchaseLine(PurchaseLine purchaseLine) {
@@ -71,7 +71,7 @@ public class PurchaseOrder extends AbstractEntity{
         if (discount == null) {
             setDiscount(0.0);
         }
-        this.totalAmount = totalAmountOnLines - discount;
+        setTotalAmount(totalAmountOnLines - discount);
     }
 
     @PrePersist

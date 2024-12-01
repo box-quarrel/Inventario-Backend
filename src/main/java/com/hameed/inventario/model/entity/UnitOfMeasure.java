@@ -29,6 +29,6 @@ public class UnitOfMeasure {
     private String description;
 
     @OneToMany(mappedBy = "primaryUom", fetch = FetchType.LAZY)
-    @JsonIgnore
+//    @JsonIgnore
     private Set<Product> products;
 }
