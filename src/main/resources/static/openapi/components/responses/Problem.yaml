@@ -25,7 +25,7 @@ properties:
     description: A URI reference to the specific occurrence of the problem
     nullable: true
   timestamp:
-    $ref: "../../components/schemas/common/iso_timestamp.yaml"
+    $ref: "../schemas/common/iso_timestamp.yaml"
 required:
   - type
   - title

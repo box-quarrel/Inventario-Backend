@@ -8,9 +8,6 @@ properties:
   quantity:
     type: integer
     format: int32
-  unitPrice:
-    type: number
-    format: double
   product:
     $ref: "ProductResponseDTO.yaml"
   creationDate:

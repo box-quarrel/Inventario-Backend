@@ -4,6 +4,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.basic.UnitOfMeasureDTO;
 import com.hameed.inventario.service.UnitOfMeasureService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/unit-of-measures")
+@RequestMapping("v1/unit-of-measures")
 public class UnitOfMeasureController {
 
     // properties
@@ -44,13 +45,13 @@ public class UnitOfMeasureController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> addUnitOfMeasure(@RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
+    public  ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> addUnitOfMeasure(@Valid @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
         UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.createUnitOfMeasure(unitOfMeasureDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Created Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> updateUnitOfMeasure(@PathVariable Long id, @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
+    public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> updateUnitOfMeasure(@PathVariable Long id, @Valid @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
         UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(id, unitOfMeasureDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Updated Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
@@ -58,6 +59,6 @@ public class UnitOfMeasureController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> deleteUnitOfMeasure(@PathVariable Long id) {
         unitOfMeasureService.deleteUnitOfMeasure(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "UnitOfMeasure Deleted Successfully"));  // 204 NO_CONTENT
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

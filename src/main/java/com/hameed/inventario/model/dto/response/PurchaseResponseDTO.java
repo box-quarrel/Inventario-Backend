@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hameed.inventario.model.dto.basic.SupplierDTO;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ public class PurchaseResponseDTO {
 
     private SupplierDTO supplier;
 
+    @UniqueElements
     private List<POLineResponseDTO> purchaseLines; // change this to purchaseLines
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

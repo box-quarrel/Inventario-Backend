@@ -7,12 +7,16 @@ properties:
     readOnly: true
   uomName:
     type: string
+    maxLength: 50
+    minLength: 2
     description: Full Name of the UnitOfMeasure
     example: "TestUnitOfMeasureName"
   uomCode:
     type: string
     description: Short Code to identify the unitOfMeasure
     example: "UOM01"
+    maxLength: 20
+    minLength: 2
   description:
     type: string
     description: Full Description of the type of products that fit in this unitOfMeasure

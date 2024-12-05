@@ -18,12 +18,12 @@ public class SaleResponseDTO {
     private Double totalAmount;
     private Double netAmount;
     private String discountType;
-    private Double discountAmount;
+    private Double discountValue;
     private CustomerDTO customer;
     private Set<SaleItemResponseDTO> saleItems;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL) // if no returned products this will be excluded from the dto
-    private List<ProductReturnResponseDTO> productReturns;
+//    @JsonInclude(JsonInclude.Include.NON_NULL) // if no returned products this will be excluded from the dto
+//    private List<ProductReturnResponseDTO> productReturns;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

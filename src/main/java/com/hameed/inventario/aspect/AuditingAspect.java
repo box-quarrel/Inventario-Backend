@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 public class AuditingAspect {
     // TODO: yet to be implemented
 
-    @Pointcut("execution(public com.hameed.inventario.model.dto.* com.hameed.inventario.mapper.*(*))")
+    @Pointcut("execution(public * com.hameed.inventario.mapper.*Mapper.*(..))")
     public void convertToDTOMapperPointcut(){}
 
     @Around("convertToDTOMapperPointcut()")

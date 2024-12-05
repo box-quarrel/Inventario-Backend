@@ -9,6 +9,8 @@ properties:
   quantityReturned:
     type: integer
     format: int32
+    minimum: 0
+    exclusiveMinimum: true
   reason:
     type: string
 

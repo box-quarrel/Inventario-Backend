@@ -83,10 +83,10 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchaseOrder.setPurchaseNumber(purchaseNumber);
 
         //save
-        purchaseRepository.save(purchaseOrder);
+        PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
 
-        // return response
-        return purchaseMapper.purchaseOrderToPurchaseResponseDTO(purchaseOrder);
+        // return Purchase order response
+        return purchaseMapper.purchaseOrderToPurchaseResponseDTO(resultPurchaseOrder);
     }
 
     @Override
@@ -105,13 +105,20 @@ public class PurchaseServiceImpl implements PurchaseService {
             // getting the supplier and setting it
             Supplier supplier = supplierService.getSupplierEntityById(purchaseRequestDTO.getSupplierId());
             purchaseOrder.setSupplier(supplier);
+            purchaseOrder.setNotes(purchaseRequestDTO.getNotes());
 
 
             // get lines from DTO and add it to po
-            List<POLineRequestDTO> purchaseLinesDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
-            List<PurchaseLine> purchaseLines =  purchaseLinesDTOS.stream().map(poLineMapper::poLineRequestDTOToPurchaseLine).toList();
-            purchaseOrder.setPurchaseLines(new ArrayList<>());
-            purchaseLines.forEach(purchaseOrder::addPurchaseLine);
+            List<POLineRequestDTO> poLineRequestDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
+            List<PurchaseLine> purchaseLines =  poLineRequestDTOS.stream().map(
+                    poLineRequestDTO -> {
+                        PurchaseLine purchaseLine = poLineMapper.poLineRequestDTOToPurchaseLine(poLineRequestDTO);
+                        Product product = productService.getProductEntityById(poLineRequestDTO.getProductId());
+                        purchaseLine.setProduct(product);
+                        return purchaseLine;
+                    }
+            ).toList();
+            purchaseLines.forEach(purchaseOrder::updatePurchaseLine);
 
             // save purchase order
             PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
@@ -160,41 +167,51 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     @Transactional
-    public PurchaseResponseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO) {
-        Long purchaseOrderId = receiveOrderDTO.getPurchaseOrderId();
+    public PurchaseResponseDTO receiveOrder(Long purchaseOrderId, ReceiveOrderDTO receiveOrderDTO) {
+//        Long purchaseOrderId = receiveOrderDTO.getPurchaseOrderId();
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseOrderId);
         if (optionalPurchaseOrder.isPresent()) {
+
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-
-
-            // Create a map from ReceivedLineDTO list for efficient lookup
-//            Map<Long, Integer> receivedQuantities = receiveOrderDTO.getReceivedLines()
-//                    .stream()
-//                    .collect(Collectors.toMap(ReceivedLineDTO::getPurchaseLineId, ReceivedLineDTO::getReceivedQuantity));
-
-            // Iterate through each purchase line and update the received quantity
+            // service-validation
+            if (!purchaseOrder.getPurchaseStatus().equals(PurchaseStatus.PENDING.toString())) {
+                throw new RecordCannotBeModifiedException("Purchase Order " + purchaseOrder.getId() + " cannot be modified because it is already received");
+            }
+            // set the discount for the received dto to the purchase order
+            if (receiveOrderDTO.getDiscount() != null) {
+                purchaseOrder.setDiscount(receiveOrderDTO.getDiscount());
+            }
 //            purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
-//                if (receivedQuantities.containsKey(purchaseLine.getId())) {
-//                    purchaseLine.setReceivedQuantity(receivedQuantities.get(purchaseLine.getId()));
+//                Optional<ReceivedLineDTO> optionalReceivedLineDTO = receiveOrderDTO.getReceivedLines().stream().filter(receivedLineDTO -> Objects.equals(receivedLineDTO.getPurchaseLineId(), purchaseLine.getId())).findFirst();
+//                if (optionalReceivedLineDTO.isPresent()) {
+//                    ReceivedLineDTO receivedLine = optionalReceivedLineDTO.get();
+//                    purchaseLine.setReceivedQuantity(receivedLine.getReceivedQuantity());
+//                    purchaseLine.setUnitPrice(receivedLine.getUnitPrice());
 //                    // increase stock of the product with the newly received quantity
 //                    inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
 //                    // add the supplier to the list of suppliers of each product in the PO
 //                    purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
 //                    // update the current cost of the product based on the unit price of the received line
-//                    purchaseLine.getProduct().setCurrentCost(purchaseLine.getUnitPrice());
+//                    purchaseLine.getProduct().setCurrentCost(receivedLine.getUnitPrice());
+//                } else {
+//                    throw new ResourceNotFoundException("Received Line with this Id: " + purchaseLine.getId() + " could not be found");
 //                }
+//            });
 
-            purchaseOrder.getPurchaseLines().forEach(purchaseLine -> {
-                Optional<ReceivedLineDTO> optionalReceivedLineDTO = receiveOrderDTO.getReceivedLines().stream().filter(receivedLineDTO -> Objects.equals(receivedLineDTO.getPurchaseLineId(), purchaseLine.getId())).findFirst();
-                if (optionalReceivedLineDTO.isPresent()) {
-                    ReceivedLineDTO receivedLine = optionalReceivedLineDTO.get();
+            receiveOrderDTO.getReceivedLines().forEach(receivedLine -> {
+                Optional<PurchaseLine> optionalPurchaseLine = purchaseOrder.getPurchaseLines().stream().filter(purchaseLine -> Objects.equals(purchaseLine.getId(), receivedLine.getPurchaseLineId())).findFirst();
+                if (optionalPurchaseLine.isPresent()) {
+                    PurchaseLine purchaseLine = optionalPurchaseLine.get();
                     purchaseLine.setReceivedQuantity(receivedLine.getReceivedQuantity());
+                    purchaseLine.setUnitPrice(receivedLine.getUnitPrice());
                     // increase stock of the product with the newly received quantity
                     inventoryStockService.increaseStock(purchaseLine.getProduct().getId(), purchaseLine.getReceivedQuantity());
                     // add the supplier to the list of suppliers of each product in the PO
                     purchaseLine.getProduct().addSupplier(purchaseOrder.getSupplier());
                     // update the current cost of the product based on the unit price of the received line
                     purchaseLine.getProduct().setCurrentCost(receivedLine.getUnitPrice());
+                } else {
+                    throw new ResourceNotFoundException("Received Line with this purchase Line Id: " + receivedLine.getPurchaseLineId() + " could not be found");
                 }
             });
 
@@ -211,7 +228,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
             // save to repository
             PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
-
+            resultPurchaseOrder.updateTotalAmount();
             // return the received purchase order
             return purchaseMapper.purchaseOrderToPurchaseResponseDTO(resultPurchaseOrder);
         } else {

@@ -1,15 +1,19 @@
 type: object
 properties:
+  id:
+    type: [ integer, null ]
+    format: int64
+    description: Purchase Line id should Only be included when a line is updated
+    nullable: true
   productId:
     type: integer
     format: int64
+    example: 3
   requestedQuantity:
     type: integer
     format: int32
-  unitPrice:
-    type: number
-    format: double
+    minimum: 1
+    example: 150
 required:
   - productId
   - requestedQuantity
-  - unitPrice

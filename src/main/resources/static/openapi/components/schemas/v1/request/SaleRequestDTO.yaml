@@ -1,24 +1,25 @@
 type: object
 properties:
-  totalAmount:
-    type: number
+  discountType:
+    type: [ string, null ]
+    enum:
+      - FIXED
+      - PERCENTAGE
+  discountValue:
+    type: [ number, null ]
     format: double
-  discount:
-    type: number
-    format: double
-    description: Defines the percentage of discount applied to the total amount (NOT for each order line)
+    description: Defines the percentage/amount of discount applied to the total amount (NOT for each order line, but for the whole sale). This will be mandatory if the value of the discountType is not null.
     example: 15
-    nullable: true
+    minimum: 0
+
   customerId:
     type: integer
     format: int64
-  /v1/request/saleItemRequestDTOS:
+  saleItemRequestDTOS:
     uniqueItems: true
     type: array
     items:
       $ref: "SaleItemRequestDTO.yaml"
 
 required:
-  - totalAmount
-  - customerId
-  - /v1/request/saleItemRequestDTOS
+  - saleItemRequestDTOS

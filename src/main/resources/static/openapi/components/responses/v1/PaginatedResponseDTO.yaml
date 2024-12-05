@@ -6,7 +6,7 @@ properties:
     example: 200
   message:
     type: string
-    example: Entities Retrieved Successfully
+    example: "Entities Retrieved Successfully"
   pageNumber:
     type: integer
     format: int32

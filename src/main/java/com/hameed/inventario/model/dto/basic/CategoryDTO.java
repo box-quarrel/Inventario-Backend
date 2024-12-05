@@ -2,18 +2,27 @@ package com.hameed.inventario.model.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 @Data
 @Builder
 public class CategoryDTO {
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
+    @NotBlank
+    @Length(min = 2, max = 50, message = "Category Name Length must be between 2 and 50")
     private String categoryName;
+
+    @NotBlank
+    @Length(min = 2, max = 20, message = "Category Code Length must be between 2 and 20")
     private String categoryCode;
+
     private String description;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

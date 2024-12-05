@@ -3,11 +3,19 @@ properties:
   purchaseLineId:
     type: integer
     format: int64
-    description: Unique identifier representing a specific order line
+    description: "Unique identifier representing a specific order line"
   receivedQuantity:
     type: integer
     format: int32
-    description: The quantity of the received product, this is useful because not always the supplier can deliver all the requested quantity
+    minimum: 0
+    description: "The quantity of the received product, this is useful because not always the supplier can deliver all the requested quantity"
+  unitPrice:
+    type: number
+    format: double
+    minimum: 0
+    description: "The price paid for a single unit of the received item on the Purchase invoice"
+
 required:
   - purchaseLineId
   - receivedQuantity
+  - unitPrice

@@ -84,10 +84,11 @@ public class SaleServiceImpl implements SaleService {
 
 
         //save
-        saleRepository.save(sale);
+        Sale resultSale = saleRepository.save(sale);
+        resultSale.updateSaleTotals();
 
-        // return PO number
-        return saleMapper.saleToSaleResponseDTO(sale);
+        // return Sale Response
+        return saleMapper.saleToSaleResponseDTO(resultSale);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.basic.CategoryDTO;
 import com.hameed.inventario.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/categories")
+@RequestMapping("v1/categories")
 public class CategoryController {
 
     // properties
@@ -44,14 +45,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<CategoryDTO>> addCategory(@RequestBody CategoryDTO categoryDTO) {
+    public  ResponseEntity<ResponseDTO<CategoryDTO>> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO resultCategoryDTO = categoryService.addCategory(categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Created Successfully", resultCategoryDTO));  // 201 CREATED
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<CategoryDTO>> updateCategory(@PathVariable Long id,
-                                                                   @RequestBody CategoryDTO categoryDTO) {
+                                                                   @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO resultCategoryDTO = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Category Updated Successfully", resultCategoryDTO));  // 201 CREATED
     }
@@ -59,7 +60,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<CategoryDTO>> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Category Deleted Successfully"));  // 204 NO_CONTENT
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 

@@ -2,8 +2,12 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hameed.inventario.annotations.ValidDiscount;
+import com.hameed.inventario.annotations.ValidEnum;
 import com.hameed.inventario.enums.DiscountType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -19,21 +23,26 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidDiscount
 public class Sale extends AbstractEntity{
 
     @Column(name = "sales_number")
     private String salesNumber;
 
     @Column(name = "net_amount")
+    @PositiveOrZero(message = "Sales net amount cannot be negative")
     private Double netAmount;
 
     @Column(name = "total_amount")
+    @PositiveOrZero(message = "Sale Total Amount cannot be negative")
     private Double totalAmount;
 
     @Column(name = "discount_type")
+    @ValidEnum(enumClass = DiscountType.class, message = "Invalid invalid type")
     private String discountType;
 
     @Column(name = "discount_value")
+    @PositiveOrZero(message = "Discount value cannot be negative")
     private Double discountValue;
 
     @ManyToOne
@@ -91,13 +100,13 @@ public class Sale extends AbstractEntity{
     // after any update to the sale item quantities, this function should be called
     public void updateSaleTotals() {
         // calculate the total amount
-        Double totalAmount = this.getSaleItems().stream().map(saleItem -> saleItem.getProduct().getCurrentPrice()).reduce(0.0, Double::sum);
+        Double totalAmount = this.getSaleItems().stream().map(saleItem -> saleItem.getProduct().getCurrentPrice() * saleItem.getQuantity()).reduce(0.0, Double::sum);
         this.setTotalAmount(totalAmount);
         // Calculate the net amount based on discount
-        if (this.getDiscountValue() != null) {
-            DiscountType discountType = DiscountType.fromString(this.getDiscountType()); // this will throw an invalid discount type exception if failed
+        if (this.discountValue != null) {
+            DiscountType discountType = DiscountType.fromString(this.discountType); // this will throw an invalid discount type exception if failed
 
-            double discountAmount = calculateDiscountAmount(totalAmount, this.getDiscountValue(), discountType);
+            double discountAmount = calculateDiscountAmount(totalAmount, discountValue, discountType);
             this.setNetAmount(totalAmount - discountAmount);
         }
     }

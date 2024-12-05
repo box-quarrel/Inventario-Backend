@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: Inventario OpenAPI definition
   description: "An API for a web-based system to manage inventory stocks and handle stocks analytics"
@@ -66,7 +66,7 @@ paths:
     $ref: "paths/v1/product-returns_{id}.yaml"
 
   # Non-standard CRUD Operations
-  /purchase-orders/receive:
+  /purchase-orders/receive/{id}:
     $ref: "paths/v1/purchase-orders_receive.yaml"
 
 

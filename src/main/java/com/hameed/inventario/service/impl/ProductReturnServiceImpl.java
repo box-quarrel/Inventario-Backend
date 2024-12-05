@@ -58,6 +58,7 @@ public class ProductReturnServiceImpl implements ProductReturnService {
         saleItem.setQuantity(saleItem.getQuantity() - productReturn.getQuantityReturned());
 
         // Persist the product return
+        sale.updateSaleTotals();
         productReturn.setSale(sale);
         ProductReturn savedProductReturn = productReturnRepository.save(productReturn);
 

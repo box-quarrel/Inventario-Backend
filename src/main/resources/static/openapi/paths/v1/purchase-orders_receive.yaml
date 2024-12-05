@@ -1,7 +1,11 @@
 put:
   tags:
     - Purchase Order
-  operationId: updatePurchaseOrder
+  operationId: receiveOrder
+  parameters:
+    - name: id
+      in: path
+      required: true
   requestBody:
     content:
       application/json:

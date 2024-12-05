@@ -4,6 +4,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.basic.SupplierDTO;
 import com.hameed.inventario.service.SupplierService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/suppliers")
+@RequestMapping("v1/suppliers")
 public class SupplierController {
     // properties
     @Value("${pageSize}")
@@ -43,13 +44,13 @@ public class SupplierController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<SupplierDTO>> addSupplier(@RequestBody SupplierDTO supplierDTO) {
+    public  ResponseEntity<ResponseDTO<SupplierDTO>> addSupplier(@Valid @RequestBody SupplierDTO supplierDTO) {
         SupplierDTO resultSupplierDTO = supplierService.addSupplier(supplierDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Supplier Created Successfully", resultSupplierDTO));  // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<SupplierDTO>> updateSupplier(@PathVariable Long id, @RequestBody SupplierDTO supplierDTO) {
+    public ResponseEntity<ResponseDTO<SupplierDTO>> updateSupplier(@PathVariable Long id, @Valid @RequestBody SupplierDTO supplierDTO) {
         SupplierDTO resultSupplierDTO = supplierService.updateSupplier(id, supplierDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Supplier Updated Successfully", resultSupplierDTO));  // 201 CREATED
     }
@@ -57,7 +58,7 @@ public class SupplierController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<SupplierDTO>> deleteSupplier(@PathVariable Long id) {
         supplierService.deleteSupplier(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Supplier Deleted Successfully"));  // 204 NO_CONTENT
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 

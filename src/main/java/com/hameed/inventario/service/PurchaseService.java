@@ -28,5 +28,5 @@ public interface PurchaseService {
 
     public PurchaseOrder getPurchaseEntityById(Long purchaseId);
 
-    public PurchaseResponseDTO receiveOrder(ReceiveOrderDTO receiveOrderDTO);
+    public PurchaseResponseDTO receiveOrder(Long purchaseOrderId, ReceiveOrderDTO receiveOrderDTO);
 }

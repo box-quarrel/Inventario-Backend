@@ -3,8 +3,14 @@ package com.hameed.inventario.model.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,28 +23,37 @@ import java.util.Set;
 @Setter
 public class Product extends AbstractEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Length(min = 2, max = 255, message = "Product Name Length must be between 2 and 255")
     private String productName;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
+    @Length(max = 20, message = "Product Code Length must be less than 20")
     private String productCode;
 
     @Column(name = "description")
     private String description;
 
     @Column(name = "barcode")
+    // should add validation for a specific format
     private String barcode;
 
     @Column(name = "current_price")
+    @Positive(message = "Current price must be positive")
     private Double currentPrice;
 
     @Column(name = "current_cost")
+    @Positive(message = "Current Cost must be positive")
     private Double currentCost;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
+    @NotNull
+    @PositiveOrZero(message = "Product's quantity cannot be a negative value")
     private int quantity;
 
     @Column(name = "image_url")
+    @URL
     private String imageUrl;
 
     // references primary unit of measure

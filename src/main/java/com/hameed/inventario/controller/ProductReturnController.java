@@ -6,6 +6,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ProductReturnResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.service.ProductReturnService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/product-returns")
+@RequestMapping("v1/product-returns")
 public class ProductReturnController {
 
     // properties
@@ -47,7 +48,7 @@ public class ProductReturnController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> addProductReturn(@RequestBody ProductReturnRequestDTO productReturnRequestDTO) {
+    public  ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> addProductReturn(@Valid @RequestBody ProductReturnRequestDTO productReturnRequestDTO) {
         ProductReturnResponseDTO resultProductReturnResponseDTO = productReturnService.addProductReturn(productReturnRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "ProductReturn Created Successfully", resultProductReturnResponseDTO));  // 201 CREATED
     }

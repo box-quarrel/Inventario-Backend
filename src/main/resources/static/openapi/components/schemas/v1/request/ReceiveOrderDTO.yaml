@@ -1,12 +1,15 @@
 type: object
 properties:
-  purchaseOrderId:
-    type: integer
-    format: int64
+  discount:
+    type: [ number, null ]
+    format: double
   receivedLines:
     type: array
+    uniqueItems: true
     items:
       $ref: "ReceivedLineDTO.yaml"
+
+    description: "This means a discount amount provided by the supplier over the total amount."
 required:
   - purchaseOrderId
   - receivedLines

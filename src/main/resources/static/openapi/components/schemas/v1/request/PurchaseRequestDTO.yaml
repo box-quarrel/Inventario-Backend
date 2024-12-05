@@ -1,20 +1,18 @@
 type: object
 properties:
-  totalAmount:
-    type: number
-    format: double
   notes:
-    type: string
+    type: [ string, null ]
     description: Any special requests with the order
-    nullable: true
+    example: "Test Purchase Order"
   supplierId:
     type: integer
     format: int64
-  poLineCreateDTOS:
+    example: 3
+  poLineRequestDTOS:
     type: array
+    uniqueItems: true
     items:
       $ref: "POLineRequestDTO.yaml"
 required:
-  - totalAmount
   - supplierId
-  - poLineCreateDTOs
+  - poLineRequestDTOS

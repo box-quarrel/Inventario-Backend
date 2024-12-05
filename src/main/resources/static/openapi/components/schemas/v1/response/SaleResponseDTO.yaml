@@ -7,14 +7,27 @@ properties:
     readOnly: true
   salesNumber:
     type: string
+    readOnly: true
   totalAmount:
     type: number
     format: double
-  discount:
+    description: "This is the calculated total amount after summing the (unitPrice * quantity) for each sale item on the sale, without applying the discount"
+  netAmount:
     type: number
     format: double
-    description: Defines the percentage of discount applied to the total amount (NOT for each order line)
+    description: "This is after applying the discount to the total amount (either by subtracting directly -for the FIXED discount type- or by subtracting from the calculated discount amount after applying the percentage -for the PERCENTAGE discountType-"
+  discountType:
+    type: string
+    enum:
+      - FIXED
+      - PERCENTAGE
+    nullable: true
+  discountValue:
+    type: number
+    format: double
+    description: "Defines the percentage/amount of discount applied to the total amount (NOT for each order line, but for the whole sale). This will be mandatory if the value of the discountType is not null."
     example: 15
+    minimum: 0
     nullable: true
   customer:
     $ref: "../basic/CustomerDTO.yaml"
@@ -26,6 +39,7 @@ properties:
   productReturns:
     uniqueItems: true
     type: array
+    nullable: true
     items:
       $ref: "ProductReturnResponseDTO.yaml"
   creationDate:

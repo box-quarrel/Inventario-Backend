@@ -7,7 +7,6 @@ properties:
     readOnly: true
   purchaseNumber:
     type: string
-    format: uuid
     readOnly: true
   purchaseStatus:
     type: string
@@ -19,13 +18,14 @@ properties:
   discount:
     type: number
     format: double
-    description: Defines the percentage of discount applied to the total amount (NOT for each order line)
+    description: "This means a discount amount provided by the supplier over the total amount."
     example: 15
     default: 0
     nullable: true
   totalAmount:
     type: number
     format: double
+    description: "This is the calculated total amount after summing the (unitPrice * quantityReceived) for each received purchase line, then subtracting the discount amount"
   notes:
     type: string
     description: Any special requests with the order
@@ -34,6 +34,7 @@ properties:
     $ref: "../basic/SupplierDTO.yaml"
   purchaseLines:
     type: array
+    uniqueItems: true
     items:
       $ref: "POLineResponseDTO.yaml"
   creationDate:

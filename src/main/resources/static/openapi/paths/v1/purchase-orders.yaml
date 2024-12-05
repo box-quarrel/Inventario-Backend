@@ -1,7 +1,7 @@
 get:
   tags:
     - Purchase Order
-  operationId: getAllPurchaseOrders
+  operationId: getAllPurchases
   parameters:
     - name: page
       in: query
@@ -35,7 +35,7 @@ get:
 post:
   tags:
     - Purchase Order
-  operationId: addPurchaseOrder
+  operationId: addPurchase
   requestBody:
     content:
       application/json:
@@ -58,47 +58,6 @@ post:
                       $ref: "../../components/schemas/v1//response/PurchaseResponseDTO.yaml"
     "400":
       description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/responses/Problem.yaml"
-    "409":
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/responses/Problem.yaml"
-
-put:
-  tags:
-    - Purchase Order
-  operationId: updatePurchaseOrder
-  requestBody:
-    content:
-      application/json:
-        schema:
-          $ref: "../../components/schemas/v1/request/PurchaseRequestDTO.yaml"
-    required: true
-  responses:
-    "201":
-      description: Created
-      content:
-        application/hal+json:
-          schema:
-            allOf:
-              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
-              - type: object
-                properties:
-                  data:
-                    $ref: "../../components/schemas/v1/request/PurchaseRequestDTO.yaml"
-    "400":
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/responses/Problem.yaml"
-    "404":
-      description: Not Found
       content:
         application/json:
           schema:

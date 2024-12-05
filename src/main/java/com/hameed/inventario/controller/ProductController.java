@@ -6,6 +6,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ProductResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/products")
+@RequestMapping("v1/products")
 public class ProductController {
 
     // properties
@@ -46,13 +47,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<ProductResponseDTO>> addProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+    public  ResponseEntity<ResponseDTO<ProductResponseDTO>> addProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
         ProductResponseDTO resultProductResponseDTO = productService.addProduct(productRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Product Created Successfully", resultProductResponseDTO));  // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<ProductResponseDTO>> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ResponseDTO<ProductResponseDTO>> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO productRequestDTO) {
         ProductResponseDTO resultProductResponseDTO = productService.updateProduct(id, productRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Product Updated Successfully", resultProductResponseDTO));  // 201 CREATED
     }
@@ -60,7 +61,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<ProductResponseDTO>> deleteProduct(@PathVariable Long id) {
         productService.removeProduct(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Product Deleted Successfully"));  // 204 NO_CONTENT
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     
 }

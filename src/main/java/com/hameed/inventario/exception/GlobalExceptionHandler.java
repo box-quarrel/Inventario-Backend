@@ -1,13 +1,14 @@
 package com.hameed.inventario.exception;
 
 import com.hameed.inventario.model.dto.response.ErrorResponseDTO;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -21,26 +22,26 @@ public class GlobalExceptionHandler {
     /*
         General Exceptions Handling
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
-
-        // Prepare Exception Response
-        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
-                .type(URI.create("https://example.com/problems/internal-server-error"))
-                .title("Internal Server Error")
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .detail(ex.getMessage())
-                .instance(URI.create("/error"))
-                .timestamp(ZonedDateTime.now().toString())
-                .build();
-
-        // Logging
-        String requestId = MDC.get("requestId");
-        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
-
-        // Return Http Response
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
+//
+//        // Prepare Exception Response
+//        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+//                .type(URI.create("https://example.com/problems/internal-server-error"))
+//                .title("Internal Server Error")
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                .detail(ex.getMessage())
+//                .instance(URI.create("/error"))
+//                .timestamp(ZonedDateTime.now().toString())
+//                .build();
+//
+//        // Logging
+//        String requestId = MDC.get("requestId");
+//        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+//
+//        // Return Http Response
+//        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException ex) {
@@ -128,8 +129,31 @@ public class GlobalExceptionHandler {
     /*
         Bean-Validation Exceptions Handling
      */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException ex) {
+
+    // Thrown by Hibernate when a database constraint is violated (e.g. unique constraints, foreign key violations)
+    @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleHibernateConstraintViolationException(org.hibernate.exception.ConstraintViolationException ex) {
+
+        // Prepare Exception Response
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/validation-error"))
+                .title("Validation Error")
+                .status(HttpStatus.CONFLICT.value())
+                .detail(ex.getMessage())
+//        .instance(URI.create("/current-endpoint")) // Uncomment and use the actual endpoint causing the error
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseDTO);
+    }
+
+    // Thrown by the Bean Validation API during persistence
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(jakarta.validation.ConstraintViolationException ex) {
 
         // Prepare Exception Response
         ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
@@ -148,6 +172,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDTO);
     }
 
+    // Thrown by spring framework when an attempt to execute an SQL statement fails to map the given data, typically but no limited to an insert or update data results in violation of an integrity constraint.
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 
@@ -186,6 +211,37 @@ public class GlobalExceptionHandler {
         LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        // Prepare Error message
+        StringBuilder errorMessage = new StringBuilder();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName;
+            try {
+                fieldName = ((FieldError) error).getField();
+            } catch (ClassCastException e) {
+                fieldName = error.getObjectName();
+            }
+            String message = error.getDefaultMessage();
+            errorMessage.append(String.format("%s: %s | ", fieldName, message));
+        });
+        // Prepare Exception Response
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/return-quantiy-error"))
+                .title("Bean Validation Exception")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .detail(errorMessage.toString())
+//        .instance(URI.create("/current-endpoint")) // Uncomment and use the actual endpoint causing the error
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDTO);
     }
 
 }

@@ -2,7 +2,13 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hameed.inventario.annotations.ValidEnum;
+import com.hameed.inventario.enums.PurchaseStatus;
+import com.hameed.inventario.exception.ResourceNotFoundException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -24,15 +30,19 @@ public class PurchaseOrder extends AbstractEntity{
     private String purchaseNumber;
 
     @Column(name = "po_status")
+    @NotBlank
+    @ValidEnum(enumClass = PurchaseStatus.class, message = "Invalid purchase status") // this is a custom validator
     private String purchaseStatus;
 
     // This should be a value for later reference ( e.g. might be used for reporting the amount of discounts provided by a supplier)
     @Column(name = "po_discount")
-    private Double discount;
+    @PositiveOrZero(message = "Discount cannot be negative")
+    private Double discount = 0.0;
 
     // This should be the actual total value paid (even after discount)
-    @Column(name = "total_amount")
-    private Double totalAmount;
+    @Column(name = "total_amount", nullable = false)
+    @PositiveOrZero
+    private Double totalAmount = 0.0;
 
     @Column(name = "notes")
     private String notes;
@@ -57,7 +67,21 @@ public class PurchaseOrder extends AbstractEntity{
         }
     }
 
-    // override the setters and make them private for totals
+
+    public void updatePurchaseLine(PurchaseLine purchaseLine) {
+        if (purchaseLine != null && purchaseLine.getId() != null && purchaseLine.getProduct() != null) {
+            for (PurchaseLine poLine : purchaseLines) {
+                if (poLine.getId() == purchaseLine.getId()) {
+                    poLine.setProduct(purchaseLine.getProduct());
+                    poLine.setRequestedQuantity(purchaseLine.getRequestedQuantity());
+                    return;
+                }
+            }
+        }
+        throw new ResourceNotFoundException("Purchase line: " + purchaseLine.getId() + " Could not be found for this purchase order");
+    }
+
+    // override the setters and make them private
     private void setTotalAmount(Double totalAmount) {
         if (totalAmount >= 0) {
             this.totalAmount = totalAmount;
@@ -67,11 +91,11 @@ public class PurchaseOrder extends AbstractEntity{
     }
 
     public void updateTotalAmount() {
-        Double totalAmountOnLines = purchaseLines.stream().map(PurchaseLine::getUnitPrice).reduce(0.0, Double::sum);
-        if (discount == null) {
+        Double totalAmountOnLines = this.purchaseLines.stream().map(purchaseLine -> purchaseLine.getUnitPrice() * purchaseLine.getReceivedQuantity()).reduce(0.0, Double::sum);
+        if (this.discount == null) {
             setDiscount(0.0);
         }
-        setTotalAmount(totalAmountOnLines - discount);
+        setTotalAmount(totalAmountOnLines - this.discount);
     }
 
     @PrePersist

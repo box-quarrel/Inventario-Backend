@@ -15,6 +15,7 @@ public interface ProductReturnMapper {
     @Mapping(source = "sale.salesNumber", target = "salesNumber")
     ProductReturnResponseDTO productReturnToProductReturnResponseDTO(ProductReturn productReturn);
 
+    @Mapping(source = "salesNumber", target = "sale.salesNumber")
     ProductReturn ProductReturnResponseDTOToProductReturn(ProductReturnResponseDTO productReturnResponseDTO);
 
     ProductReturn ProductReturnRequestDTOToProductReturn(ProductReturnRequestDTO productReturnRequestDTO);

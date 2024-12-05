@@ -4,10 +4,13 @@ properties:
     type: string
     description: Full Name of the Product
     example: "TestProductName"
+    maxLength: 255
+    minLength: 2
   productCode:
     type: string
     description: Short Code to identify the product
     example: "PROD01"
+    maxLength: 20
   description:
     type: string
   barcode:
@@ -15,14 +18,20 @@ properties:
   currentPrice:
     type: number
     format: double
+    exclusiveMinimum: true
+    minimum: 0
   currentCost:
     type: number
     format: double
+    exclusiveMinimum: true
+    minimum: 0
   quantity:
     type: integer
     format: int32
+    minimum: 0
   imageUrl:
     type: string
+    format: url
   categoryId:
     type: integer
     format: int64
@@ -31,8 +40,5 @@ properties:
     format: int64
 required:
   - productName
-  - productCode
   - currentPrice
   - quantity
-  - categoryId
-  - primaryUomId

@@ -2,7 +2,9 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 
@@ -13,16 +15,16 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnitOfMeasure {
+public class UnitOfMeasure extends AbstractEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @NotBlank(message = "Unit of Measure Name cannot be blank")
+    @Length(min = 2, max = 50, message = "Unit of Measure Name Length must be between 2 and 50")
     private String uomName;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
+    @NotBlank
+    @Length(min = 2, max = 20, message = "Unit of Measure Code Length must be between 2 and 20")
     private String uomCode;
 
     @Column(name = "description")

@@ -8,10 +8,14 @@ properties:
   categoryName:
     type: string
     description: Full Name of the Category
+    maxLength: 50
+    minLength: 2
     example: "TestCategoryName"
   categoryCode:
     type: string
     description: Short Code to identify the category
+    maxLength: 20
+    minLength: 2
     example: "TT01"
   description:
     type: string

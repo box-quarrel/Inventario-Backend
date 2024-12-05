@@ -3,7 +3,10 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +20,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Supplier extends AbstractEntity{
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Length(min = 2, max = 50, message = "Supplier Name Length must be between 2 and 50")
     private String supplierName;
 
     @Column(name = "contact_name")
@@ -27,6 +32,7 @@ public class Supplier extends AbstractEntity{
     private String contactPhone;
 
     @Column(name = "email")
+    @Email
     private String email;
 
     @Column(name = "address")

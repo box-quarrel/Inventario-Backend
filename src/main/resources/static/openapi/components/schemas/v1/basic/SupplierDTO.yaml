@@ -7,37 +7,35 @@ properties:
     readOnly: true
   supplierName:
     type: string
+    maxLength: 50
+    minLength: 2
   contactName:
     type: string
   contactPhone:
-    type: string
-    maxLength: 15
+    type: [ string, null ]
+    maxLength: 20
     minLength: 7
     example: (+20)10236482399
-    nullable: true
+    
   email:
-    type: string
-    maxLength: 255
-    minLength: 3
+    type: [ string, null ]
     example: test@example.com
-    nullable: true
+    
   address:
-    type: string
+    type: [ string, null ]
   creationDate:
     $ref: "../../common/iso_timestamp.yaml"
   lastUpdateDate:
     $ref: "../../common/iso_timestamp.yaml"
   createdBy:
-    type: string
+    type: [ string, null ]
     description: The user who created this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
     readOnly: true
-    nullable: true
+    
   lastUpdateBy:
-    type: string
+    type: [ string, null ]
     description: The last user who modified this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
     readOnly: true
-    nullable: true
+    
 required:
   - supplierName
-  - contactName
-  - contactPhone

@@ -27,6 +27,52 @@ get:
         application/json:
           schema:
             $ref: "../../components/responses/Problem.yaml"
+
+put:
+  tags:
+    - Supplier
+  operationId: updateSupplier
+  parameters:
+    - name: id
+      in: path
+      required: true
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/v1/basic/SupplierDTO.yaml"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/hal+json:
+          schema:
+            allOf:
+              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+              - type: object
+                properties:
+                  data:
+                    $ref: "../../components/schemas/v1/basic/SupplierDTO.yaml"
+    "400":
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "404":
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+    "409":
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/responses/Problem.yaml"
+
 delete:
   tags:
     - Supplier
@@ -41,11 +87,7 @@ delete:
   responses:
     "204":
       description: No Content
-      content:
-        application/hal+json:
-          schema:
-            allOf:
-              - $ref: "../../components/responses/v1/ResponseDTO.yaml"
+
     "404":
       description: Not Found
       content:

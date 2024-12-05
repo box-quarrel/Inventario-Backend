@@ -4,6 +4,7 @@ import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.model.dto.basic.CustomerDTO;
 import com.hameed.inventario.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/inventario/api/v1/customers")
+@RequestMapping("v1/customers")
 public class CustomerController {
 
     // properties
@@ -44,21 +45,21 @@ public class CustomerController {
     }
 
     @PostMapping
-    public  ResponseEntity<ResponseDTO<CustomerDTO>> addCustomer(@RequestBody CustomerDTO customerDTO) {
+    public  ResponseEntity<ResponseDTO<CustomerDTO>> addCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         CustomerDTO resultCustomerDTO = customerService.addCustomer(customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Customer Created Successfully", resultCustomerDTO));  // 201 CREATED
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<CustomerDTO>> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO<CustomerDTO>> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDTO customerDTO) {
         CustomerDTO resultCustomerDTO = customerService.updateCustomer(id, customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Customer Updated Successfully", resultCustomerDTO));  // 201 CREATED
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<CustomerDTO>> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDTO<>(204, "Customer Deleted Successfully"));  // 204 NO_CONTENT
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 NO_CONTENT
     }
 
 

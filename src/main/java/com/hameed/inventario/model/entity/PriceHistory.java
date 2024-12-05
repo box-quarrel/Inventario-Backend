@@ -2,6 +2,7 @@ package com.hameed.inventario.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Entity
@@ -14,9 +15,11 @@ import lombok.*;
 public class PriceHistory extends AbstractEntity{
 
     @Column(name = "old_price")
+    @Positive(message = "Old Price must be positive")
     private Double oldPrice;
 
     @Column(name = "new_price")
+    @Positive(message = "New Price must be positive")
     private Double newPrice;
 
     @ManyToOne
