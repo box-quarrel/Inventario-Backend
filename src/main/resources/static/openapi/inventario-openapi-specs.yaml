@@ -119,6 +119,32 @@ paths:
         403:
           description: Forbidden (Insufficient permissions)
 
+  /users/changePassword/{username}:
+    patch:
+      tags:
+        - UserEntity
+      summary: Change password for specific user (only for admin)
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Password change request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+      responses:
+        201:
+          description: Password updated successfully
+        403:
+          description: Forbidden (Insufficient permissions)
+
   /users/changePassword:
     patch:
       tags:

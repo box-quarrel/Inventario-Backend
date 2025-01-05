@@ -66,7 +66,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PreAuthorize("hasRole('AMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/changePassword/{username}")
     public ResponseEntity<ResponseDTO<?>> changePasswordForUser(@PathVariable String username,
             @RequestBody PasswordChangeRequest passwordChangeRequest) {
