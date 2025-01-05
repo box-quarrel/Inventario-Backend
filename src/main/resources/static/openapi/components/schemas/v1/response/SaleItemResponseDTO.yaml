@@ -16,11 +16,11 @@ properties:
     $ref: "../../common/iso_timestamp.yaml"
   createdBy:
     type: string
-    description: The user who created this supplier. This is only accessible to authorized users.
+    description: The userEntity who created this supplier. This is only accessible to authorized users.
     readOnly: true
     nullable: true
   lastUpdateBy:
     type: string
-    description: The last user who modified this supplier. This is only accessible to authorized users.
+    description: The last userEntity who modified this supplier. This is only accessible to authorized users.
     readOnly: true
     nullable: true

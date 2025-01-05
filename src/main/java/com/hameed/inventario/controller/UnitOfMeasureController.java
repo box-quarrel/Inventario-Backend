@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class UnitOfMeasureController {
         this.unitOfMeasureService = unitOfMeasureService;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<UnitOfMeasureDTO>> getAllUnitOfMeasures(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -37,25 +39,28 @@ public class UnitOfMeasureController {
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "UnitOfMeasures Retrieved Successfully", unitOfMeasureDTOPage)); // 200 OK
     }
 
-
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> getUnitOfMeasureById(@PathVariable Long id) {
         UnitOfMeasureDTO unitOfMeasureDTO = unitOfMeasureService.getUnitOfMeasureById(id);
         return ResponseEntity.ok(new ResponseDTO<>(200, "UnitOfMeasure Retrieved Successfully", unitOfMeasureDTO)); // 200 OK
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public  ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> addUnitOfMeasure(@Valid @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
         UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.createUnitOfMeasure(unitOfMeasureDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Created Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> updateUnitOfMeasure(@PathVariable Long id, @Valid @RequestBody UnitOfMeasureDTO unitOfMeasureDTO) {
         UnitOfMeasureDTO resultUnitOfMeasureDTO = unitOfMeasureService.updateUnitOfMeasure(id, unitOfMeasureDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "UnitOfMeasure Updated Successfully", resultUnitOfMeasureDTO));  // 201 CREATED
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<UnitOfMeasureDTO>> deleteUnitOfMeasure(@PathVariable Long id) {
         unitOfMeasureService.deleteUnitOfMeasure(id);

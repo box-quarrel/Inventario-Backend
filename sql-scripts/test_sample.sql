@@ -37,4 +37,16 @@ VALUES
 
 
 
+INSERT INTO users (username, password, enabled) VALUES ('admin', '$2y$10$dhDiEkz5cCevbzn9LA7ieuf1/iSj49Q6UMZtHnTP/lBU42fzEMAGy', true);
+INSERT INTO users (username, password, enabled) VALUES ('manager', '$2y$10$dVtwm.6dB6bJ.ZcGUzo7MuhoIkDxECtW2/TFYrAhXlwExdcngDKmm', true);
+INSERT INTO users (username, password, enabled) VALUES ('user', '$2y$10$AKqnKpiz4KlT1h5tPEkDHeAuBvksoy.3Vh6OBbM.yWR4GuBYU4pce', true);
 
+
+INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_ADMIN');
+INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_MANAGER');
+INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_USER');
+
+INSERT INTO authorities (username, authority) VALUES ('manager', 'ROLE_MANAGER');
+INSERT INTO authorities (username, authority) VALUES ('manager', 'ROLE_USER');
+
+INSERT INTO authorities (username, authority) VALUES ('user', 'ROLE_USER');

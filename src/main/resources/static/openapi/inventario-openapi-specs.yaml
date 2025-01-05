@@ -9,8 +9,10 @@ servers:
   - url: http://localhost:8080/inventario/api/v1
 
 tags:
-  - name: User
-    description: Operations about user management
+  - name: Authentication
+    description: Authentication endpoints for login and token generation
+  - name: UserEntity
+    description: Operations about userEntity management
   - name: Customer
     description: Operations about customer management
   - name: Product
@@ -70,3 +72,105 @@ paths:
     $ref: "paths/v1/purchase-orders_receive.yaml"
 
 
+  # security and users
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login to generate a JWT token
+      requestBody:
+        description: Credentials for authentication
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        200:
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        401:
+          description: Unauthorized (Invalid credentials)
+
+  /users:
+    get:
+      tags:
+        - UserEntity
+      summary: Retrieve all users
+      security:
+        - BearerAuth: [ ]
+      responses:
+        200:
+          description: List of users
+        403:
+          description: Forbidden (Insufficient permissions)
+    post:
+      tags:
+        - UserEntity
+      summary: Create a new user
+      security:
+        - BearerAuth: [ ]
+      responses:
+        201:
+          description: User created successfully
+        403:
+          description: Forbidden (Insufficient permissions)
+
+  /users/changePassword:
+    patch:
+      tags:
+        - UserEntity
+      summary: Change password for the authenticated user
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        description: Password change request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+      responses:
+        201:
+          description: Password updated successfully
+        403:
+          description: Forbidden (Insufficient permissions)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    PasswordChangeRequest:
+      type: object
+      properties:
+        newPassword:
+          type: string
+      required:
+        - newPassword
+
+security:
+  - BearerAuth: []

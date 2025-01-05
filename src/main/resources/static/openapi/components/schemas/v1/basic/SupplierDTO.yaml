@@ -29,12 +29,12 @@ properties:
     $ref: "../../common/iso_timestamp.yaml"
   createdBy:
     type: [ string, null ]
-    description: The user who created this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    description: The userEntity who created this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
     readOnly: true
     
   lastUpdateBy:
     type: [ string, null ]
-    description: The last user who modified this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
+    description: The last userEntity who modified this supplier. This is only accessible to authorized users. Should not be sent in request payloads - will be ignored.
     readOnly: true
     
 required:

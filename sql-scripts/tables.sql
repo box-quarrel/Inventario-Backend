@@ -211,13 +211,17 @@ CREATE TABLE  PRODUCT_RETURNS (
 CREATE TABLE  Users (
                         username VARCHAR(50) PRIMARY KEY,
                         password VARCHAR(255) NOT NULL,
-                        enabled BOOLEAN NOT NULL
+                        enabled BOOLEAN NOT NULL,
+                        creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create Authorities Table
 CREATE TABLE  Authorities (
+                              id BIGINT PRIMARY KEY AUTO_INCREMENT,
                               username VARCHAR(50),
                               authority VARCHAR(50),
-                              PRIMARY KEY (username, authority),
+                              creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              created_by VARCHAR(255),
+                              CONSTRAINT unique_username_authority UNIQUE (username, authority),
                               FOREIGN KEY (username) REFERENCES Users(username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

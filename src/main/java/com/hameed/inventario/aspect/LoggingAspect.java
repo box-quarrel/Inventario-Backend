@@ -1,5 +1,6 @@
 package com.hameed.inventario.aspect;
 
+import com.hameed.inventario.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -31,33 +32,34 @@ public class LoggingAspect {
     public Object logRequestAndResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String requestId = MDC.get("requestId");
+        String username = SecurityUtil.getUsername();
         // Log request details
-        LOGGER.info("Request ID: {}, Method: {}, URI: {}, IP: {}",
-                requestId, request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
+        LOGGER.info("Request ID: {}, username: {}, Method: {}, URI: {}, IP: {}",
+                requestId, username, request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
 
         // Proceed with the actual method execution
         Object result = joinPoint.proceed();
 
         // Log response details
-        LOGGER.info("Request ID: {}, Response: {}", requestId, result);
+        LOGGER.info("Request ID: {}, username: {}, Response: {}", requestId, username, result);
 
         return result;
     }
 
     @Around("servicePointcut()")
     public Object logServiceRequestAndResponse(ProceedingJoinPoint joinPoint) throws Throwable {
-        // Capture requestId from MDC
+        // Capture requestId from MDC and Security username
         String requestId = MDC.get("requestId");
-
+        String username = SecurityUtil.getUsername();
         // Log service method entry
-        LOGGER.info("Request ID: {}, Invoking Service Method: {} with Args: {}",
-                requestId, joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));
+        LOGGER.info("Request ID: {}, username: {}, Invoking Service Method: {} with Args: {}",
+                requestId, username, joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));
 
         // Proceed with the actual method execution
         Object result = joinPoint.proceed();
 
         // Log service method exit with response details
-        LOGGER.info("Request ID: {}, Service Method Response: {}", requestId, result);
+        LOGGER.info("Request ID: {}, username: {}, Service Method Response: {}", requestId, username, result);
 
         return result;
     }

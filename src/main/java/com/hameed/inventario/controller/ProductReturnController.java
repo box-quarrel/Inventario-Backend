@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,6 +32,7 @@ public class ProductReturnController {
         this.productReturnService = productReturnService;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<ProductReturnResponseDTO>> getAllProductReturns(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -41,12 +43,14 @@ public class ProductReturnController {
     }
 
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> getProductReturnById(@PathVariable Long id) {
         ProductReturnResponseDTO productReturnResponseDTO = productReturnService.getProductReturnById(id);
         return ResponseEntity.ok(new ResponseDTO<>(200, "ProductReturn Retrieved Successfully", productReturnResponseDTO)); // 200 OK
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public  ResponseEntity<ResponseDTO<ProductReturnResponseDTO>> addProductReturn(@Valid @RequestBody ProductReturnRequestDTO productReturnRequestDTO) {
         ProductReturnResponseDTO resultProductReturnResponseDTO = productReturnService.addProductReturn(productReturnRequestDTO);

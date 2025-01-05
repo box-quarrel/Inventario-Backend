@@ -1,6 +1,7 @@
 package com.hameed.inventario.aspect;
 
 
+import com.hameed.inventario.util.SecurityUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,7 +15,7 @@ import java.lang.reflect.Field;
 @Order(1)
 @Component
 public class AuditingAspect {
-    // TODO: yet to be implemented
+
 
     @Pointcut("execution(public * com.hameed.inventario.mapper.*Mapper.*(..))")
     public void convertToDTOMapperPointcut(){}
@@ -26,8 +27,8 @@ public class AuditingAspect {
 
         // check if the result is an entity DTO
         if(result != null && isDtoAndAuditable(result)) {
-            // TODO: check if user is authorized to see audit fields or not
-            removeAuditingFields(result);
+            if (!SecurityUtil.hasAuthority("ROLE_ADMIN"))
+                removeAuditingFields(result);
         }
         return result;
     }

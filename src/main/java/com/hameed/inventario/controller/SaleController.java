@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class SaleController {
         this.saleService = saleService;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO<SaleResponseDTO>> getAllSales(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -38,12 +40,14 @@ public class SaleController {
     }
 
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<SaleResponseDTO>> getSaleById(@PathVariable Long id) {
         SaleResponseDTO saleResponseDTO = saleService.getSaleById(id);
         return ResponseEntity.ok(new ResponseDTO<>(200, "Sale Retrieved Successfully", saleResponseDTO)); // 200 OK
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public  ResponseEntity<ResponseDTO<SaleResponseDTO>> addSale(@Valid @RequestBody SaleRequestDTO saleRequestDTO) {
         SaleResponseDTO saleResponseDTO = saleService.sell(saleRequestDTO);

@@ -43,11 +43,11 @@ properties:
     $ref: "../../common/iso_timestamp.yaml"
   createdBy:
     type: string
-    description: The user who created this purchase order. This is only accessible to authorized users.
+    description: The userEntity who created this purchase order. This is only accessible to authorized users.
     readOnly: true
     nullable: true
   lastUpdateBy:
     type: string
-    description: The last user who modified this purchase order. This is only accessible to authorized users.
+    description: The last userEntity who modified this purchase order. This is only accessible to authorized users.
     readOnly: true
     nullable: true

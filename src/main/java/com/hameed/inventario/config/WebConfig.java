@@ -1,6 +1,6 @@
 package com.hameed.inventario.config;
 
-import com.hameed.inventario.util.RequestLoggingInterceptor;
+import com.hameed.inventario.filter.RequestLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(requestLoggingInterceptor)
                 .addPathPatterns("/**")  // Intercept all paths
                 .excludePathPatterns(
-                        "/penapi/**",
+                        "/openapi/**",
                         "/swagger-ui/**",        // Exclude Swagger UI paths
                         "/v3/api-docs/**",       // Exclude OpenAPI spec paths
                         "/swagger-resources/**", // Exclude Swagger resources

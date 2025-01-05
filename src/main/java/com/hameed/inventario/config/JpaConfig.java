@@ -1,6 +1,5 @@
 package com.hameed.inventario.config;
 
-import com.hameed.inventario.security.SecurityAuditorAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

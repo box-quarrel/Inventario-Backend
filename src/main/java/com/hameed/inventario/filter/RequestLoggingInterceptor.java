@@ -1,4 +1,4 @@
-package com.hameed.inventario.util;
+package com.hameed.inventario.filter;
 
 import com.hameed.inventario.aspect.LoggingAspect;
 import jakarta.servlet.http.HttpServletRequest;
