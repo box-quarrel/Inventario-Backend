@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "po_lines", schema = "inventario-directory")
+@Table(name = "PO_LINES", schema = "inventario_directory")
 @Getter
 @Setter
 public class PurchaseLine extends AbstractEntity {

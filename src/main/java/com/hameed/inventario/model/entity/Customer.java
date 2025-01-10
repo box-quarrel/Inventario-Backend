@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "customers", schema = "inventario-directory")
+@Table(name = "Customers", schema = "inventario_directory")
 @Getter
 @Setter
 @Builder

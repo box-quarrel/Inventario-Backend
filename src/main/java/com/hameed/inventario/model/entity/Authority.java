@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "authorities",
+@Table(name = "Authorities", schema = "inventario_directory",
         uniqueConstraints = @UniqueConstraint(columnNames = {"username", "authority"}))
 @EntityListeners(AuditingEntityListener.class)
 public class Authority{
