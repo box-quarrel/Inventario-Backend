@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.Set;
 
 @Entity
-@Table(name = "Unit_of_Measures", schema = "inventario_directory")
+@Table(name = "unit_of_measures", schema = "inventario_directory")
 @Getter
 @Setter
 @Builder
@@ -24,7 +24,7 @@ public class UnitOfMeasure extends AbstractEntity{
 
     @Column(name = "code", nullable = false)
     @NotBlank
-    @Length(min = 2, max = 20, message = "Unit of Measure Code Length must be between 2 and 20")
+    @Length(min = 2, max = 50, message = "Unit of Measure Code Length must be between 2 and 50")
     private String uomCode;
 
     @Column(name = "description")

@@ -38,6 +38,7 @@ public class WebSecurityConfig {
                                 authorize
                                         .requestMatchers("/v1/auth/login",
                                                 "/openapi/**",
+                                                "/actuator/**",          // Exclude Actuator Endpoints
                                                 "/swagger-ui/**",        // Exclude Swagger UI paths
                                                 "/v3/api-docs/**",       // Exclude OpenAPI spec paths
                                                 "/swagger-resources/**", // Exclude Swagger resources

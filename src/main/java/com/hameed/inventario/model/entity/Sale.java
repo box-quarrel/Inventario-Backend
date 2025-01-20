@@ -6,9 +6,11 @@ import com.hameed.inventario.annotations.ValidDiscount;
 import com.hameed.inventario.annotations.ValidEnum;
 import com.hameed.inventario.enums.DiscountType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "Sales", schema = "inventario_directory")
+@Table(name = "sales", schema = "inventario_directory")
 @Getter
 @Setter
 @Builder
@@ -27,6 +29,8 @@ import java.util.Set;
 public class Sale extends AbstractEntity{
 
     @Column(name = "sales_number")
+    @NotNull
+    @Length(min = 2, max = 50, message = "Sales Number must be between 2 and 50")
     private String salesNumber;
 
     @Column(name = "net_amount")

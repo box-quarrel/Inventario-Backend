@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Categories", schema = "inventario_directory")
+@Table(name = "categories", schema = "inventario_directory")
 @Getter
 @Setter
 @Builder
@@ -30,7 +30,7 @@ public class Category extends AbstractEntity{
 
     @Column(name = "code", nullable = false)
     @NotBlank
-    @Length(min = 2, max = 20, message = "Category Code Length must be between 2 and 20")
+    @Length(min = 2, max = 50, message = "Category Code Length must be between 2 and 50")
     private String categoryCode;
 
     @Column(name = "description")

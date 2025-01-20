@@ -7,6 +7,7 @@ import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,6 +66,25 @@ public class GlobalExceptionHandler {
     /*
         Service-Validation Exceptions Handling
      */
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+
+        // Prepare Exception Response
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/username-not-foune"))
+                .title("Username Not Found")
+                .status(HttpStatus.NOT_FOUND.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(DuplicateCodeException.class)
     public ResponseEntity<ErrorResponseDTO> handleDuplicateCodeException(DuplicateCodeException ex) {
