@@ -30,7 +30,7 @@ get:
                   dataPage:
                     type: array
                     items:
-                      $ref: "../../components/schemas/v1//response/ProductReturnResponseDTO.yaml"
+                      $ref: "../../components/schemas/v1/response/ProductReturnResponseDTO.yaml"
 
 post:
   tags:
@@ -40,7 +40,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1//request/ProductReturnRequestDTO.yaml"
+          $ref: "../../components/schemas/v1/request/ProductReturnRequestDTO.yaml"
     required: true
   responses:
     "201":
@@ -55,7 +55,7 @@ post:
                   data:
                     type: array
                     items:
-                      $ref: "../../components/schemas/v1//response/ProductReturnResponseDTO.yaml"
+                      $ref: "../../components/schemas/v1/response/ProductReturnResponseDTO.yaml"
     "400":
       description: Bad Request
       content:

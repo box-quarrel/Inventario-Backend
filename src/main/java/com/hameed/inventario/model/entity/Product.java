@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,18 +19,18 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "Products", schema = "inventario_directory")
+@Table(name = "products", schema = "inventario_directory")
 @Getter
 @Setter
 public class Product extends AbstractEntity {
 
     @Column(name = "name", nullable = false)
     @NotBlank
-    @Length(min = 2, max = 255, message = "Product Name Length must be between 2 and 255")
+    @Length(min = 2, max = 50, message = "Product Name Length must be between 2 and 50")
     private String productName;
 
     @Column(name = "code", nullable = false)
-    @Length(max = 20, message = "Product Code Length must be less than 20")
+    @Length(max = 50, message = "Product Code Length must be less than 50")
     private String productCode;
 
     @Column(name = "description")

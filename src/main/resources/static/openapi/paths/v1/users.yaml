@@ -1,7 +1,9 @@
 get:
   tags:
-    - Purchase Order
-  operationId: getAllPurchases
+    - UserEntity
+  security:
+    - BearerAuth: [ ]
+  operationId: getAllUsers
   parameters:
     - name: page
       in: query
@@ -30,17 +32,18 @@ get:
                   dataPage:
                     type: array
                     items:
-                      $ref: "../../components/schemas/v1/response/PurchaseResponseDTO.yaml"
-
+                      $ref: "../../components/schemas/v1/basic/UserDTO.yaml"
+    403:
+      description: Forbidden (Insufficient permissions)
 post:
   tags:
-    - Purchase Order
-  operationId: addPurchase
+    - UserEntity
+  operationId: addUser
   requestBody:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/v1/request/PurchaseRequestDTO.yaml"
+          $ref: "../../components/schemas/v1/basic/UserDTO.yaml"
     required: true
   responses:
     "201":
@@ -53,9 +56,7 @@ post:
               - type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: "../../components/schemas/v1/response/PurchaseResponseDTO.yaml"
+                    $ref: "../../components/schemas/v1/basic/UserDTO.yaml"
     "400":
       description: Bad Request
       content:
@@ -68,3 +69,5 @@ post:
         application/json:
           schema:
             $ref: "../../components/responses/Problem.yaml"
+    403:
+      description: Forbidden (Insufficient permissions)

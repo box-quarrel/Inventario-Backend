@@ -2,6 +2,7 @@ package com.hameed.inventario.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,11 +16,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Users", schema = "inventario_directory")
+@Table(name = "users", schema = "inventario_directory")
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity{
     @Id
     @Column(name = "username", unique=true, nullable = false)
+    @Length(min = 2, max = 50, message = "username Length must be between 2 and 50")
     private String username;
 
     @Column(name = "password", nullable = false)

@@ -2,6 +2,7 @@ package com.hameed.inventario.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Authorities", schema = "inventario_directory",
+@Table(name = "authorities", schema = "inventario_directory",
         uniqueConstraints = @UniqueConstraint(columnNames = {"username", "authority"}))
 @EntityListeners(AuditingEntityListener.class)
 public class Authority{

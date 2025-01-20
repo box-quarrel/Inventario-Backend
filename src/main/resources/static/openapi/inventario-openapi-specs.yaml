@@ -4,11 +4,13 @@ info:
   description: "An API for a web-based system to manage inventory stocks and handle stocks analytics"
   version: 1.0.0
   contact:
-    email: pshameed99@gmail.com
+    email: abdulhamidmazroua@gmail.com
 servers:
   - url: http://localhost:8080/inventario/api/v1
 
 tags:
+  - name: Actuators
+    description: Endpoints for monitoring application's Health
   - name: Authentication
     description: Authentication endpoints for login and token generation
   - name: UserEntity
@@ -71,51 +73,89 @@ paths:
   /purchase-orders/receive/{id}:
     $ref: "paths/v1/purchase-orders_receive.yaml"
 
+  # users
+  /users:
+    $ref: "paths/v1/users.yaml"
 
-  # security and users
-  /auth/login:
-    post:
+  /users/authorize/{username}:
+    patch:
       tags:
-        - Authentication
-      summary: Login to generate a JWT token
+        - UserEntity
+      summary: Add new roles to the user
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
-        description: Credentials for authentication
+        description: New role request
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthRequest'
+              $ref: '#/components/schemas/RoleRequest'
       responses:
-        200:
-          description: Successful authentication
+        "201":
+          description: Created
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: "components/responses/v1/ResponseDTO.yaml"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "components/schemas/v1/basic/UserDTO.yaml"
+        404:
+          description: Username Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
-        401:
-          description: Unauthorized (Invalid credentials)
-
-  /users:
-    get:
-      tags:
-        - UserEntity
-      summary: Retrieve all users
-      security:
-        - BearerAuth: [ ]
-      responses:
-        200:
-          description: List of users
+                $ref: "components/responses/Problem.yaml"
         403:
           description: Forbidden (Insufficient permissions)
-    post:
+
+  /users/deleteUser/{username}:
+    delete:
       tags:
         - UserEntity
-      summary: Create a new user
+      operationId: deleteCustomer
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          content:
+            application/hal+json:
+              schema:
+                $ref: "components/responses/Problem.yaml"
+
+  /users/changePassword:
+    patch:
+      tags:
+        - UserEntity
+      summary: Change password for the authenticated user
       security:
         - BearerAuth: [ ]
+      requestBody:
+        description: Password change request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
       responses:
         201:
-          description: User created successfully
+          description: Password updated successfully
         403:
           description: Forbidden (Insufficient permissions)
 
@@ -145,25 +185,28 @@ paths:
         403:
           description: Forbidden (Insufficient permissions)
 
-  /users/changePassword:
-    patch:
+  # security authentication
+  /auth/login:
+    post:
       tags:
-        - UserEntity
-      summary: Change password for the authenticated user
-      security:
-        - BearerAuth: [ ]
+        - Authentication
+      summary: Login to generate a JWT token
       requestBody:
-        description: Password change request
+        description: Credentials for authentication
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordChangeRequest'
+              $ref: '#/components/schemas/AuthRequest'
       responses:
-        201:
-          description: Password updated successfully
-        403:
-          description: Forbidden (Insufficient permissions)
+        200:
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        401:
+          description: Unauthorized (Invalid credentials)
 
 components:
   securitySchemes:
@@ -183,7 +226,7 @@ components:
       required:
         - username
         - password
-
+        -
     AuthResponse:
       type: object
       properties:
@@ -197,6 +240,14 @@ components:
           type: string
       required:
         - newPassword
+
+    RoleRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          description: Role that needs to be added to the user
+          example: MANAGER
 
 security:
   - BearerAuth: []
