@@ -1,12 +1,15 @@
 openapi: 3.1.0
 info:
-  title: Inventario OpenAPI definition
-  description: "An API for a web-based system to manage inventory stocks and handle stocks analytics"
+  title: Inventario API
+  description: "A RESTful API designed to serve as the backend for a web-based Point of Sale (POS) system. It manages products, sales, inventory, and user authentication, providing endpoints for various POS operations."
   version: 1.0.0
   contact:
     email: abdulhamidmazroua@gmail.com
 servers:
+  - url: https://www.hameed.vip/inventario/api/v1
+    description: Production server
   - url: http://localhost:8080/inventario/api/v1
+    description: Local development server
 
 tags:
   - name: Actuators

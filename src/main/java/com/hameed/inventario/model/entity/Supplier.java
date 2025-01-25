@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "suppliers", schema = "inventario_directory")
+@Table(name = "suppliers")
 @Getter
 @Setter
 @Builder

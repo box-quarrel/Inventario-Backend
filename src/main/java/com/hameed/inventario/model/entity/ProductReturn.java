@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Entity
-@Table(name = "product_returns", schema = "inventario_directory")
+@Table(name = "product_returns")
 @Getter
 @Setter
 @Builder

@@ -1,3 +1,10 @@
+# this will run on docker mysql8.4 image
+-- Create a new database
+CREATE DATABASE IF NOT EXISTS inventario_directory;
+
+-- Use the newly created database
+USE inventario_directory;
+
 -- Disable foreign key checks
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -266,10 +273,12 @@ VALUES
     ('Smartphone', 'PROD003', 'Latest smartphone model', 'ELEC001', 'PC', 200, 300.00, 500.00, '1122334455', 'http://example.com/phone.jpg', 'admin', 'admin');
 
 
-
-INSERT INTO users (username, password, enabled) VALUES ('admin', '$2y$10$dhDiEkz5cCevbzn9LA7ieuf1/iSj49Q6UMZtHnTP/lBU42fzEMAGy', true);
-INSERT INTO users (username, password, enabled) VALUES ('manager', '$2y$10$dVtwm.6dB6bJ.ZcGUzo7MuhoIkDxECtW2/TFYrAhXlwExdcngDKmm', true);
-INSERT INTO users (username, password, enabled) VALUES ('user', '$2y$10$AKqnKpiz4KlT1h5tPEkDHeAuBvksoy.3Vh6OBbM.yWR4GuBYU4pce', true);
+# user: admin, password: admin
+# user: manager, password: manager
+# user: user, password: user
+INSERT INTO users (username, password, enabled) VALUES ('admin', '$2a$12$MmHmB4I7kM4EPR.96qisx.bEu1F9mV7qYEMPh4OgUT5dqUnV051T2', true);
+INSERT INTO users (username, password, enabled) VALUES ('manager', '$2a$12$leQd0EIwElmPZYSZrYxXfuAqTAJnzUA4rI6F0GIsSwI.RTwJbGfK2', true);
+INSERT INTO users (username, password, enabled) VALUES ('user', '$2a$12$YhR0iJEpfkkt0lWrhXMYSuT9hsf/8sg8S9YTwrLTWvVOqplE9SslO', true);
 
 
 INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_ADMIN');

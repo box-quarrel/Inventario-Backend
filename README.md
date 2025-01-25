@@ -1,118 +1,129 @@
-# Inventario Backend
+# Inventario Backend ![CI/CD Pipeline](https://github.com/box-quarrel/Inventario-Backend/actions/workflows/pipeline.yml/badge.svg)
 
 **Inventario Backend** is a RESTful API designed to serve as the backend for a Point of Sale (POS) system. It manages products, sales, inventory, and user authentication, providing endpoints for various POS operations.
 
-## Features
+## Overview
 
-### Product Management
-- **Create Product**: Add new products to the inventory.
-- **Update Product**: Modify existing product details.
-- **Delete Product**: Remove a product from the inventory.
-- **Retrieve Product**: Get detailed information about a specific product.
-
-### Sales Processing
-- **Create Sale**: Process a sale and generate a sale record.
-- **View Sales**: View historical sales records for analysis.
-- **Update Sale**: Modify existing sale information if needed.
-- **Delete Sale**: Remove a sale record.
-
-### Inventory Management
-- **Track Inventory**: Keep track of product stock levels.
-- **Adjust Inventory**: Manually adjust stock levels for restocks, damages, etc.
-- **Low Stock Alerts**: Receive notifications when stock levels fall below a threshold.
-- **Inventory History**: Keep a log of inventory changes for audit purposes.
-
-### User Authentication
-- **Sign Up**: Register new users with roles such as admin, manager, or cashier.
-- **Login**: Secure login with JWT-based authentication.
-- **Role-based Access Control**: Different access levels based on user roles.
-
-### Purchase Management
-- **Create Purchase**: Record new purchase orders to restock inventory.
-- **View Purchases**: Track historical purchases and their statuses.
-- **Update Purchase**: Modify existing purchase orders if necessary.
-- **Supplier Management**: Add, update, or delete supplier information linked to purchases.
-
-### Customer Management
-- **Create Customer**: Register new customers to track their purchase history.
-- **Update Customer**: Modify existing customer information.
-- **Delete Customer**: Remove a customer from the system.
-- **View Customer**: Get detailed information about a customer, including their transactions.
-
-### Supplier Management
-- **Create Supplier**: Register new suppliers for inventory purchases.
-- **Update Supplier**: Modify supplier contact details or products supplied.
-- **Delete Supplier**: Remove a supplier from the system.
-- **View Supplier**: Get detailed information about a supplier and their transactions.
-
-### Reporting and Analytics
-- **Sales Reports**: Generate reports of sales based on dates, products, or other filters.
-- **Inventory Reports**: View reports on current inventory levels, product movement, etc.
-- **Product Performance**: Analyze which products are performing well and which are not.
-
-### Security and Data Integrity
-- **JWT Authentication**: Secure RESTful API using JSON Web Tokens (JWT).
-- **Role-based Access**: Limit access to endpoints based on user roles to ensure security.
-- **Data Validation**: Ensure that input data is validated and sanitized before processing.
+- **📦 Product Management**: Create, update, delete, and retrieve products.}
+- **🛒 Sales Processing**: Create, view, update, and delete sales.
+- **📊 Inventory Management**: Track, adjust, and log inventory; receive low stock alerts. 
+- **🔐 User Authentication**: Sign up, login, and role-based access control. 
+- **🧾 Purchase Management**: Create, view, update purchases; manage suppliers. 
+- **👥 Customer Management**: Create, update, delete, and view customers. 
+- **🚚 Supplier Management**: Create, update, delete, and view suppliers. 
+- **📈 Reporting and Analytics**: Generate sales and inventory reports; analyze product performance. 
+- **📈 Security and Data Integrity**: JWT authentication, role-based access, and data validation. 
+Here are some badges you can use for your README:
 
 
 ## Technologies Used
 
-- **Java**: Primary programming language.
-- **Spring Boot**: Framework for building the application.
-- **Spring Security**: For authentication and authorization.
-- **Hibernate**: ORM for database interactions.
-- **MySQL**: Relational database management system.
-- **Maven**: Build automation tool.
+- ![CI/CD Pipeline](https://github.com/box-quarrel/Inventario-Backend/actions/workflows/pipeline.yml/badge.svg)
+- ![Java](https://img.shields.io/badge/Java-22-blue.svg)
+- ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen.svg)
+- ![Hibernate](https://img.shields.io/badge/Hibernate-5.5.7-yellow.svg)
+- ![MySQL](https://img.shields.io/badge/MySQL-8.4-orange.svg)
+- ![Maven](https://img.shields.io/badge/Maven-3.9-purple.svg)
+- ![Lombok](https://img.shields.io/badge/Lombok-1.18.20-red.svg)
+- ![MapStruct](https://img.shields.io/badge/MapStruct-1.4.2-lightgrey.svg)
+- ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.1.3-blue.svg)
+- ![Swagger](https://img.shields.io/badge/Swagger-3.0.0-brightgreen.svg)
+- ![JUnit](https://img.shields.io/badge/JUnit-5.7.0-red.svg)
+- ![Mockito](https://img.shields.io/badge/Mockito-3.6.28-yellow.svg)
+- ![Docker](https://img.shields.io/badge/Docker-20.10.7-blue.svg)
+- ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI/CD-brightgreen.svg)
+- ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 ## Getting Started
 
 ### Prerequisites
 
-- **Java 11** or higher installed.
-- **MySQL** database setup.
+- **Java 22** or higher installed.
+- **MySQL 8.4** database setup.
 - **Maven** installed.
 
 ### Installation
-
+I would like to make the installation based on creating the .env file
+and adding the defined variables
+Also using the init_sql.sql file to create the database and the tables
+lets begin
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/box-quarrel/Inventario-Backend.git
 
-2. **Navigate to the project directory**:
+    cd Inventario-Backend
+    ```
+2. **Create the database and tables**:
    ```bash
-   cd Inventario-Backend
+   mysql -u your_db_username -p < src/main/resources/init_sql.sql
+   ```
    
-3. **Configure the database**:
-   - Create a MySQL database named inventario
-   - Update the database configuration in src/main/resources/application.properties:
-     ```bash
-       spring.datasource.url=jdbc:mysql://localhost:3306/inventario
-       spring.datasource.username=your_username
-       spring.datasource.password=your_password
-
-4. **Configure your security key**:
-   - Update the security configuration in src/main/resources/application.properties:
-     ```bash
-     jwt.secret=your_secret_key
-     jwt.expiration=your_chosen_token_expiration_duration_in_milliseconds  
-
-5. **Build the project**:
+3. **Create a `.env` file**:
+   ```bash
+   touch .env
+   ```
+   
+4. **Add the following environment variables to the `.env` file**:
+   ```properties
+    SPRING_PROFILES_ACTIVE=dev
+    DB_HOST=localhost
+    DB_NAME=inventario_directory (you can change the name but change also in the init_sql.sql file)
+    DB_USERNAME=your_db_username
+    DB_PASSWORD=your_db_password
+    SECRETE_KEY=your_secrete_key
+    ```
+5. **If you want to run on docker-compose you can add the following variables also to the `.env` file. OPTIONAL STEP** :
+   ```properties
+    MYSQL_ROOT_PASSWORD=root
+    MYSQL_DATABASE=inventario_directory (you can change the name but change also in the init_sql.sql file)
+    MYSQL_USER=your_db_username
+    MYSQL_PASSWORD=your_db_password
+    ```
+   ```
+6. **Build and run the application**:
    ```bash
    mvn clean install
-
-6. **Run the application**:
-   ```bash
    mvn spring-boot:run
-
+   ```
+    
 ### API Documentation
 The API endpoints are documented using Swagger.
-Once the application is running, access the Swagger UI at:
-http://localhost:8080/inventario/api/swagger-ui/index.html#/
+To use the Swagger UI, follow these steps:
+1. **once the application is running, navigate to the following URL**:
+   ```
+   http://localhost:8080/inventario/api/swagger-ui/index.html
+   ```
 
+2. **Go to Authentication Endpoint and use the following credentials to login**:
+    ```json
+    {
+      "username": "admin",
+      "password": "admin"
+    }
+    ```
+    OR
+    ```json
+    {
+      "username": "manager",
+      "password": "manager"
+    }
+    ```
+    OR
+    ```json
+    {
+      "username": "user",
+      "password": "user"
+    }
+    ```
+3. **Click on the `Authorize` button and paste the token in the following format**:
+    ```
+    Bearer <token here>
+    ```
 
 ### License
 This project is licensed under the MIT License.
 
 ### Contact
-For questions or support, please contact: abdulhamidmazroua@gmail.com
+For questions or support, please contact me on the following contact details:
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?style=flat&logo=Linkedin&logoColor=white)]([https://www.linkedin.com/in/abdulhamid-mazroua/])
+[![Email](https://img.shields.io/badge/-Email-c14438?style=flat&logo=Gmail&logoColor=white)](mailto:[abdulhamidmazroua@gmail.com])

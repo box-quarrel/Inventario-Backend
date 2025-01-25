@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.Set;
 
 @Entity
-@Table(name = "unit_of_measures", schema = "inventario_directory")
+@Table(name = "unit_of_measures")
 @Getter
 @Setter
 @Builder

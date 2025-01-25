@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "products", schema = "inventario_directory")
+@Table(name = "products")
 @Getter
 @Setter
 public class Product extends AbstractEntity {

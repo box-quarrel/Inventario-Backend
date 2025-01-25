@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users", schema = "inventario_directory")
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity{
     @Id

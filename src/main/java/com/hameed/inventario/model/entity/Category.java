@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "categories", schema = "inventario_directory")
+@Table(name = "categories")
 @Getter
 @Setter
 @Builder

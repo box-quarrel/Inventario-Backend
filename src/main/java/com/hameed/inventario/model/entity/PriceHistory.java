@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Entity
-@Table(name = "price_history", schema = "inventario_directory")
+@Table(name = "price_history")
 @Getter
 @Setter
 @Builder
