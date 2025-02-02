@@ -3,6 +3,7 @@ package com.hameed.inventario.config;
 import com.hameed.inventario.filter.JwtRequestFilter;
 import com.hameed.inventario.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,11 +11,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +28,13 @@ public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+
+    @Value("${cors.allowed-origins}")
+    private String[] allowedOrigins;
+    @Value("${cors.allowed-methods}")
+    private String[] allowedMethods;
+    @Value("${cors.allowed-headers}")
+    private String[] allowedHeaders;
 
     @Autowired
     public WebSecurityConfig(UserDetailsService userDetailsService, JwtUtil jwtUtil) {
@@ -48,6 +60,14 @@ public class WebSecurityConfig {
                                         .authenticated()
                 )
                 .csrf(CsrfConfigurer::disable)
+                // I need to allow CORS for the front end to be able to access the back end
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+                    corsConfiguration.setAllowedMethods(Arrays.asList(allowedMethods));
+                    corsConfiguration.setAllowedHeaders(Arrays.asList(allowedHeaders));
+                    return corsConfiguration;
+                }))
 //                .formLogin(Customizer.withDefaults()); // we should add CORS management and then add the front end login form here
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtRequestFilter(userDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
