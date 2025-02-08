@@ -42,11 +42,11 @@ public class Product extends AbstractEntity {
 
     @Column(name = "current_price")
     @Positive(message = "Current price must be positive")
-    private Double currentPrice;
+    private Double currentPrice = 0.0;
 
     @Column(name = "current_cost")
     @Positive(message = "Current Cost must be positive")
-    private Double currentCost;
+    private Double currentCost = 0.0;
 
     @Column(name = "quantity", nullable = false)
     @NotNull
