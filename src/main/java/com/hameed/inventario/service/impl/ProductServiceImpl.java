@@ -50,6 +50,10 @@ public class ProductServiceImpl implements ProductService {
         UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productRequestDTO.getPrimaryUomId());
         product.setCategory(productCategory);
         product.setPrimaryUom(primaryUom);
+        // Added to avoid null pointer exception when adding a new product
+        product.setCurrentCost(productRequestDTO.getCurrentCost());
+        product.setCurrentPrice(productRequestDTO.getCurrentPrice());
+        // save
         Product resultProduct = productRepository.save(product);
         return productMapper.productToProductResponseDTO(resultProduct);
     }
