@@ -66,17 +66,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         // set the purchase status with pending
         purchaseOrder.setPurchaseStatus(PurchaseStatus.PENDING.toString());
 
-        // get lines from DTO
-        List<POLineRequestDTO> poLineRequestDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
-        List<PurchaseLine> purchaseLines =  poLineRequestDTOS.stream().map(
-                poLineRequestDTO -> {
-                    PurchaseLine purchaseLine = poLineMapper.poLineRequestDTOToPurchaseLine(poLineRequestDTO);
-                    Product product = productService.getProductEntityById(poLineRequestDTO.getProductId());
-                    purchaseLine.setProduct(product);
-                    return purchaseLine;
-                }
-        ).toList();
-        purchaseLines.forEach(purchaseOrder::addPurchaseLine);
+        // get lines from DTO and map them to purchase lines
+        mapPOLineRequestDTOsToPurchaseLines(purchaseRequestDTO.getPoLineRequestDTOS()).forEach(purchaseOrder::addPurchaseLine);
 
         // create purchase number using date part and sequential part
         String purchaseNumber = this.generatePONumber();
@@ -92,7 +83,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional
     // this update should be restricted to very specific users
-    public PurchaseResponseDTO updatePurchase(Long purchaseId, PurchaseRequestDTO purchaseRequestDTO) {
+    public PurchaseResponseDTO updatePurchaseOrder(Long purchaseId, PurchaseRequestDTO purchaseRequestDTO) {
 
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseRepository.findById(purchaseId);
         if(optionalPurchaseOrder.isPresent()) {
@@ -107,18 +98,8 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchaseOrder.setSupplier(supplier);
             purchaseOrder.setNotes(purchaseRequestDTO.getNotes());
 
-
-            // get lines from DTO and add it to po
-            List<POLineRequestDTO> poLineRequestDTOS = purchaseRequestDTO.getPoLineRequestDTOS();
-            List<PurchaseLine> purchaseLines =  poLineRequestDTOS.stream().map(
-                    poLineRequestDTO -> {
-                        PurchaseLine purchaseLine = poLineMapper.poLineRequestDTOToPurchaseLine(poLineRequestDTO);
-                        Product product = productService.getProductEntityById(poLineRequestDTO.getProductId());
-                        purchaseLine.setProduct(product);
-                        return purchaseLine;
-                    }
-            ).toList();
-            purchaseLines.forEach(purchaseOrder::updatePurchaseLine);
+            // get lines from DTO and map them to purchase lines
+            mapPOLineRequestDTOsToPurchaseLines(purchaseRequestDTO.getPoLineRequestDTOS()).forEach(purchaseOrder::updatePurchaseLine);
 
             // save purchase order
             PurchaseOrder resultPurchaseOrder = purchaseRepository.save(purchaseOrder);
@@ -130,9 +111,21 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
     }
 
+    // map lines from DTO to purchase lines in the purchase order
+    private List<PurchaseLine> mapPOLineRequestDTOsToPurchaseLines(List<POLineRequestDTO> poLineRequestDTOS) {
+        return poLineRequestDTOS.stream().map(
+                poLineRequestDTO -> {
+                    PurchaseLine purchaseLine = poLineMapper.poLineRequestDTOToPurchaseLine(poLineRequestDTO);
+                    Product product = productService.getProductEntityById(poLineRequestDTO.getProductId());
+                    purchaseLine.setProduct(product);
+                    return purchaseLine;
+                }
+        ).toList();
+    }
+
     @Override
     @Transactional
-    public void removePurchase(Long purchaseId) {
+    public void removePurchaseOrder(Long purchaseId) {
         purchaseRepository.findById(purchaseId).ifPresentOrElse(
                 purchaseOrder -> {
                     // service-validation
@@ -149,13 +142,13 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public Page<PurchaseResponseDTO> getAllPurchases(Pageable pageable) {
+    public Page<PurchaseResponseDTO> getAllPurchaseOrders(Pageable pageable) {
         Page<PurchaseOrder> pagePurchaseOrders = purchaseRepository.findAll(pageable);
         return pagePurchaseOrders.map(purchaseMapper::purchaseOrderToPurchaseResponseDTO);
     }
 
     @Override
-    public PurchaseResponseDTO getPurchaseById(Long purchaseId) {
+    public PurchaseResponseDTO getPurchaseOrderById(Long purchaseId) {
         PurchaseOrder purchaseOrder = this.getPurchaseEntityById(purchaseId);
         return purchaseMapper.purchaseOrderToPurchaseResponseDTO(purchaseOrder);
     }

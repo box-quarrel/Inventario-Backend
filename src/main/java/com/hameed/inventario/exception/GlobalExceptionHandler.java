@@ -44,6 +44,26 @@ public class GlobalExceptionHandler {
 //        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalArgumentException(IllegalArgumentException ex) {
+
+        // Prepare Exception Response
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .type(URI.create("https://example.com/problems/resource-not-found"))
+                .title("Illegal Argument Exception")
+                .status(HttpStatus.NOT_ACCEPTABLE.value())
+                .detail(ex.getMessage())
+                .timestamp(ZonedDateTime.now().toString())
+                .build();
+
+        // Logging
+        String requestId = MDC.get("requestId");
+        LOGGER.error("Request ID: {}, Exception: {}", requestId, errorResponseDTO);
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException ex) {
 

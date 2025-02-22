@@ -8,6 +8,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,7 +29,7 @@ public class PurchaseResponseDTO {
     private SupplierDTO supplier;
 
     @UniqueElements
-    private List<POLineResponseDTO> purchaseLines; // change this to purchaseLines
+    private List<POLineResponseDTO> purchaseLines = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

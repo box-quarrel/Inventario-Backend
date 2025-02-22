@@ -7,8 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 import org.hibernate.validator.constraints.UniqueElements;
@@ -22,6 +21,9 @@ import java.util.Set;
 @Table(name = "products")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product extends AbstractEntity {
 
     @Column(name = "name", nullable = false)
@@ -51,7 +53,7 @@ public class Product extends AbstractEntity {
     @Column(name = "quantity", nullable = false)
     @NotNull
     @PositiveOrZero(message = "Product's quantity cannot be a negative value")
-    private int quantity;
+    private int quantity = 0;
 
     @Column(name = "image_url")
     @URL
@@ -74,7 +76,7 @@ public class Product extends AbstractEntity {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "supplier_id")
     )
-    private Set<Supplier> suppliers;
+    private Set<Supplier> suppliers = new HashSet<>();
 
     // one-to-many relation with historical price/cost recording changes
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

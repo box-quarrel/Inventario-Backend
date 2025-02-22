@@ -36,8 +36,8 @@ jobs:
 #      - name: Lint and format code
 #        run: mvn checkstyle:check
 
-#      - name: Run tests with Maven
-#        run: mvn test
+      - name: Run tests with Maven
+        run: mvn test
 
       - name: Get version from Maven
         id: get_version

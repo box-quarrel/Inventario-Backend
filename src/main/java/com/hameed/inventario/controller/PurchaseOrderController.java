@@ -37,14 +37,14 @@ public class PurchaseOrderController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) Integer size) {
         int finalPageSize = (size == null) ? pageSize : size;
-        Page<PurchaseResponseDTO> purchaseDTOPage = purchaseService.getAllPurchases(PageRequest.of(page, finalPageSize));
+        Page<PurchaseResponseDTO> purchaseDTOPage = purchaseService.getAllPurchaseOrders(PageRequest.of(page, finalPageSize));
         return ResponseEntity.ok(new PaginatedResponseDTO<>(200, "Purchase Orders Retrieved Successfully", purchaseDTOPage)); // 200 OK
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> getPurchaseById(@PathVariable Long id) {
-        PurchaseResponseDTO purchaseResponseDTO = purchaseService.getPurchaseById(id);
+        PurchaseResponseDTO purchaseResponseDTO = purchaseService.getPurchaseOrderById(id);
         return ResponseEntity.ok(new ResponseDTO<>(200, "Purchase Order Retrieved Successfully", purchaseResponseDTO)); // 200 OK
     }
 
@@ -70,14 +70,14 @@ public class PurchaseOrderController {
     @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> updatePurchase(@PathVariable Long id, @Valid @RequestBody PurchaseRequestDTO purchaseRequestDTO) {
-        PurchaseResponseDTO resultPurchaseResponseDTO = purchaseService.updatePurchase(id, purchaseRequestDTO);
+        PurchaseResponseDTO resultPurchaseResponseDTO = purchaseService.updatePurchaseOrder(id, purchaseRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Purchase Updated Successfully", resultPurchaseResponseDTO));  // 201 CREATED
     }
 
     @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<PurchaseResponseDTO>> deletePurchase(@PathVariable Long id) {
-        purchaseService.removePurchase(id);
+        purchaseService.removePurchaseOrder(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }

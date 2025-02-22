@@ -39,12 +39,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
+        // service-validation
+        if (productRepository.findByProductCode(productRequestDTO.getProductCode()).isPresent()) {
+            throw new DuplicateCodeException("Product code " + productRequestDTO.getProductCode() + " already exists");
+        }
         // map productCreateDTO to Product
         Product product = productMapper.ProductRequestDTOToProduct(productRequestDTO);
-        // service-validation
-        if (productRepository.findByProductCode(product.getProductCode()).isPresent()) {
-            throw new DuplicateCodeException("Product code " + product.getProductCode() + " already exists");
-        }
         // calling services to get category and uom
         Category productCategory = categoryService.getCategoryEntityById(productRequestDTO.getCategoryId());
         UnitOfMeasure primaryUom = unitOfMeasureService.getUnitOfMeasureEntityById(productRequestDTO.getPrimaryUomId());
