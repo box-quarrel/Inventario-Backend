@@ -14,17 +14,17 @@ public interface PurchaseService {
 
     // Update an existing purchase
     // TODO: this should be authorization restricted
-    public PurchaseResponseDTO updatePurchase (Long purchaseId, PurchaseRequestDTO purchaseRequestDTO);
+    public PurchaseResponseDTO updatePurchaseOrder(Long purchaseId, PurchaseRequestDTO purchaseRequestDTO);
 
     // Remove a purchase
     // TODO: this should be authorization restricted
-    public void removePurchase(Long purchaseId);
+    public void removePurchaseOrder(Long purchaseId);
 
     // Get all purchases with pagination
-    public Page<PurchaseResponseDTO> getAllPurchases(Pageable pageable);
+    public Page<PurchaseResponseDTO> getAllPurchaseOrders(Pageable pageable);
 
     // Get a purchase by ID
-    public PurchaseResponseDTO getPurchaseById(Long purchaseId);
+    public PurchaseResponseDTO getPurchaseOrderById(Long purchaseId);
 
     public PurchaseOrder getPurchaseEntityById(Long purchaseId);
 
