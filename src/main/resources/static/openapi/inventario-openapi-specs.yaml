@@ -121,11 +121,11 @@ paths:
         403:
           description: Forbidden (Insufficient permissions)
 
-  /users/deleteUser/{username}:
+  /users/{username}:
     delete:
       tags:
         - UserEntity
-      operationId: deleteCustomer
+      operationId: deleteUser
       parameters:
         - name: username
           in: path
@@ -239,9 +239,12 @@ components:
     PasswordChangeRequest:
       type: object
       properties:
+        oldPassword:
+          type: string
         newPassword:
           type: string
       required:
+        - oldPassword
         - newPassword
 
     RoleRequest:

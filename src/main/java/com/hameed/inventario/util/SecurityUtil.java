@@ -13,8 +13,13 @@ public class SecurityUtil {
                 .anyMatch(requiredAuthority::equals);
     }
 
-    public static String getUsername() {
+    public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    public static String getCurrentUserPassword() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getCredentials().toString();
     }
 }

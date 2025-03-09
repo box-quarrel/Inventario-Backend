@@ -2,142 +2,133 @@ package com.hameed.inventario.service.impl;
 
 import com.hameed.inventario.enums.RoleType;
 import com.hameed.inventario.model.dto.basic.UserDTO;
-import com.hameed.inventario.model.dto.request.PasswordChangeRequest;
 import com.hameed.inventario.model.dto.request.RoleRequest;
-import com.hameed.inventario.model.entity.Authority;
-import com.hameed.inventario.model.entity.UserEntity;
-import com.hameed.inventario.repository.UserRepository;
 import com.hameed.inventario.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final JdbcUserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(JdbcUserDetailsManager userDetailsManager, PasswordEncoder passwordEncoder) {
+        this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserDTO addUser(UserDTO userDTO) {
-        // Build the user entity from dto
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userDTO.getUsername());
-        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        Set<Authority> authorities = userDTO.getRoles().stream().map(
+    public Page<UserDTO> getAllUsers(PageRequest pageRequest) {
+        assert userDetailsManager.getJdbcTemplate() != null;
+        String queryAllUsers = "select username,password,enabled from users";
+        String queryAllAuthorities = "select username,authority from authorities";
+        List<UserDTO> userList = userDetailsManager.getJdbcTemplate().query(queryAllUsers, this::mapToUserDetails)
+                .stream().map(this::mapUserDetailsToUserDTO).toList();
+        userDetailsManager.getJdbcTemplate().query(queryAllAuthorities, (rs, rowNum) -> {
+            String username = rs.getString(1);
+            String authority = rs.getString(2);
+            userList.stream().filter(user -> user.getUsername().equals(username))
+                    .forEach(user -> user.getRoles().add(authority));
+            return null;
+        });
+        return new PageImpl<>(userList, pageRequest, userList.size());
+    }
+
+    @Override
+    public void createUser(UserDTO userDTO) {
+        UserDetails userDetails = mapUserDTOToUserDetails(userDTO);
+        userDetailsManager.createUser(userDetails);
+    }
+
+    @Override
+    public void updateUser(UserDTO userDTO) {
+        UserDetails userDetails = mapUserDTOToUserDetails(userDTO);
+        userDetailsManager.updateUser(userDetails);
+
+    }
+
+    private UserDetails mapUserDTOToUserDetails(UserDTO userDTO) {
+        String[] roles = userDTO.getRoles().stream().map(
                 role -> {
                     RoleType roleType = RoleType.fromString(role);
-                    String formattedRole = "ROLE_" + roleType.toString().toUpperCase();
-                    return Authority.builder()
-                            .authority(formattedRole)
-                            .build();
-                }
-        ).collect(Collectors.toSet());
-        authorities.forEach(userEntity::addAuthority);
-        if (userEntity.getAuthorities().isEmpty()) {
-            // add user role by default if now roles provided
-            userEntity.getAuthorities().add(Authority.builder().authority("ROLE_USER").build());
+                    return roleType.toString().toUpperCase();
+                }).toArray(String[]::new);
+        return User.withUsername(userDTO.getUsername())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .roles(roles)
+                .build();
+    }
+
+    private UserDTO mapUserDetailsToUserDTO(UserDetails userDetails) {
+        Set<String> roles = userDetails.getAuthorities().stream()
+                .map(authority -> authority.getAuthority().substring(5))
+                .map(RoleType::fromString)
+                .map(RoleType::toString)
+                .collect(Collectors.toSet());
+        return new UserDTO(userDetails.getUsername(), null, roles);
+    }
+
+    private UserDetails mapToUserDetails(ResultSet rs, int rowNum) throws SQLException {
+        String userName = rs.getString(1);
+        String password = rs.getString(2);
+        boolean enabled = rs.getBoolean(3);
+        boolean accLocked = false;
+        boolean accExpired = false;
+        boolean credsExpired = false;
+        if (rs.getMetaData().getColumnCount() > 3) {
+            accLocked = rs.getBoolean(4);
+            accExpired = rs.getBoolean(5);
+            credsExpired = rs.getBoolean(6);
         }
 
-        UserEntity resultUser = userRepository.save(userEntity);
-        UserDTO resultUserDTO = UserDTO.builder()
-                .username(resultUser.getUsername())
-                .roles(resultUser.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toSet()))
-                .creationDate(resultUser.getCreationDate())
-                .build();
-        // save
-        return resultUserDTO;
+        return new User(userName, password, enabled, !accExpired, !credsExpired, !accLocked, AuthorityUtils.NO_AUTHORITIES);
     }
 
     @Override
-    public UserDTO updateUser(String username, UserDTO userDTO) {
-        // TODO: Implement to update user profile when we create it later
-        return null;
+    public void deleteUser(String username) {
+        userDetailsManager.deleteUser(username);
     }
 
     @Override
-    public void changePassword(String username, PasswordChangeRequest passwordChangeRequest) {
-        UserEntity user = getUserByUsername(username);
-        user.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
-        userRepository.save(user);
+    public boolean userExists(String username) {
+        return userDetailsManager.userExists(username);
     }
 
     @Override
-    public void removeUser(String username) {
-        UserEntity user = getUserByUsername(username);
-        userRepository.delete(user);
+    public void changePassword(String oldPassword, String newPassword) {
+        userDetailsManager.changePassword(oldPassword, passwordEncoder.encode(newPassword));
     }
 
     @Override
-    public Page<UserDTO> getAllUsers(Pageable pageable) {
-        Page<UserEntity> usersPage = userRepository.findAll(pageable);
-        // map all users to user dto
-        return usersPage.map(
-                userEntity -> UserDTO.builder()
-                        .username(userEntity.getUsername())
-                        .roles(userEntity.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toSet()))
-                        .creationDate(userEntity.getCreationDate())
-                        .build()
-        );
+    public void changePasswordForUser(String username, String newPassword) {
+        if (!userDetailsManager.userExists(username)) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        String changePasswordSql = "update users set password = ? where username = ?";
+        assert userDetailsManager.getJdbcTemplate() != null;
+        userDetailsManager.getJdbcTemplate().update(changePasswordSql, new Object[]{passwordEncoder.encode(newPassword), username});
     }
 
     @Override
-    public UserEntity getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user: " + username + " not found"));
-    }
-
-    @Override
-    public UserDTO authorizeUser(String username, RoleRequest roleRequest) {
-
+    public void authorizeUser(String username, RoleRequest roleRequest) {
         RoleType roleType = RoleType.fromString(roleRequest.getRole());
         String formattedRole = "ROLE_" + roleType.toString().toUpperCase();
-        UserEntity user = this.getUserByUsername(username);
-        // check whether authority already exists or not
-        if (user.getAuthorities().stream().map(Authority::getAuthority).anyMatch(formattedRole::equals))
-            throw new IllegalArgumentException("User Already has the Authority: " + roleRequest.getRole());
-
-        Authority authority = Authority.builder()
-            .authority(formattedRole)
-            .build();
-        user.addAuthority(authority);
-        UserEntity resultUser = userRepository.save(user);
-        UserDTO resultUserDTO = UserDTO.builder()
-                .username(resultUser.getUsername())
-                .roles(resultUser.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toSet()))
-                .creationDate(resultUser.getCreationDate())
-                .build();
-        // save
-        return resultUserDTO;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = getUserByUsername(username);
-
-        List<GrantedAuthority> authorities = userEntity.getAuthorities()
-                .stream()
-                .map(auth -> new SimpleGrantedAuthority(auth.getAuthority()))
-                .collect(Collectors.toList());
-
-        return new User(userEntity.getUsername(), userEntity.getPassword(), userEntity.isEnabled(), true, true, true, authorities);
+        String createAuthoritySql = "insert into authorities (username, authority) values (?,?)";
+        assert userDetailsManager.getJdbcTemplate() != null;
+        userDetailsManager.getJdbcTemplate().update(createAuthoritySql, new Object[]{username, formattedRole});
     }
 }

@@ -32,7 +32,7 @@ public class LoggingAspect {
     public Object logRequestAndResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String requestId = MDC.get("requestId");
-        String username = SecurityUtil.getUsername();
+        String username = SecurityUtil.getCurrentUsername();
         // Log request details
         LOGGER.info("Request ID: {}, username: {}, Method: {}, URI: {}, IP: {}",
                 requestId, username, request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
@@ -50,7 +50,7 @@ public class LoggingAspect {
     public Object logServiceRequestAndResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         // Capture requestId from MDC and Security username
         String requestId = MDC.get("requestId");
-        String username = SecurityUtil.getUsername();
+        String username = SecurityUtil.getCurrentUsername();
         // Log service method entry
         LOGGER.info("Request ID: {}, username: {}, Invoking Service Method: {} with Args: {}",
                 requestId, username, joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));

@@ -7,7 +7,6 @@ import com.hameed.inventario.model.dto.request.RoleRequest;
 import com.hameed.inventario.model.dto.response.PaginatedResponseDTO;
 import com.hameed.inventario.model.dto.response.ResponseDTO;
 import com.hameed.inventario.service.UserService;
-import com.hameed.inventario.util.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -47,22 +46,22 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public  ResponseEntity<ResponseDTO<UserDTO>> addUser(@Valid @RequestBody UserDTO UserDTO) {
-        UserDTO resultUserDTO = userService.addUser(UserDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "User Created Successfully", resultUserDTO));  // 201 CREATED
+        userService.createUser(UserDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "User Created Successfully"));  // 201 CREATED
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/authorize/{username}")
     public ResponseEntity<ResponseDTO<UserDTO>> authorizeUser(@PathVariable String username,
                                                               @RequestBody RoleRequest roleRequest) {
-        UserDTO resultUserDTO = userService.authorizeUser(username, roleRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Authorization Granted Successfully", resultUserDTO));  // 201 CREATED
+        userService.authorizeUser(username, roleRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Authorization Granted Successfully"));  // 201 CREATED
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{username}")
     public ResponseEntity<ResponseDTO<UserDTO>> deleteUser(@PathVariable String username) {
-        userService.removeUser(username);
+        userService.deleteUser(username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -70,7 +69,7 @@ public class UserController {
     @PatchMapping("/changePassword/{username}")
     public ResponseEntity<ResponseDTO<?>> changePasswordForUser(@PathVariable String username,
             @RequestBody PasswordChangeRequest passwordChangeRequest) {
-        userService.changePassword(username, passwordChangeRequest);
+        userService.changePasswordForUser(username, passwordChangeRequest.getNewPassword());
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Password updated Successfully"));  // 201 CREATED
     }
 
@@ -78,8 +77,7 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/changePassword")
     public ResponseEntity<ResponseDTO<?>> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
-        String username = SecurityUtil.getUsername();
-        userService.changePassword(username, passwordChangeRequest);
+        userService.changePassword(passwordChangeRequest.getOldPassword(), passwordChangeRequest.getNewPassword());
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(201, "Password updated Successfully"));  // 201 CREATED
     }
 }
